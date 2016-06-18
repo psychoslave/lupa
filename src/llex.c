@@ -39,16 +39,16 @@
 /* ORDER RESERVED */
 static const char *const luaX_tokens [] = {
     //"and", "break",       "do",   "else", "elseif",
-      "kaj", "eksterŝalte", "fari", "alie", "alise",
+      "kaj", "ekstersxalte", "fare", "alie", "alise",
     //"end",  "false", "for", "function", "goto",  "if",
-      "fine", "falsa", "por", "funkcie",  "ŝalte", "se",
+      "hop", "falsa", "por", "funkcie",  "sxalte", "se",
     //"in", "local",  "nil",  "not", "or", "repeat",
-      "el", "lokala", "nilo", "ne",  "aŭ", "cikle",
+      "el", "lokala", "nilo", "ne",  "aux", "cikle",
     //"return",  "then", "true", "until", "while",
-      "reŝalte", "tiam", "vera", "ĝis",   "dum",
+      "resxalte", "tiam", "vera", "gxis",   "dum",
     //"//", "..", "...", "==", ">=", "<=", "~=",
     //"ŝŝ"
-      "lo", "lige", "ktp", "egalas", ">=", "<=", "~=",
+      "//", "lige", "ktp", "egalas", ">=", "<=", "~=",
     "<<", ">>", "::", "<eof>",
     "<number>", "<integer>", "<name>", "<string>"
     //"<nombra>", "<indukta>", "<noma>", "<ĉena>"

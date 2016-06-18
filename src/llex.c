@@ -46,9 +46,8 @@ static const char *const luaX_tokens [] = {
       "el", "lokala", "nilo", "ne",  "aux", "cikle",
     //"return",  "then", "true", "until", "while",
       "resxalte", "tiam", "vera", "gxis",   "dum",
-    //"//", "..", "...", "==", ">=", "<=", "~=",
-    //"ŝŝ"
-      "//", "lige", "ktp", "egalas", ">=", "<=", "~=",
+    //"//", "..",   "...", "==",     ">=",         "<=", "~=",
+      "ŝŝ", "lige", "ktp", "egalas", "almenauxas", "maksimumas", "malegalas",
     "<<", ">>", "::", "<eof>",
     "<number>", "<integer>", "<name>", "<string>"
     //"<nombra>", "<indukta>", "<noma>", "<ĉena>"

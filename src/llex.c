@@ -82,6 +82,10 @@ void luaX_init (lua_State *L) {
     luaC_fix(L, obj2gco(ts));  /* reserved words are never collected */
     ts->extra = cast_byte(i+1);  /* reserved word */
   }
+
+    TString *ts = luaS_new(L, "egaligxas");
+    luaC_fix(L, obj2gco(ts));  /* reserved words are never collected */
+    ts->extra = cast_byte(TK_EQ+1-FIRST_RESERVED);  /* reserved word */
 }
 
 

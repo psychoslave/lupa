@@ -986,6 +986,7 @@ static UnOpr getunopr (int op) {
   switch (op) {
     case TK_NOT: return OPR_NOT;
     case '-': return OPR_MINUS;
+    case TK_MINUS: return OPR_MINUS;
     case '~': return OPR_BNOT;
     case TK_BNOT: return OPR_BNOT;
     case '#': return OPR_LEN;
@@ -997,11 +998,16 @@ static UnOpr getunopr (int op) {
 static BinOpr getbinopr (int op) {
   switch (op) {
     case '+': return OPR_ADD;
+    case TK_ADD: return OPR_ADD;
     case '-': return OPR_SUB;
+    case TK_SUB: return OPR_SUB;
     case '*': return OPR_MUL;
     case '%': return OPR_MOD;
+    case TK_MOD: return OPR_MOD;
     case '^': return OPR_POW;
+    case TK_POW: return OPR_POW;
     case '/': return OPR_DIV;
+    case TK_DIV: return OPR_DIV;
     case TK_IDIV: return OPR_IDIV;
     case '&': return OPR_BAND;
     case TK_BAND: return OPR_BAND;

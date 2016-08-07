@@ -33,7 +33,7 @@
 
 
 
-#define currIsNewline(ls)	(ls->current == '\n' || ls->current == '\r')
+#define currIsNewline(ls)    (ls->current == '\n' || ls->current == '\r')
 
 
 /* ORDER RESERVED */
@@ -53,9 +53,44 @@ static const char *const luaX_tokens [] = {
     //"<nombra>", "<indukta>", "<noma>", "<ĉena>"
 };
 
+static const struct {
+    const char *name;
+    int token;
+} aliases [] = {
+    { "nee",     TK_BNOT },
+    { "disauxe", TK_BXOR },
+    { "superas", TK_GT },
+    { "malinfraas", TK_GT },
+    { "suras", TK_GE },
+    { "almenauxas", TK_GE },
+    { "malsubas", TK_GE },
+    { "egalas",  TK_EQ },
+    { "samas",   TK_EQ },
+    { "malsamas",TK_NE },
+    { "neegalas",TK_NE },
+    { "infraas", TK_LT },
+    { "malsuperas", TK_LT },
+    { "subas", TK_LE },
+    { "malsuras", TK_LE },
+    { "malalmenauxas", TK_LE },
+    { "kaje", TK_BAND },
+    { "auxe", TK_BOR },
+    { "sobsxove", TK_SHR },
+    { "sorsxove", TK_SHL }
+};
 
 #define save_and_next(ls) (save(ls, ls->current), next(ls))
 
+
+static void init_aliases (lua_State *L) {
+  int i;
+  int n = sizeof(aliases)/sizeof(aliases[0]);
+  for (i=0; i<n; i++) {
+    TString *ts = luaS_new(L, aliases[i].name);
+    luaC_fix(L, obj2gco(ts));
+    ts->extra = cast_byte(aliases[i].token);
+  }
+}
 
 static l_noret lexerror (LexState *ls, const char *msg, int token);
 
@@ -86,6 +121,7 @@ void luaX_init (lua_State *L) {
     TString *ts = luaS_new(L, "egaligxas");
     luaC_fix(L, obj2gco(ts));  /* reserved words are never collected */
     ts->extra = cast_byte(TK_EQ+1-FIRST_RESERVED);  /* reserved word */
+    init_aliases(L);
 }
 
 

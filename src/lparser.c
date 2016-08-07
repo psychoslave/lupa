@@ -987,6 +987,7 @@ static UnOpr getunopr (int op) {
     case TK_NOT: return OPR_NOT;
     case '-': return OPR_MINUS;
     case '~': return OPR_BNOT;
+    case TK_BNOT: return OPR_BNOT;
     case '#': return OPR_LEN;
     default: return OPR_NOUNOPR;
   }
@@ -1003,16 +1004,21 @@ static BinOpr getbinopr (int op) {
     case '/': return OPR_DIV;
     case TK_IDIV: return OPR_IDIV;
     case '&': return OPR_BAND;
+    case TK_BAND: return OPR_BAND;
     case '|': return OPR_BOR;
+    case TK_BOR: return OPR_BOR;
     case '~': return OPR_BXOR;
+    case TK_BXOR: return OPR_BXOR;
     case TK_SHL: return OPR_SHL;
     case TK_SHR: return OPR_SHR;
     case TK_CONCAT: return OPR_CONCAT;
     case TK_NE: return OPR_NE;
     case TK_EQ: return OPR_EQ;
     case '<': return OPR_LT;
+    case TK_LT: return OPR_LT;
     case TK_LE: return OPR_LE;
     case '>': return OPR_GT;
+    case TK_GT: return OPR_GT;
     case TK_GE: return OPR_GE;
     case TK_AND: return OPR_AND;
     case TK_OR: return OPR_OR;

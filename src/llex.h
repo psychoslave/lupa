@@ -40,6 +40,12 @@ enum RESERVED {
   , TK_BNOT /* binary bitwise inverse */
   , TK_GT /* greater than operator */
   , TK_LT /* lower than operator */
+  , TK_ADD /* addition operator */
+  , TK_MINUS /* unary opposite operator */
+  , TK_SUB /* substraction */
+  , TK_DIV /* double division */
+  , TK_MOD /* double division */
+  , TK_POW /* powering operator */
 };
 
 /* number of reserved words */

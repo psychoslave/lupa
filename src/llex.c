@@ -76,7 +76,22 @@ static const struct {
     { "kaje", TK_BAND },
     { "auxe", TK_BOR },
     { "sobsxove", TK_SHR },
-    { "sorsxove", TK_SHL }
+    { "sorsxove", TK_SHL },
+    { "plus", TK_ADD },
+    { "mal", TK_MINUS },
+    { "kontraux", TK_MINUS },
+    { "minus", TK_SUB },
+    { "disige", TK_DIV },
+    { "divide", TK_DIV },
+    { "ozle", TK_DIV },
+    { "onige", TK_IDIV },
+    { "parte", TK_IDIV },
+    { "pece", TK_IDIV },
+    { "kvociente", TK_IDIV },
+    { "module", TK_MOD },
+    { "kongrue", TK_MOD },
+    { "alt", TK_POW },
+    { "potencige", TK_POW },
 };
 
 #define save_and_next(ls) (save(ls, ls->current), next(ls))

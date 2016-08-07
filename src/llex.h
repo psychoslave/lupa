@@ -34,6 +34,12 @@ enum RESERVED {
   TK_SHL, TK_SHR,
   TK_DBCOLON, TK_EOS,
   TK_FLT, TK_INT, TK_NAME, TK_STRING
+  , TK_BAND /* binary conjunction (and) */
+  , TK_BXOR /* bitwise exclusive disjunction (or) */
+  , TK_BOR /* bitwise inclusive disjunction (or) */
+  , TK_BNOT /* binary bitwise inverse */
+  , TK_GT /* greater than operator */
+  , TK_LT /* lower than operator */
 };
 
 /* number of reserved words */

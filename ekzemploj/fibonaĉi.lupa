@@ -1,0 +1,8 @@
+funkcie fibu(nombro)
+    se(nombro samas 0 aux nombro samas 1) tiam
+        resxalte nombro
+    hop
+    resxalte fibu(nombro minus 2) plus fibu(nombro minus 1)
+hop
+kvinfibo = fibu(5)
+printu(kvinfibo)

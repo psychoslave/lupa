@@ -1,15 +1,15 @@
-# Makefile for installing Lua
-# See dokumentaro/readme.html for installation and customization instructions.
+# Makefile por instali Lupa
+# See dokumentaro/leginda.html por instrukctioj pri instalado kaj tajlorado
 
-# == CHANGE THE SETTINGS BELOW TO SUIT YOUR ENVIRONMENT =======================
+# == ŜANGU LA AGORDOJN SUBE POR TAŬGI VIAN MEDION =======================
 
-# Your platform. See PLATS for possible values.
+# Vian platformo. Vidu PLATS por eblaj valoroj.
 PLAT= none
 
-# Where to install. The installation starts in the fontaro and dokumentaro directories,
-# so take care if INSTALL_TOP is not an absolute path. See the local target.
-# You may want to make INSTALL_LMOD and INSTALL_CMOD consistent with
-# LUA_ROOT, LUA_LDIR, and LUA_CDIR in luaconf.h.
+# Kien instali. La instalado komencas en la dosiereroj "fontaro" kaj "dokumentaro",
+# do zorgu se INSTALL_TOP ne estas absoluta dosierindiko. Vidu la lokan celon.
+# Vi eble deziros fari INSTALL_LMOD kaj INSTALL_CMOD koheraj kun 
+# LUA_ROOT, LUA_LDIR, kaj LUA_CDIR in luaconf.h.
 INSTALL_TOP= /usr/local
 INSTALL_BIN= $(INSTALL_TOP)/bin
 INSTALL_INC= $(INSTALL_TOP)/include
@@ -18,37 +18,37 @@ INSTALL_MAN= $(INSTALL_TOP)/man/man1
 INSTALL_LMOD= $(INSTALL_TOP)/share/lua/$V
 INSTALL_CMOD= $(INSTALL_TOP)/lib/lua/$V
 
-# How to install. If your install program does not support "-p", then
-# you may have to run ranlib on the installed liblua.a.
+# Kiel instali. Se vian instalprogramaro ne provizas "-p", tiam
+# vi eble devos ruli "ranlib" je la instalita "liblua.a".
 INSTALL= install -p
 INSTALL_EXEC= $(INSTALL) -m 0755
 INSTALL_DATA= $(INSTALL) -m 0644
 #
-# If you don't have "install" you can use "cp" instead.
+# Se vi ne havas "install" vi povas uzi "cp" anstataŭe.
 # INSTALL= cp -p
 # INSTALL_EXEC= $(INSTALL)
 # INSTALL_DATA= $(INSTALL)
 
-# Other utilities.
+# Aliaj utilprogramoj
 MKDIR= mkdir -p
 RM= rm -f
 
-# == END OF USER SETTINGS -- NO NEED TO CHANGE ANYTHING BELOW THIS LINE =======
+# == FINO DE UZANTA AGORODOJ -- NE BEZONU ŜANĜI ION AJN SUBE TIU LINIO =======
 
-# Convenience platforms targets.
+# Oportunaj platformaj celoj.
 PLATS= aix bsd c89 freebsd generic linux macosx mingw posix solaris
 
-# What to install.
+# Kion instali.
 TO_BIN= lupe lupkodu
 TO_INC= lua.h luaconf.h lualib.h lauxlib.h lua.hpp
 TO_LIB= liblua.a
 TO_MAN= lua.1 luac.1
 
-# Lua version and release.
+# Lupa versio kaj eldono.
 V= 5.3
 R= $V.3
 
-# Targets start here.
+# Celoj komencas tie.
 all:	$(PLAT)
 
 $(PLATS) clean:
@@ -74,14 +74,15 @@ local:
 	$(MAKE) install INSTALL_TOP=../install
 
 none:
-	@echo "Please do 'make PLATFORM' where PLATFORM is one of these:"
+	@echo "Bonvolu taski 'faru PLATFORMO' kie PALTFORMO estas valoro el la sekvantaj:"
 	@echo "   $(PLATS)"
 	@echo "See dokumentaro/readme.html for complete instructions."
+	@echo "Vidu dokumentaro/leginda.html por plenaj instrukcioj."
 
-# make may get confused with test/ and install/
+# make povas esti konfuzita per test/ kaj install/
 dummy:
 
-# echo config parameters
+# eĥu agordajn parametrojn
 echo:
 	@cd fontaro && $(MAKE) -s echo
 	@echo "PLAT= $(PLAT)"
@@ -101,14 +102,14 @@ echo:
 	@echo "INSTALL_EXEC= $(INSTALL_EXEC)"
 	@echo "INSTALL_DATA= $(INSTALL_DATA)"
 
-# echo pkg-config data
+# eĥu pkg-config datenoj
 pc:
 	@echo "version=$R"
 	@echo "prefix=$(INSTALL_TOP)"
 	@echo "libdir=$(INSTALL_LIB)"
 	@echo "includedir=$(INSTALL_INC)"
 
-# list targets that do not create files (but not all makes understand .PHONY)
+# listu celojn, kiuj ne kreas dosieroj (sed ne ĉiuj `make` subtenas .PHONY)
 .PHONY: all $(PLATS) clean test install local none dummy echo pecho lecho
 
-# (end of Makefile)
+# (fino de fareblara dosiero)

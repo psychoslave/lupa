@@ -1,7 +1,0 @@
-nuno = 1
-fino = 7
-cikle
-        print (nuno .. ' ne estas ' .. fino)
-        nuno = nuno + 1
-gxis nuno >= fino
-print (nuno .. ' estas ' .. fino)

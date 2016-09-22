@@ -65,7 +65,7 @@ $(LUA_T): $(LUA_O) $(LUA_A)
 $(LUAC_T): $(LUAC_O) $(LUA_A)
 	$(CC) -o $@ $(LDFLAGS) $(LUAC_O) $(LUA_A) $(LIBS)
 
-clean:
+malplenigu:
 	$(RM) $(ALL_T) $(ALL_O)
 
 depend:

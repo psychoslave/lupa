@@ -1,46 +1,44 @@
-# Makefile por instali Lupa
-# See dokumentaro/leginda.html por instrukctioj pri instalado kaj tajlorado
+# Vidu dokumentaro/leginda.html por instrukctioj pri instalado kaj tajlorado
 
 # == ŜANGU LA AGORDOJN SUBE POR TAŬGI VIAN MEDION =======================
 
-# Vian platformo. Vidu PLATS por eblaj valoroj.
-PLAT= none
+# Vian platformo. Vidu CELEBLOPLATFORMARO por eblaj valoroj.
+CELPLATFORMO= neniu
 
 # Kien instali. La instalado komencas en la dosiereroj "fontaro" kaj "dokumentaro",
-# do zorgu se INSTALL_TOP ne estas absoluta dosierindiko. Vidu la lokan celon.
-# Vi eble deziros fari INSTALL_LMOD kaj INSTALL_CMOD koheraj kun 
+# do zorgu se INSTALOSUPRO ne estas absoluta dosierindiko. Vidu la lokan celon.
+# Vi eble deziros fari INSTALOLMOD kaj INSTALOCMOD koheraj kun 
 # LUA_ROOT, LUA_LDIR, kaj LUA_CDIR in luaconf.h.
-INSTALL_TOP= /usr/local
-INSTALL_BIN= $(INSTALL_TOP)/bin
-INSTALL_INC= $(INSTALL_TOP)/include
-INSTALL_LIB= $(INSTALL_TOP)/lib
-INSTALL_MAN= $(INSTALL_TOP)/man/man1
-INSTALL_LMOD= $(INSTALL_TOP)/share/lua/$V
-INSTALL_CMOD= $(INSTALL_TOP)/lib/lua/$V
+INSTALOSUPRO= /usr/local
+INSTALODUUMDOSIERUJO= $(INSTALOSUPRO)/bin
+INSTALOINKLUZIVARO= $(INSTALOSUPRO)/include
+INSTALOTEKARO= $(INSTALOSUPRO)/lib
+INSTALOMANLIBRARO= $(INSTALOSUPRO)/man/man1
+INSTALOLMOD= $(INSTALOSUPRO)/share/lupa/$V
+INSTALOCMOD= $(INSTALOSUPRO)/lib/lupa/$V
 
 # Kiel instali. Se vian instalprogramaro ne provizas "-p", tiam
 # vi eble devos ruli "ranlib" je la instalita "liblua.a".
 INSTALL= install -p
-INSTALL_EXEC= $(INSTALL) -m 0755
-INSTALL_DATA= $(INSTALL) -m 0644
+INSTALORULAĴO= $(INSTALL) -m 0755
+INSTALODATENO= $(INSTALL) -m 0644
 #
 # Se vi ne havas "install" vi povas uzi "cp" anstataŭe.
-# INSTALL= cp -p
-# INSTALL_EXEC= $(INSTALL)
-# INSTALL_DATA= $(INSTALL)
+# INSTALORULAĴO= $(INSTALL)
+# INSTALODATENO= $(INSTALL)
 
 # Aliaj utilprogramoj
-MKDIR= mkdir -p
-RM= rm -f
+DOSIERKREU= mkdir -p
+FORIGU= rm -f
 
 # == FINO DE UZANTA AGORODOJ -- NE BEZONU ŜANĜI ION AJN SUBE TIU LINIO =======
 
 # Oportunaj platformaj celoj.
-PLATS= aix bsd c89 freebsd generic linux macosx mingw posix solaris
+CELEBLOPLATFORMARO= aix bsd c89 freebsd generic linux macosx mingw posix solaris
 
 # Kion instali.
-TO_BIN= lupe lupkodu
-TO_INC= lua.h luaconf.h lualib.h lauxlib.h lua.hpp
+AL_DUUMDOSIERO= lupe lupkodu
+TO_INKLUZIVARO= lua.h luaconf.h lualib.h lauxlib.h lua.hpp
 TO_LIB= liblua.a
 TO_MAN= lua.1 luac.1
 
@@ -49,67 +47,66 @@ V= 5.3
 R= $V.3
 
 # Celoj komencas tie.
-all:	$(PLAT)
+all:	$(CELPLATFORMO)
 
-$(PLATS) clean:
+$(CELEBLOPLATFORMARO) malplenigu:
 	cd fontaro && $(MAKE) $@
 
-test:	dummy
-	fontaro/lua -v
+testi:	vaki
+	fontaro/lupe -v
 
-install: dummy
-	cd fontaro && $(MKDIR) $(INSTALL_BIN) $(INSTALL_INC) $(INSTALL_LIB) $(INSTALL_MAN) $(INSTALL_LMOD) $(INSTALL_CMOD)
-	cd fontaro && $(INSTALL_EXEC) $(TO_BIN) $(INSTALL_BIN)
-	cd fontaro && $(INSTALL_DATA) $(TO_INC) $(INSTALL_INC)
-	cd fontaro && $(INSTALL_DATA) $(TO_LIB) $(INSTALL_LIB)
-	cd dokumentaro && $(INSTALL_DATA) $(TO_MAN) $(INSTALL_MAN)
+instali: vaki
+	cd fontaro && $(DOSIERKREU) $(INSTALODUUMDOSIERUJO) $(INSTALOINKLUZIVARO) $(INSTALOTEKARO) $(INSTALOMANLIBRARO) $(INSTALOLMOD) $(INSTALOCMOD)
+	cd fontaro && $(INSTALORULAĴO) $(AL_DUUMDOSIERO) $(INSTALODUUMDOSIERUJO)
+	cd fontaro && $(INSTALODATENO) $(TO_INKLUZIVARO) $(INSTALOINKLUZIVARO)
+	cd fontaro && $(INSTALODATENO) $(TO_LIB) $(INSTALOTEKARO)
+	cd dokumentaro && $(INSTALODATENO) $(TO_MAN) $(INSTALOMANLIBRARO)
 
-uninstall:
-	cd fontaro && cd $(INSTALL_BIN) && $(RM) $(TO_BIN)
-	cd fontaro && cd $(INSTALL_INC) && $(RM) $(TO_INC)
-	cd fontaro && cd $(INSTALL_LIB) && $(RM) $(TO_LIB)
-	cd dokumentaro && cd $(INSTALL_MAN) && $(RM) $(TO_MAN)
+malinstali:
+	cd fontaro && cd $(INSTALODUUMDOSIERUJO) && $(FORIGU) $(AL_DUUMDOSIERO)
+	cd fontaro && cd $(INSTALOINKLUZIVARO) && $(FORIGU) $(TO_INKLUZIVARO)
+	cd fontaro && cd $(INSTALOTEKARO) && $(FORIGU) $(TO_LIB)
+	cd dokumentaro && cd $(INSTALOMANLIBRARO) && $(FORIGU) $(TO_MAN)
 
-local:
-	$(MAKE) install INSTALL_TOP=../install
+lokali:
+	$(MAKE) instali INSTALOSUPRO=../instali
 
-none:
-	@echo "Bonvolu taski 'faru PLATFORMO' kie PALTFORMO estas valoro el la sekvantaj:"
-	@echo "   $(PLATS)"
-	@echo "See dokumentaro/readme.html for complete instructions."
+neniu:
+	@echo "Bonvolu taski 'faru PALTFORMO' kie PALTFORMO estas valoro el la sekvantaj:"
+	@echo "   $(CELEBLOPLATFORMARO)"
 	@echo "Vidu dokumentaro/leginda.html por plenaj instrukcioj."
 
-# make povas esti konfuzita per test/ kaj install/
-dummy:
+# make povas esti konfuzita per testi/ kaj instali/
+vaki:
 
 # eĥu agordajn parametrojn
-echo:
+eĥi:
 	@cd fontaro && $(MAKE) -s echo
-	@echo "PLAT= $(PLAT)"
+	@echo "CELPLATFORMO= $(CELPLATFORMO)"
 	@echo "V= $V"
 	@echo "R= $R"
-	@echo "TO_BIN= $(TO_BIN)"
-	@echo "TO_INC= $(TO_INC)"
+	@echo "AL_DUUMDOSIERO= $(AL_DUUMDOSIERO)"
+	@echo "TO_INKLUZIVARO= $(TO_INKLUZIVARO)"
 	@echo "TO_LIB= $(TO_LIB)"
 	@echo "TO_MAN= $(TO_MAN)"
-	@echo "INSTALL_TOP= $(INSTALL_TOP)"
-	@echo "INSTALL_BIN= $(INSTALL_BIN)"
-	@echo "INSTALL_INC= $(INSTALL_INC)"
-	@echo "INSTALL_LIB= $(INSTALL_LIB)"
-	@echo "INSTALL_MAN= $(INSTALL_MAN)"
-	@echo "INSTALL_LMOD= $(INSTALL_LMOD)"
-	@echo "INSTALL_CMOD= $(INSTALL_CMOD)"
-	@echo "INSTALL_EXEC= $(INSTALL_EXEC)"
-	@echo "INSTALL_DATA= $(INSTALL_DATA)"
+	@echo "INSTALOSUPRO= $(INSTALOSUPRO)"
+	@echo "INSTALODUUMDOSIERUJO= $(INSTALODUUMDOSIERUJO)"
+	@echo "INSTALOINKLUZIVARO= $(INSTALOINKLUZIVARO)"
+	@echo "INSTALOTEKARO= $(INSTALOTEKARO)"
+	@echo "INSTALOMANLIBRARO= $(INSTALOMANLIBRARO)"
+	@echo "INSTALOLMOD= $(INSTALOLMOD)"
+	@echo "INSTALOCMOD= $(INSTALOCMOD)"
+	@echo "INSTALORULAĴO= $(INSTALORULAĴO)"
+	@echo "INSTALODATENO= $(INSTALODATENO)"
 
-# eĥu pkg-config datenoj
-pc:
-	@echo "version=$R"
-	@echo "prefix=$(INSTALL_TOP)"
-	@echo "libdir=$(INSTALL_LIB)"
-	@echo "includedir=$(INSTALL_INC)"
+# eĥu pakaĵoagordajn datenojn
+pakaĵoagordeĥi:
+	@echo "versio=$R"
+	@echo "prefikso=$(INSTALOSUPRO)"
+	@echo "tekaro=$(INSTALOTEKARO)"
+	@echo "inkluzivaro=$(INSTALOINKLUZIVARO)"
 
 # listu celojn, kiuj ne kreas dosieroj (sed ne ĉiuj `make` subtenas .PHONY)
-.PHONY: all $(PLATS) clean test install local none dummy echo pecho lecho
+.PHONY: all $(CELEBLOPLATFORMARO) malplenigu testi instali lokali neniu vaki eĥi pecho lecho
 
 # (fino de fareblara dosiero)

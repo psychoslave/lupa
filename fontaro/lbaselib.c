@@ -498,7 +498,7 @@ static const luaL_Reg base_funcs[] = {
   {"type", luaB_type},
   {"tipdonu", luaB_type},
   {"xpcall", luaB_xpcall},
-  {"traktsxirmvoku", luaB_pcall},
+  {"traktsxirmvoku", luaB_xpcall},
   /* placeholders */
   {"_G", NULL},
   {"_VERSION", NULL},

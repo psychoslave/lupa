@@ -178,12 +178,16 @@
 #define LUA_SHRDIR	"!\\..\\share\\lua\\" LUA_VDIR "\\"
 #define LUA_PATH_DEFAULT  \
 		LUA_LDIR"?.lua;"  LUA_LDIR"?\\init.lua;" \
+		lupa_LDIR"?.lupa;"  lupa_LDIR"?\\init.lupa;" \
 		LUA_CDIR"?.lua;"  LUA_CDIR"?\\init.lua;" \
+		lupa_CDIR"?.lupa;"  lupa_CDIR"?\\init.lupa;" \
 		LUA_SHRDIR"?.lua;" LUA_SHRDIR"?\\init.lua;" \
-		".\\?.lua;" ".\\?\\init.lua"
+		".\\?.lua;" ".\\?\\init.lua;" \
+		".\\?.lupa;" ".\\?\\init.lupa"
 #define LUA_CPATH_DEFAULT \
 		LUA_CDIR"?.dll;" \
 		LUA_CDIR"..\\lib\\lua\\" LUA_VDIR "\\?.dll;" \
+		LUA_CDIR"..\\lib\\lupa\\" LUA_VDIR "\\?.dll;" \
 		LUA_CDIR"loadall.dll;" ".\\?.dll"
 
 #else			/* }{ */
@@ -193,8 +197,11 @@
 #define LUA_CDIR	LUA_ROOT "lib/lupa/" LUA_VDIR "/"
 #define LUA_PATH_DEFAULT  \
 		LUA_LDIR"?.lua;"  LUA_LDIR"?/init.lua;" \
+		LUA_LDIR"?.lupa;"  LUA_LDIR"?/init.lupa;" \
 		LUA_CDIR"?.lua;"  LUA_CDIR"?/init.lua;" \
-		"./?.lua;" "./?/init.lua"
+		LUA_CDIR"?.lupa;"  LUA_CDIR"?/init.lupa;" \
+		"./?.lua;" "./?/init.lua;" \
+		"./?.lupa;" "./?/init.lupa"
 #define LUA_CPATH_DEFAULT \
 		LUA_CDIR"?.so;" LUA_CDIR"loadall.so;" "./?.so"
 #endif			/* } */

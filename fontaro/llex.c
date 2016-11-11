@@ -43,7 +43,7 @@ static const char *const luaX_tokens [] = {
     //"end",  "false", "for", "function", "goto",  "if",
       "hop", "falsa", "por", "funkcie",  "sxalte", "se",
     //"in", "local",  "nil",  "not", "or", "repeat",
-      "el", "lokala", "nilo", "ne",  "aux", "cikle",
+      "el", "loka", "nilo", "ne",  "aux", "cikle",
     //"return",  "then", "true", "until", "while",
       "resxalte", "tiam", "vera", "gxis",   "dum",
     //"//", "..",   "...", "==",     ">=",         "<=", "~=",

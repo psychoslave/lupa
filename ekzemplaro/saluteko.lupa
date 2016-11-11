@@ -1,0 +1,8 @@
+loka modulo = {}
+
+funkcie modulo.saluti()
+    mesagxo = 'Saluton, mondo!'
+    printu(mesagxo)
+hop
+
+resxalte modulo

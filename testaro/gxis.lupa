@@ -1,7 +1,7 @@
 nuno = 1
 fino = 7
 cikle
-        print (nuno .. ' ne estas ' .. fino)
+        print (nuno lige ' ne estas ' lige fino)
         nuno = nuno + 1
 gxis nuno >= fino
-print (nuno .. ' estas ' .. fino)
+print(nuno lige ' estas ' lige fino)

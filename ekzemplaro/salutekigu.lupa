@@ -1,0 +1,2 @@
+teko = necesu "saluteko"
+teko.saluti()

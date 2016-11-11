@@ -38,25 +38,50 @@
 
 /* ORDER RESERVED */
 static const char *const luaX_tokens [] = {
-    //"and", "break",       "do",   "else", "elseif",
-      "kaj", "ekstersxalte", "fare", "alie", "alise",
-    //"end",  "false", "for", "function", "goto",  "if",
-      "hop", "falsa", "por", "funkcie",  "sxalte", "se",
-    //"in", "local",  "nil",  "not", "or", "repeat",
-      "el", "loka", "nilo", "ne",  "aux", "cikle",
-    //"return",  "then", "true", "until", "while",
-      "resxalte", "tiam", "vera", "gxis",   "dum",
-    //"//", "..",   "...", "==",     ">=",         "<=", "~=",
-      "ŝŝ", "lige", "ktp", "egalas", "almenauxas", "maksimumas", "malegalas",
-    "<<", ">>", "::", "<eof>",
-    "<number>", "<integer>", "<name>", "<string>"
-    //"<nombra>", "<indukta>", "<noma>", "<ĉena>"
+    "and", "break",       "do",   "else", "elseif",
+    "end",  "false", "for", "function", "goto",  "if",
+    "in", "local",  "nil",  "not", "or", "repeat",
+    "return",  "then", "true", "until", "while",
+    "//", "..",   "...", "==",     ">=",         "<=", "~=",
+    "<nombra>", "<indukta>", "<noma>", "<ĉena>"
 };
 
 static const struct {
     const char *name;
     int token;
 } aliases [] = {
+   { "kaj",TK_AND },            // and
+   { "ekstersxalte",TK_BREAK }, // break
+   { "fare",TK_DO },            // do
+   { "alie",TK_ELSE },          // else
+   { "alise",TK_ELSEIF },       // elseif
+   { "hop",TK_END },            // end
+   { "falsa",TK_FALSE },        // false
+   { "por",TK_FOR },            // for 
+   { "funkcie",TK_FUNCTION },   // function
+   { "sxalte",TK_GOTO },        // goto
+   { "se",TK_IF },              // if
+   { "el",TK_IN },              // in
+   { "loka",TK_LOCAL },         // local
+   { "nilo",TK_NIL },           // nil
+   { "ne",TK_NOT },             // not
+   { "aux",TK_OR },             // or
+   { "cikle",TK_REPEAT },       // repeat
+   { "resxalte",TK_RETURN },    // return
+   { "tiam",TK_THEN },          // then
+   { "vera",TK_TRUE },          // true
+   { "gxis",TK_UNTIL },         // until
+   { "dum",TK_WHILE },          // while
+   { "onige", TK_IDIV },        // //
+   { "lige",TK_CONCAT }         // ..
+   { "ktp",TK_DOTS },           // ...
+   { "egalas",  TK_EQ },        // == 
+   { "almenauxas",TK_GE },      // >=
+   { "maksimumas",TK_LE },      // <=
+   { "malegalas",TK_NE },       // ~=
+   // end of luaX_tokens aliases
+
+   // pli da sinonimoj
     { "nee",     TK_BNOT },
     { "disauxe", TK_BXOR },
     { "superas", TK_GT },
@@ -64,10 +89,10 @@ static const struct {
     { "suras", TK_GE },
     { "almenauxas", TK_GE },
     { "malsubas", TK_GE },
-    { "egalas",  TK_EQ },
     { "samas",   TK_EQ },
     { "malsamas",TK_NE },
     { "neegalas",TK_NE },
+    { "nesamas",TK_NE },
     { "infraas", TK_LT },
     { "malsuperas", TK_LT },
     { "subas", TK_LE },
@@ -84,7 +109,6 @@ static const struct {
     { "disige", TK_DIV },
     { "divide", TK_DIV },
     { "ozle", TK_DIV },
-    { "onige", TK_IDIV },
     { "parte", TK_IDIV },
     { "pece", TK_IDIV },
     { "kvociente", TK_IDIV },
@@ -92,6 +116,7 @@ static const struct {
     { "kongrue", TK_MOD },
     { "alt", TK_POW },
     { "potencige", TK_POW },
+    { "krocxe",TK_CONCAT }, // ..
 };
 
 #define save_and_next(ls) (save(ls, ls->current), next(ls))

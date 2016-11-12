@@ -34,7 +34,7 @@ enum RESERVED {
   TK_SHL, TK_SHR,
   TK_DBCOLON, TK_EOS,
   TK_FLT, TK_INT, TK_NAME, TK_STRING
-  , TK_BAND /* binary conjunction (and) */
+  , TK_BAND /* bitwise conjunction (and) */
   , TK_BXOR /* bitwise exclusive disjunction (or) */
   , TK_BOR /* bitwise inclusive disjunction (or) */
   , TK_BNOT /* binary bitwise inverse */
@@ -46,6 +46,7 @@ enum RESERVED {
   , TK_DIV /* double division */
   , TK_MOD /* double division */
   , TK_POW /* powering operator */
+  , TK_COLON /* reflexive method calling operator */
 };
 
 /* number of reserved words */

@@ -907,7 +907,7 @@ static void suffixedexp (LexState *ls, expdesc *v) {
         luaK_indexed(fs, v, &key);
         break;
       }
-      case ':': {  /* ':' NAME funcargs */
+      case TK_COLON: {  /* ':' NAME funcargs */
         expdesc key;
         luaX_next(ls);
         checkname(ls, &key);
@@ -1479,7 +1479,7 @@ static int funcname (LexState *ls, expdesc *v) {
   singlevar(ls, v);
   while (ls->t.token == '.')
     fieldsel(ls, v);
-  if (ls->t.token == ':') {
+  if (ls->t.token == TK_COLON) {
     ismethod = 1;
     fieldsel(ls, v);
   }

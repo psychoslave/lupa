@@ -4,4 +4,4 @@ cikle
         print (nuno lige ' ne estas ' lige fino)
         nuno = nuno + 1
 gxis nuno >= fino
-print(nuno lige ' estas ' lige fino)
+printu (nuno lige ' estas ' lige fino)

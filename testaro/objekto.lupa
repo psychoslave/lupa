@@ -1,0 +1,22 @@
+vektoro = {}
+vektoro_mt = { __index = vektoro }
+
+function vektoro sin new(x,y)
+  return setmetatable( {x=x, y=y}, vektoro_mt)
+end
+
+function vektoro sin mag()
+  return math.sqrt(self sin dot(self))
+end
+
+function vektoro sin dot(v)
+  return self.x * v.x + self.y * v.y
+end
+
+function vektoro sin cxenigu()
+    return self.x lige ", " lige self.y 
+end
+
+vektorajxo = vektoro sin new(3,4)
+
+printu (vektorajxo sin cxenigu() )

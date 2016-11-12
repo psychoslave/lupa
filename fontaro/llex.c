@@ -115,7 +115,9 @@ static const struct {
   { "kongrue", TK_MOD },
   { "alt", TK_POW },
   { "potencige", TK_POW },
-  { "krocxe",TK_CONCAT } // ..
+  { "krocxe",TK_CONCAT }, // ..
+  { "sin", TK_COLON }, // :
+  { ":", TK_COLON } // :
 };
 
 #define save_and_next(ls) (save(ls, ls->current), next(ls))
@@ -582,7 +584,7 @@ static int llex (LexState *ls, SemInfo *seminfo) {
       case ':': {
         next(ls);
         if (check_next1(ls, ':')) return TK_DBCOLON;
-        else return ':';
+        else return TK_COLON;
       }
       case '"': case '\'': {  /* short literal strings */
         read_string(ls, ls->current, seminfo);

@@ -3,6 +3,9 @@
 Lupa estas disbranĉiĝo de Lua, kiu celas ebli kodi plene per Esperanta
 vortprovizo, kiam resti plene kongruan kun Lua 5.3.
 
+Ankaŭ ekzistas la fratan projekton [Mallupa](https://github.com/psychoslave/mallupa), kiu tradukas dialektojn, el kiu
+Esperantajn dialektojn, al plena Lua kodo.
+
 # Ek!
 ```bash
 $ ./fare

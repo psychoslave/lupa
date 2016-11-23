@@ -1,5 +1,5 @@
-<p style="text-align:center">
-![Lupa emblemo](bildaro/lupa emblemo.png "Lupu vin!")
+<p align="center">
+  <img src="https://raw.githubusercontent.com/psychoslave/lupa/master/bildaro/lupa%20emblemo.png" alt="Lupa logotipo" title="Lupu vin!" />
 </p>
 
 Lupa estas disbranĉiĝo de Lua, kiu celas ebli kodi plene per Esperanta

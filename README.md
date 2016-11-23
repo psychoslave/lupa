@@ -1,4 +1,4 @@
-<center>![Lupa emblemo](bildaro/lupa emblemo.png "Lupu vin!")</center>
+<p style="text-align:center">![Lupa emblemo](bildaro/lupa emblemo.png "Lupu vin!")</p>
 
 Lupa estas disbranĉiĝo de Lua, kiu celas ebli kodi plene per Esperanta
 vortprovizo, kiam resti plene kongruan kun Lua 5.3.

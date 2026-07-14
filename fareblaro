@@ -36,6 +36,14 @@ FORIGU= rm -f
 # Oportunaj platformaj celoj.
 CELEBLOPLATFORMARO= aix bsd c89 freebsd generic linux macosx mingw posix solaris
 
+# Aŭtomata platformdetekto (ŝel-sendependa, do ne bezonas $OSTYPE)
+SISTEMNOMO := $(shell uname -s 2>/dev/null || echo Nekonata)
+AŬTOPLATFORMO := $(if $(filter Darwin,$(SISTEMNOMO)),macosx,$(if $(filter Linux,$(SISTEMNOMO)),linux,$(if $(filter FreeBSD,$(SISTEMNOMO)),freebsd,$(if $(filter MINGW% MSYS% CYGWIN%,$(SISTEMNOMO)),mingw,posix))))
+
+# Testaj dosieroj
+TESTDOSIERUJO= testaro
+TESTODOSIEROJ := $(sort $(wildcard $(TESTDOSIERUJO)/*.lupa) $(wildcard $(TESTDOSIERUJO)/*.lua))
+
 # Kion instali.
 AL_DUUMDOSIERO= lupe lupkodu
 TO_INKLUZIVARO= lua.h luaconf.h lualib.h lauxlib.h lua.hpp
@@ -54,6 +62,35 @@ $(CELEBLOPLATFORMARO) malplenigu:
 
 testi:	vaki
 	fontaro/lupe -v
+
+aŭtokonstrui:	vaki
+	@echo "Detektita sistemo: $(SISTEMNOMO)"
+	@echo "Elektita platformo: $(AŬTOPLATFORMO)"
+	$(MAKE) -f fareblaro $(AŬTOPLATFORMO)
+
+plentesti:	vaki
+	@echo "[1/2] Konstrui per aŭtomata platformdetekto..."
+	$(MAKE) -f fareblaro aŭtokonstrui
+	@echo "[2/2] Ruli ĉiujn testojn en $(TESTDOSIERUJO)/..."
+	@set -e; \
+	if [ -z "$(strip $(TESTODOSIEROJ))" ]; then \
+		echo "Neniu testdosiero trovita en $(TESTDOSIERUJO)/"; \
+		exit 1; \
+	fi; \
+	malsukcesoj=0; \
+	for dosiero in $(TESTODOSIEROJ); do \
+		echo "-> $$dosiero"; \
+		if ./fontaro/lupe "$$dosiero"; then \
+			:; \
+		else \
+			malsukcesoj=`expr $$malsukcesoj + 1`; \
+		fi; \
+	done; \
+	if [ $$malsukcesoj -gt 0 ]; then \
+		echo "Malsukcesis $$malsukcesoj testo(j)."; \
+		exit 1; \
+	fi; \
+	echo "Ĉiuj testoj sukcesis."
 
 instali: vaki
 	cd fontaro && $(DOSIERKREU) $(INSTALODUUMDOSIERUJO) $(INSTALOINKLUZIVARO) $(INSTALOTEKARO) $(INSTALOMANLIBRARO) $(INSTALOLMOD) $(INSTALOCMOD)
@@ -107,6 +144,6 @@ pakaĵoagordeĥi:
 	@echo "inkluzivaro=$(INSTALOINKLUZIVARO)"
 
 # listu celojn, kiuj ne kreas dosieroj (sed ne ĉiuj `make` subtenas .PHONY)
-.PHONY: all $(CELEBLOPLATFORMARO) malplenigu testi instali lokali neniu vaki eĥi pecho lecho
+.PHONY: all $(CELEBLOPLATFORMARO) malplenigu testi aŭtokonstrui plentesti instali lokali neniu vaki eĥi pecho lecho
 
 # (fino de fareblara dosiero)

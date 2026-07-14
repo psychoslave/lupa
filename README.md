@@ -1,3 +1,4 @@
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/psychoslave/lupa/master/bildaro/lupa%20emblemo.png" alt="Lupa logotipo" title="Lupu vin!" />
 </p>
@@ -21,3 +22,16 @@ $ sudo ./fare instali
 $ cd ekzemplaro
 $ lupe saluti.lupa
 ```
+
+# Testado
+```bash
+$ # ruli ĉiujn testojn en testaro/ (inkluzive .lupa kaj .lua)
+$ ./fare plentesti
+
+$ # nur konstrui per aŭtomata platformdetekto
+$ ./fare aŭtokonstrui
+
+$ # simpla rapida kontrolo de la interpretilo
+$ ./fare testi
+```
+

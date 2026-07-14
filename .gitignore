@@ -27,6 +27,8 @@
 *.i*86
 *.x86_64
 *.hex
+fontaro/lupe
+fontaro/lupkodu
 
 # Debug files
 *.dSYM/

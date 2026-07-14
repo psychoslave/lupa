@@ -59,10 +59,12 @@ static const struct {
   { "falsa", TK_FALSE },        // false
   { "por", TK_FOR },            // for 
   { "funkcie", TK_FUNCTION },   // function
+  { "tie", TK_FUNCTION },       // function
   { "sxalte", TK_GOTO },        // goto
   { "se", TK_IF },              // if
   { "el", TK_IN },              // in
   { "loka", TK_LOCAL },         // local
+  { "ĉi", TK_LOCAL },           // local
   { "nilo", TK_NIL },           // nil
   { "ne", TK_NOT },             // not
   { "aux", TK_OR },             // or

@@ -20,7 +20,7 @@ printe(lupa_vorto.saluton)
 printe(lupa_vorto.adiaŭo)
 
 -- Testo 3: unikodaj identigiloj en funkcioj
-funkcie eltrovo_kvadrato(nombro)
+ĉi tie eltrovo_kvadrato(nombro)
   reŝalte nombro * nombro
 hop
 

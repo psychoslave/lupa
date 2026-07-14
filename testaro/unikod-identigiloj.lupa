@@ -126,7 +126,7 @@ loka eŭsukcesita = 0
 loka nesukcesita = 0
 
 por ba, testo el induktparodonu(testoj) fare
-  loka sukceso, eraro = sxirmvoku(testo)
+  loka sukceso, eraro = ŝirmvoku(testo)
   se ne sukceso tiam
     printe('[nesukcesita] ' .. tostring(testo) .. ': ' .. tostring(eraro))
     nesukcesita = nesukcesita + 1

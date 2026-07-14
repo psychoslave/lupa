@@ -704,8 +704,10 @@ static void setpath (lua_State *L, const char *fieldname, const char *envname1,
 static const luaL_Reg pk_funcs[] = {
   {"loadlib", ll_loadlib},
   {"teksxargu", ll_loadlib},
+  {"tekŝargu", ll_loadlib},
   {"searchpath", ll_searchpath},
   {"dosierindikosercxu", ll_searchpath},
+  {"dosierindikoserĉu", ll_searchpath},
 #if defined(LUA_COMPAT_MODULE)
   {"seeall", ll_seeall},
   {"plenvidu", ll_seeall},

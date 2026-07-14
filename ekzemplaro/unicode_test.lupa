@@ -1,0 +1,46 @@
+-- Test Unicode identifiers in Lupa
+-- This file tests support for UTF-8 encoded Unicode characters in identifier names
+
+-- Esperanto identifiers with circumflex accents
+mesaĝo = 'Saluton, mondo!'
+ĉifro = 42
+selfero = 3.14
+
+-- Test 1: Simple Unicode identifier assignment and print
+print(mesaĝo)
+print(ĉifro)
+print(selfero)
+
+-- Test 2: Unicode identifiers in table
+lupa_vorto = {
+  saluton = 'Ĥej',
+  adiaŭo = 'Ĝis'
+}
+print(lupa_vorto.saluton)
+print(lupa_vorto.adiaŭo)
+
+-- Test 3: Unicode identifiers in functions
+funkcie eltrovo_kvadrato(nombro)
+  resxalte nombro * nombro
+hop
+
+rezultato = eltrovo_kvadrato(5)
+print(rezultato)
+
+-- Test 4: Unicode in loop variables
+for ĉapelo = 1, 3 fare
+  print(ĉapelo)
+hop
+
+-- Test 5: Mixed ASCII and Unicode in same identifier context
+aso = 1
+ĵaŭdo = 2
+vendrudo = 3
+print(aso .. ', ' .. ĵaŭdo .. ', ' .. vendrudo)
+
+-- Test 6: Unicode variable in conditionals
+se mesaĝo samas 'Saluton, mondo!' tiam
+  print('Unicode identifiers laboras!')
+hop
+
+print('Ĉiuj testoj finiĝis.')

@@ -28,6 +28,10 @@ $ lupe saluti.lupa
 $ # ruli ĉiujn testojn en testaro/ (inkluzive .lupa kaj .lua)
 $ ./fare plentesti
 
+$ # opcie ankaŭ ruli oficialan Lua 5.3 testaron kontraŭ lupe
+$ # (bezonas: lua 5.3 + reto por unua elŝuto)
+$ LUPA_RUN_LUA53_OFICIALA=1 ./fare plentesti
+
 $ # nur konstrui per aŭtomata platformdetekto
 $ ./fare aŭtokonstrui
 

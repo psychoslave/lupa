@@ -35,3 +35,15 @@ $ # simpla rapida kontrolo de la interpretilo
 $ ./fare testi
 ```
 
+# Sinonimoj kaj fallback
+
+Detala dokumentado pri ĉiuj Esperantaj sinonimoj (inkluzive `-x` fallback-formoj) troviĝas en:
+
+- `dokumentaro/esperantaj-sinonimoj.md`
+
+Tio inkluzivas:
+
+- ŝlosilvortajn/operatorajn sinonimojn el `llex`
+- bazbibliotekajn sinonimojn el `lbaselib`
+- pakaĵajn/ŝargajn sinonimojn el `loadlib`
+

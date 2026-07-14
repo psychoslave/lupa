@@ -478,6 +478,7 @@ static const luaL_Reg base_funcs[] = {
   {"pcall", luaB_pcall},
   {"sxirmvoku", luaB_pcall},
   {"print", luaB_print},
+  {"printe", luaB_print},
   {"printu", luaB_print},
   {"rawequal", luaB_rawequal},
   {"rektegalu", luaB_rawequal},

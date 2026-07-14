@@ -67,6 +67,7 @@ static const struct {
   { "ne", TK_NOT },             // not
   { "aux", TK_OR },             // or
   { "cikle", TK_REPEAT },       // repeat
+  { "reŝalte", TK_RETURN },     // return
   { "resxalte", TK_RETURN },    // return
   { "tiam", TK_THEN },          // then
   { "vera", TK_TRUE },          // true

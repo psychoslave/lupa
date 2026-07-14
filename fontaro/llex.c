@@ -64,6 +64,7 @@ static const struct {
   { "se", TK_IF },              // if
   { "el", TK_IN },              // in
   { "loka", TK_LOCAL },         // local
+  { "loke", TK_LOCAL },         // local
   { "ĉi", TK_LOCAL },           // local
   { "nilo", TK_NIL },           // nil
   { "ne", TK_NOT },             // not

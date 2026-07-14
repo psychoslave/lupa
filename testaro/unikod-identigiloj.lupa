@@ -108,7 +108,7 @@ hop
 hop
 
 -- Rulu ĉiujn testojn
-loka testoj = {
+loke testoj = {
   unikoda·identigila·atribucio·testi,
   unikodajn·numerojn·testi,
   unikodajn·identigilojn·en·tabelo·testi,

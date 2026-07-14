@@ -22,8 +22,8 @@ printe(interjekcio.adiaŭo)
   reŝalte nombro * nombro
 hop
 
-rezultato = ĉi·kvadrato(5)
-printe(rezultato)
+rezulto = ĉi·kvadrato(5)
+printe(rezulto)
 
 -- Testo 4: unikodo en iteraciaj variabloj
 por ĉiu = 1, 3 fare

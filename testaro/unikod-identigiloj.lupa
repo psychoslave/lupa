@@ -20,15 +20,15 @@ hop
 
 ĉi tie unikodajn·identigilojn·en·tabelo·testi()
   -- Unikodaj identigiloj kiel tabelkampoj
-  loka vorto = {}
-  vorto.saluton = 'Saluton'
-  vorto.ĝojo = 'Ĝojo'
-  asertu(vorto.saluton == 'Saluton', 'Tabela kampalirado nesukcesita')
-  asertu(vorto.ĝojo == 'Ĝojo', 'Unikoda tabela kampo nesukcesita')
+  loka glosaro = {}
+  glosaro.saluton = 'Saluton'
+  glosaro.ĝojo = 'Ĝojo'
+  asertu(glosaro.saluton == 'Saluton', 'Tabela kampalirado nesukcesita')
+  asertu(glosaro.ĝojo == 'Ĝojo', 'Unikoda tabela kampo nesukcesita')
   printe('[eŭsukcesita] unikodajn·identigilojn·en·tabelo·testi')
 hop
 
-ĉi tie unikodajn·identigilojn·en·funkcioj·testi()
+ĉi tie unikoda·funkcio·identigilo·testi()
   -- Unikodaj identigiloj en funkciaj difinoj kaj alvokoj
   ĉi tie kvadrato(ĉifro)
     reŝalte ĉifro * ĉifro
@@ -36,29 +36,29 @@ hop
 
   loka rezulto = kvadrato(5)
   asertu(rezulto == 25, 'Funkcio kun unikoda parametro nesukcesita')
-  printe('[eŭsukcesita] unikodajn·identigilojn·en·funkcioj·testi')
+  printe('[eŭsukcesita] unikoda·funkcio·identigilo·testi')
 hop
 
-ĉi tie unikodajn·iteraciajn·variablojn·testi()
+ĉi tie unikoda·iteracia·variablo·testi()
   -- Unikodaj identigiloj en cikloj
   loka sumo = 0
-  por ĉapelo = 1, 5 fare
-    sumo = sumo + ĉapelo
+  por aldonota = 1, 5 fare
+    sumo = sumo + aldonota
   hop
   asertu(sumo == 15, 'Ciklo kun unikoda variablo nesukcesita')
-  printe('[eŭsukcesita] unikodajn·iteraciajn·variablojn·testi')
+  printe('[eŭsukcesita] unikoda·iteracia·variablo·testi')
 hop
 
 ĉi tie miksita·asciia·unikoda·uzaĵo·testi()
   -- Miksitaj ASCII kaj unikodaj identigiloj
-  loka tago1 = 1
+  loka unua·tago = 1
   loka ĵaŭdo = 4
-  loka totalo = tago1 + ĵaŭdo
+  loka totalo = unua·tago + ĵaŭdo
   asertu(totalo == 5, 'Miksita ASCII/unikoda aritmetiko nesukcesita')
   printe('[eŭsukcesita] miksita·asciia·unikoda·uzaĵo·testi')
 hop
 
-ĉi tie unikodajn·identigilojn·en·kondiĉoj·testi()
+ĉi tie unikodajn·enkondiĉa·identigilo·testi()
   -- Unikodaj identigiloj en kondiĉaj esprimoj
   loka identigilo = 'testo'
   se identigilo == 'testo' tiam
@@ -66,44 +66,44 @@ hop
   alie
     asertu(falsa, 'Kondiĉa testo nesukcesita')
   hop
-  printe('[eŭsukcesita] unikodajn·identigilojn·en·kondiĉoj·testi')
+  printe('[eŭsukcesita] unikodajn·enkondiĉa·identigilo·testi')
 hop
 
-ĉi tie unikoda·cxenoperaciojn·testi()
+ĉi tie unikoda·ĉenoperacio·testi()
   -- Unikodaj identigiloj kun ĉenaj operacioj
-  loka tekstoA = 'Saluton'
-  loka tekstoB = 'mondo'
-  loka rezulto = tekstoA .. ', ' .. tekstoB .. '!'
+  loka unua·teksto = 'Saluton'
+  loka dua·teksto = 'mondo'
+  loka rezulto = unua·teksto .. ', ' .. dua·teksto .. '!'
   asertu(rezulto == 'Saluton, mondo!', 'Ĉena kunligo nesukcesita')
-  printe('[eŭsukcesita] unikoda·cxenoperaciojn·testi')
+  printe('[eŭsukcesita] unikoda·ĉenoperacio·testi')
 hop
 
-ĉi tie latinajn·ampleksigitajn·signojn·testi()
+ĉi tie latina·ampleksigita·signo·testi()
   -- Diversaj latinaj ampleksigitaj signoj uzataj en eŭropaj lingvoj
-  loka ĉ = 'ĉapelo'
+  loka ĉ = 'aldonota'
   loka ĝ = 'ĝojo'
   loka ĥ = 'ĥemio'
   loka ĵ = 'ĵurnalo'
   loka ŝ = 'ŝipo'
   loka ŭ = 'aŭ'
 
-  asertu(ĉ == 'ĉapelo', 'Ĉ-signo nesukcesita')
+  asertu(ĉ == 'aldonota', 'Ĉ-signo nesukcesita')
   asertu(ĝ == 'ĝojo', 'Ĝ-signo nesukcesita')
   asertu(ĥ == 'ĥemio', 'Ĥ-signo nesukcesita')
   asertu(ĵ == 'ĵurnalo', 'Ĵ-signo nesukcesita')
   asertu(ŝ == 'ŝipo', 'Ŝ-signo nesukcesita')
   asertu(ŭ == 'aŭ', 'Ŭ-signo nesukcesita')
-  printe('[eŭsukcesita] latinajn·ampleksigitajn·signojn·testi')
+  printe('[eŭsukcesita] latina·ampleksigita·signo·testi')
 hop
 
 ĉi tie unikoda·loka·skopo·testi()
   -- Unikodaj identigiloj respektas lokan skopon
-  loka ĉapelo·ekstera = 'ekstera'
+  loka transpaso = 'ekstera'
   fare
-    loka ĉapelo·ekstera = 'interna'
-    asertu(ĉapelo·ekstera == 'interna', 'Interna skopo nesukcesita')
+    loka transpaso = 'interna'
+    asertu(transpaso == 'interna', 'Interna skopo nesukcesita')
   hop
-  asertu(ĉapelo·ekstera == 'ekstera', 'Ekstera skopo nesukcesita')
+  asertu(transpaso == 'ekstera', 'Ekstera skopo nesukcesita')
   printe('[eŭsukcesita] unikoda·loka·skopo·testi')
 hop
 
@@ -112,12 +112,12 @@ loke testoj = {
   unikoda·identigila·atribucio·testi,
   unikodajn·numerojn·testi,
   unikodajn·identigilojn·en·tabelo·testi,
-  unikodajn·identigilojn·en·funkcioj·testi,
-  unikodajn·iteraciajn·variablojn·testi,
+  unikoda·funkcio·identigilo·testi,
+  unikoda·iteracia·variablo·testi,
   miksita·asciia·unikoda·uzaĵo·testi,
-  unikodajn·identigilojn·en·kondiĉoj·testi,
-  unikoda·cxenoperaciojn·testi,
-  latinajn·ampleksigitajn·signojn·testi,
+  unikodajn·enkondiĉa·identigilo·testi,
+  unikoda·ĉenoperacio·testi,
+  latina·ampleksigita·signo·testi,
   unikoda·loka·skopo·testi,
 }
 

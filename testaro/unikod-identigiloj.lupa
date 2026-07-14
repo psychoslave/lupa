@@ -5,17 +5,17 @@
 ĉi tie unikoda·identigila·atribucio·testi()
   -- Baza unikoda identigila atribuo
   loka identigilo = 'Saluton, mondo!'
-  asertu(identigilo == 'Saluton, mondo!', 'Unikoda identigila atribuo malsukcesis')
-  printe('[PASIS] unikoda·identigila·atribucio·testi')
+  asertu(identigilo == 'Saluton, mondo!', 'Unikoda identigila atribuo nesukcesita')
+  printe('[eŭsukcesita] unikoda·identigila·atribucio·testi')
 hop
 
 ĉi tie unikodajn·numerojn·testi()
   -- Unikodaj identigiloj kun nombraj valoroj
-  loka ĉifro = 42
+  loka ĉifro = 1
   loka pi = 3.14159
-  asertu(ĉifro == 42, 'Unikoda nombro-atribuo malsukcesis')
-  asertu(pi > 3.1 kaj pi < 3.2, 'Unikoda flosnombra atribuo malsukcesis')
-  printe('[PASIS] unikodajn·numerojn·testi')
+  asertu(ĉifro == 1, 'Unikoda nombro-atribuo nesukcesita')
+  asertu(pi > 3.1 kaj pi < 3.2, 'Unikoda flosnombra atribuo nesukcesita')
+  printe('[eŭsukcesita] unikodajn·numerojn·testi')
 hop
 
 ĉi tie unikodajn·identigilojn·en·tabelo·testi()
@@ -23,9 +23,9 @@ hop
   loka vorto = {}
   vorto.saluton = 'Saluton'
   vorto.ĝojo = 'Ĝojo'
-  asertu(vorto.saluton == 'Saluton', 'Tabela kampalirado malsukcesis')
-  asertu(vorto.ĝojo == 'Ĝojo', 'Unikoda tabela kampo malsukcesis')
-  printe('[PASIS] unikodajn·identigilojn·en·tabelo·testi')
+  asertu(vorto.saluton == 'Saluton', 'Tabela kampalirado nesukcesita')
+  asertu(vorto.ĝojo == 'Ĝojo', 'Unikoda tabela kampo nesukcesita')
+  printe('[eŭsukcesita] unikodajn·identigilojn·en·tabelo·testi')
 hop
 
 ĉi tie unikodajn·identigilojn·en·funkcioj·testi()
@@ -35,8 +35,8 @@ hop
   hop
 
   loka rezulto = kvadrato(5)
-  asertu(rezulto == 25, 'Funkcio kun unikoda parametro malsukcesis')
-  printe('[PASIS] unikodajn·identigilojn·en·funkcioj·testi')
+  asertu(rezulto == 25, 'Funkcio kun unikoda parametro nesukcesita')
+  printe('[eŭsukcesita] unikodajn·identigilojn·en·funkcioj·testi')
 hop
 
 ĉi tie unikodajn·iteraciajn·variablojn·testi()
@@ -45,8 +45,8 @@ hop
   por ĉapelo = 1, 5 fare
     sumo = sumo + ĉapelo
   hop
-  asertu(sumo == 15, 'Ciklo kun unikoda variablo malsukcesis')
-  printe('[PASIS] unikodajn·iteraciajn·variablojn·testi')
+  asertu(sumo == 15, 'Ciklo kun unikoda variablo nesukcesita')
+  printe('[eŭsukcesita] unikodajn·iteraciajn·variablojn·testi')
 hop
 
 ĉi tie miksita·asciia·unikoda·uzaĵo·testi()
@@ -54,8 +54,8 @@ hop
   loka tago1 = 1
   loka ĵaŭdo = 4
   loka totalo = tago1 + ĵaŭdo
-  asertu(totalo == 5, 'Miksita ASCII/unikoda aritmetiko malsukcesis')
-  printe('[PASIS] miksita·asciia·unikoda·uzaĵo·testi')
+  asertu(totalo == 5, 'Miksita ASCII/unikoda aritmetiko nesukcesita')
+  printe('[eŭsukcesita] miksita·asciia·unikoda·uzaĵo·testi')
 hop
 
 ĉi tie unikodajn·identigilojn·en·kondiĉoj·testi()
@@ -64,9 +64,9 @@ hop
   se identigilo == 'testo' tiam
     asertu(vera, 'Kondiĉo devus sukcesi')
   alie
-    asertu(falsa, 'Kondiĉa testo malsukcesis')
+    asertu(falsa, 'Kondiĉa testo nesukcesita')
   hop
-  printe('[PASIS] unikodajn·identigilojn·en·kondiĉoj·testi')
+  printe('[eŭsukcesita] unikodajn·identigilojn·en·kondiĉoj·testi')
 hop
 
 ĉi tie unikoda·cxenoperaciojn·testi()
@@ -74,8 +74,8 @@ hop
   loka tekstoA = 'Saluton'
   loka tekstoB = 'mondo'
   loka rezulto = tekstoA .. ', ' .. tekstoB .. '!'
-  asertu(rezulto == 'Saluton, mondo!', 'Ĉena kunligo malsukcesis')
-  printe('[PASIS] unikoda·cxenoperaciojn·testi')
+  asertu(rezulto == 'Saluton, mondo!', 'Ĉena kunligo nesukcesita')
+  printe('[eŭsukcesita] unikoda·cxenoperaciojn·testi')
 hop
 
 ĉi tie latinajn·ampleksigitajn·signojn·testi()
@@ -87,13 +87,13 @@ hop
   loka ŝ = 'ŝipo'
   loka ŭ = 'aŭ'
 
-  asertu(ĉ == 'ĉapelo', 'Ĉ-signo malsukcesis')
-  asertu(ĝ == 'ĝojo', 'Ĝ-signo malsukcesis')
-  asertu(ĥ == 'ĥemio', 'Ĥ-signo malsukcesis')
-  asertu(ĵ == 'ĵurnalo', 'Ĵ-signo malsukcesis')
-  asertu(ŝ == 'ŝipo', 'Ŝ-signo malsukcesis')
-  asertu(ŭ == 'aŭ', 'Ŭ-signo malsukcesis')
-  printe('[PASIS] latinajn·ampleksigitajn·signojn·testi')
+  asertu(ĉ == 'ĉapelo', 'Ĉ-signo nesukcesita')
+  asertu(ĝ == 'ĝojo', 'Ĝ-signo nesukcesita')
+  asertu(ĥ == 'ĥemio', 'Ĥ-signo nesukcesita')
+  asertu(ĵ == 'ĵurnalo', 'Ĵ-signo nesukcesita')
+  asertu(ŝ == 'ŝipo', 'Ŝ-signo nesukcesita')
+  asertu(ŭ == 'aŭ', 'Ŭ-signo nesukcesita')
+  printe('[eŭsukcesita] latinajn·ampleksigitajn·signojn·testi')
 hop
 
 ĉi tie unikoda·loka·skopo·testi()
@@ -101,10 +101,10 @@ hop
   loka ĉapelo·ekstera = 'ekstera'
   fare
     loka ĉapelo·ekstera = 'interna'
-    asertu(ĉapelo·ekstera == 'interna', 'Interna skopo malsukcesis')
+    asertu(ĉapelo·ekstera == 'interna', 'Interna skopo nesukcesita')
   hop
-  asertu(ĉapelo·ekstera == 'ekstera', 'Ekstera skopo malsukcesis')
-  printe('[PASIS] unikoda·loka·skopo·testi')
+  asertu(ĉapelo·ekstera == 'ekstera', 'Ekstera skopo nesukcesita')
+  printe('[eŭsukcesita] unikoda·loka·skopo·testi')
 hop
 
 -- Rulu ĉiujn testojn
@@ -122,24 +122,24 @@ loke testoj = {
 }
 
 printe('\n=== Rulado de unikodaj identigilaj testoj ===')
-loka pasis = 0
-loka malsukcesis = 0
+loka eŭsukcesita = 0
+loka nesukcesita = 0
 
 por ba, testo el induktparodonu(testoj) fare
   loka sukceso, eraro = sxirmvoku(testo)
   se ne sukceso tiam
-    printe('[MALSUKCESIS] ' .. tostring(testo) .. ': ' .. tostring(eraro))
-    malsukcesis = malsukcesis + 1
+    printe('[nesukcesita] ' .. tostring(testo) .. ': ' .. tostring(eraro))
+    nesukcesita = nesukcesita + 1
   alie
-    pasis = pasis + 1
+    eŭsukcesita = eŭsukcesita + 1
   hop
 hop
 
 printe('\n=== Testrezultoj ===')
-printe('Pasis: ' .. pasis)
-printe('Malsukcesis: ' .. malsukcesis)
-printe('Entute:  ' .. (pasis + malsukcesis))
+printe('eŭsukcesita: ' .. eŭsukcesita)
+printe('nesukcesita: ' .. nesukcesita)
+printe('Entute:  ' .. (eŭsukcesita + nesukcesita))
 
-se malsukcesis > 0 tiam
+se nesukcesita > 0 tiam
   os.exit(1)
 hop

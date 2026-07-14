@@ -518,18 +518,25 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
 */
 static int isidentifiercont(LexState *ls) {
   unsigned char c1 = (unsigned char)ls->current;
-  
-  /* ASCII: digits, letters, underscore */
-  if (lislalnum(c1)) return 1;
-  
-  /* UTF-8 multi-byte: get continuation bytes */
-  if (c1 >= 0xC0) {
-    /* For now, accept any UTF-8 continuation as part of identifier */
-    /* This is safe because we'll validate in luai_isutf8alpha during identifier start */
-    return luai_isutf8cont((unsigned char)c1) || (c1 >= 0xC0);
+  /* ASCII identifier continuation or any non-ASCII UTF-8 byte. */
+  return lislalnum(c1) || c1 >= 0x80;
+}
+
+static void saveutf8seq(LexState *ls) {
+  unsigned char c1 = (unsigned char)ls->current;
+  save_and_next(ls);  /* save leading byte */
+
+  if (c1 >= 0xE0) {  /* 3-byte sequence */
+    if (luai_isutf8cont((unsigned char)ls->current)) {
+      save_and_next(ls);
+      if (luai_isutf8cont((unsigned char)ls->current))
+        save_and_next(ls);
+    }
   }
-  
-  return 0;
+  else if (c1 >= 0xC0) {  /* 2-byte sequence */
+    if (luai_isutf8cont((unsigned char)ls->current))
+      save_and_next(ls);
+  }
 }
 
 static int llex (LexState *ls, SemInfo *seminfo) {
@@ -629,9 +636,12 @@ static int llex (LexState *ls, SemInfo *seminfo) {
       default: {
         if (lislalpha(ls->current)) {  /* ASCII identifier or reserved word? */
           TString *ts;
-          do {
-            save_and_next(ls);
-          } while (lislalnum(ls->current));
+          while (isidentifiercont(ls)) {
+            if ((unsigned char)ls->current >= 0x80)
+              saveutf8seq(ls);
+            else
+              save_and_next(ls);
+          }
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
           seminfo->ts = ts;
@@ -675,21 +685,9 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           }
           
           /* Continue reading the identifier */
-          while (lislalnum(ls->current) || (unsigned char)ls->current >= 0x80) {
+          while (isidentifiercont(ls)) {
             if ((unsigned char)ls->current >= 0xC0) {
-              /* Another multi-byte sequence */
-              unsigned char mc1 = (unsigned char)ls->current;
-              save_and_next(ls);
-              if (mc1 >= 0xE0) {
-                if (luai_isutf8cont((unsigned char)ls->current)) {
-                  save_and_next(ls);
-                  if (luai_isutf8cont((unsigned char)ls->current)) {
-                    save_and_next(ls);
-                  }
-                }
-              } else if (luai_isutf8cont((unsigned char)ls->current)) {
-                save_and_next(ls);
-              }
+              saveutf8seq(ls);
             } else if (lislalnum(ls->current)) {
               save_and_next(ls);
             } else if (luai_isutf8cont((unsigned char)ls->current)) {

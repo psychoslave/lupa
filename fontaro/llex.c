@@ -413,7 +413,7 @@ static int readhexaesc (LexState *ls) {
 
 static unsigned long readutf8esc (LexState *ls) {
   unsigned long r;
-  int i = 4;  /* chars to be removed: '\', 'u', '{', and first digit */
+  int i = 4;  /* chars to be removed: '\\', 'u', '{', and first digit */
   save_and_next(ls);  /* skip 'u' */
   esccheck(ls, ls->current == '{', "missing '{'");
   r = gethexa(ls);  /* must have at least one digit */
@@ -476,7 +476,7 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
           case 'u': utf8esc(ls);  goto no_save;
           case '\n': case '\r':
             inclinenumber(ls); c = '\n'; goto only_save;
-          case '\\': case '\"': case '\'':
+          case '\\': case '"': case '\'': 
             c = ls->current; goto read_save;
           case EOZ: goto no_save;  /* will raise an error next loop */
           case 'z': {  /* zap following span of spaces */
@@ -490,7 +490,7 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
           }
           default: {
             esccheck(ls, lisdigit(ls->current), "invalid escape sequence");
-            c = readdecesc(ls);  /* digital escape '\ddd' */
+            c = readdecesc(ls);  /* digital escape '\\ddd' */
             goto only_save;
           }
         }
@@ -512,6 +512,25 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
                                    luaZ_bufflen(ls->buff) - 2);
 }
 
+/*
+** Check if current position starts a valid identifier continuation in UTF-8
+** Handles multi-byte sequences transparently
+*/
+static int isidentifiercont(LexState *ls) {
+  unsigned char c1 = (unsigned char)ls->current;
+  
+  /* ASCII: digits, letters, underscore */
+  if (lislalnum(c1)) return 1;
+  
+  /* UTF-8 multi-byte: get continuation bytes */
+  if (c1 >= 0xC0) {
+    /* For now, accept any UTF-8 continuation as part of identifier */
+    /* This is safe because we'll validate in luai_isutf8alpha during identifier start */
+    return luai_isutf8cont((unsigned char)c1) || (c1 >= 0xC0);
+  }
+  
+  return 0;
+}
 
 static int llex (LexState *ls, SemInfo *seminfo) {
   luaZ_resetbuffer(ls->buff);
@@ -608,11 +627,79 @@ static int llex (LexState *ls, SemInfo *seminfo) {
         return TK_EOS;
       }
       default: {
-        if (lislalpha(ls->current)) {  /* identifier or reserved word? */
+        if (lislalpha(ls->current)) {  /* ASCII identifier or reserved word? */
           TString *ts;
           do {
             save_and_next(ls);
           } while (lislalnum(ls->current));
+          ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
+                                  luaZ_bufflen(ls->buff));
+          seminfo->ts = ts;
+          if (isreserved(ts))  /* reserved word? */
+            return ts->extra - 1 + FIRST_RESERVED;
+          else {
+            return TK_NAME;
+          }
+        }
+        /* UTF-8 identifier start (non-ASCII) */
+        else if ((unsigned char)ls->current >= 0xC0) {
+          unsigned char c1, c2 = 0, c3 = 0;
+          TString *ts;
+          c1 = (unsigned char)ls->current;
+          
+          /* Peek ahead for multi-byte sequence */
+          if (c1 >= 0xE0) {  /* 3-byte sequence */
+            save_and_next(ls);  /* save c1 */
+            if (luai_isutf8cont((unsigned char)ls->current)) {
+              c2 = (unsigned char)ls->current;
+              save_and_next(ls);  /* save c2 */
+              if (luai_isutf8cont((unsigned char)ls->current)) {
+                c3 = (unsigned char)ls->current;
+                save_and_next(ls);  /* save c3 */
+              }
+            }
+          } else if (c1 >= 0xC0) {  /* 2-byte sequence */
+            save_and_next(ls);  /* save c1 */
+            if (luai_isutf8cont((unsigned char)ls->current)) {
+              c2 = (unsigned char)ls->current;
+              save_and_next(ls);  /* save c2 */
+            }
+          }
+          
+          /* Validate it's a valid UTF-8 letter */
+          if (!luai_isutf8alpha(c1, c2, c3)) {
+            /* Not a valid letter, treat as single-char token */
+            int ch = ls->current;
+            next(ls);
+            return ch;
+          }
+          
+          /* Continue reading the identifier */
+          while (lislalnum(ls->current) || (unsigned char)ls->current >= 0x80) {
+            if ((unsigned char)ls->current >= 0xC0) {
+              /* Another multi-byte sequence */
+              unsigned char mc1 = (unsigned char)ls->current;
+              save_and_next(ls);
+              if (mc1 >= 0xE0) {
+                if (luai_isutf8cont((unsigned char)ls->current)) {
+                  save_and_next(ls);
+                  if (luai_isutf8cont((unsigned char)ls->current)) {
+                    save_and_next(ls);
+                  }
+                }
+              } else if (luai_isutf8cont((unsigned char)ls->current)) {
+                save_and_next(ls);
+              }
+            } else if (lislalnum(ls->current)) {
+              save_and_next(ls);
+            } else if (luai_isutf8cont((unsigned char)ls->current)) {
+              /* Continuation byte (shouldn't happen, but handle it) */
+              save_and_next(ls);
+            } else {
+              break;
+            }
+          }
+          
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
           seminfo->ts = ts;
@@ -649,4 +736,3 @@ int luaX_lookahead (LexState *ls) {
   ls->lookahead.token = llex(ls, &ls->lookahead.seminfo);
   return ls->lookahead.token;
 }
-

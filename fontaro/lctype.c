@@ -53,3 +53,69 @@ LUAI_DDEF const lu_byte luai_ctype_[UCHAR_MAX + 2] = {
 };
 
 #endif			/* } */
+
+/*
+** UTF-8 continuation byte check
+** Bytes 0x80-0xBF are continuation bytes
+*/
+int luai_isutf8cont(unsigned char c) {
+  return (c >= 0x80 && c <= 0xBF);
+}
+
+/*
+** Check if a sequence of UTF-8 bytes represents a Unicode letter
+** This handles multi-byte UTF-8 sequences
+** c1 is the first byte, c2 and c3 are the continuation bytes (if applicable)
+**
+** Supports:
+** - Basic Latin (ASCII): 0x41-0x5A, 0x61-0x7A
+** - Latin Extended-A: 0xC380-0xC3BF (à-ÿ)
+** - Latin Extended-B: 0xC480-0xC5BF
+** - Combining Diacritical Marks: 0xCC80-0xCDA0
+** - Greek: 0xCE91-0xCEB3
+** - Cyrillic: 0xD090-0xD182
+** And other ranges as commonly used for European languages
+*/
+int luai_isutf8alpha(unsigned char c1, unsigned char c2, unsigned char c3) {
+  /* ASCII letters: a-z, A-Z */
+  if (c1 >= 0x41 && c1 <= 0x5A) return 1;  /* A-Z */
+  if (c1 >= 0x61 && c1 <= 0x7A) return 1;  /* a-z */
+  
+  /* Single-byte UTF-8 (not ASCII) - not a letter */
+  if (c1 < 0x80) return 0;
+  
+  /* Two-byte UTF-8 sequences (0xC0-0xDF) */
+  if (c1 >= 0xC0 && c1 <= 0xDF) {
+    if (!luai_isutf8cont(c2)) return 0;
+    
+    /* Latin Extended-A and Extended-B (0xC380-0xC5BF) */
+    /* Covers: à-ÿ, Ā-ƿ, etc. */
+    if (c1 == 0xC3 || c1 == 0xC4 || c1 == 0xC5) return 1;
+    
+    /* Greek (0xCE91-0xCEB3) */
+    if (c1 == 0xCE && c2 >= 0x91 && c2 <= 0xBF) return 1;
+    
+    /* Cyrillic (0xD090-0xD182) */
+    if (c1 == 0xD0 && c2 >= 0x90 && c2 <= 0xBF) return 1;
+    if (c1 == 0xD1 && c2 >= 0x80 && c2 <= 0x82) return 1;
+    
+    /* Other two-byte sequences for European languages */
+    if (c1 >= 0xC8 && c1 <= 0xDD) return 1;  /* Various European letters */
+    
+    return 0;
+  }
+  
+  /* Three-byte UTF-8 sequences (0xE0-0xEF) */
+  if (c1 >= 0xE0 && c1 <= 0xEF) {
+    if (!luai_isutf8cont(c2) || !luai_isutf8cont(c3)) return 0;
+    
+    /* General Unicode support for letter categories */
+    /* This includes CJK, Arabic, Hebrew, and other scripts */
+    return 1;  /* Assume all 3-byte sequences are valid for now */
+  }
+  
+  /* Four-byte UTF-8 sequences (0xF0-0xF7) - rare in identifiers */
+  if (c1 >= 0xF0 && c1 <= 0xF7) return 1;
+  
+  return 0;
+}

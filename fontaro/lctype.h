@@ -91,5 +91,11 @@ LUAI_DDEC const lu_byte luai_ctype_[UCHAR_MAX + 2];
 
 #endif			/* } */
 
-#endif
+/*
+** UTF-8 aware character classification for identifiers
+** Allows Unicode letters (like ĝ, ĉ, ŝ, etc.) in identifier names
+*/
+int luai_isutf8alpha(unsigned char c1, unsigned char c2, unsigned char c3);
+int luai_isutf8cont(unsigned char c);
 
+#endif

@@ -1,0 +1,145 @@
+#!/usr/bin/env lupa
+-- Unuotestoj por unikodaj identigiloj en Lupa
+-- Rulu per: lupe testaro/unikod-identigiloj.lupa
+
+loka funkcie testu_unikodan_identigilan_atribucion()
+  -- Baza unikoda identigila atribuo
+  loka identigilo = 'Saluton, mondo!'
+  asertu(identigilo == 'Saluton, mondo!', 'Unikoda identigila atribuo malsukcesis')
+  printe('[PASIS] testu_unikodan_identigilan_atribucion')
+hop
+
+loka funkcie testu_unikodajn_numerojn()
+  -- Unikodaj identigiloj kun nombraj valoroj
+  loka ĉifro = 42
+  loka pi = 3.14159
+  asertu(ĉifro == 42, 'Unikoda nombro-atribuo malsukcesis')
+  asertu(pi > 3.1 kaj pi < 3.2, 'Unikoda flosnombra atribuo malsukcesis')
+  printe('[PASIS] testu_unikodajn_numerojn')
+hop
+
+loka funkcie testu_unikodajn_identigilojn_en_tabelo()
+  -- Unikodaj identigiloj kiel tabelkampoj
+  loka vorto = {}
+  vorto.saluton = 'Saluton'
+  vorto.ĝojo = 'Ĝojo'
+  asertu(vorto.saluton == 'Saluton', 'Tabela kampalirado malsukcesis')
+  asertu(vorto.ĝojo == 'Ĝojo', 'Unikoda tabela kampo malsukcesis')
+  printe('[PASIS] testu_unikodajn_identigilojn_en_tabelo')
+hop
+
+loka funkcie testu_unikodajn_identigilojn_en_funkcioj()
+  -- Unikodaj identigiloj en funkciaj difinoj kaj alvokoj
+  loka funkcie kvadrato(ĉifro)
+    reŝalte ĉifro * ĉifro
+  hop
+
+  loka rezulto = kvadrato(5)
+  asertu(rezulto == 25, 'Funkcio kun unikoda parametro malsukcesis')
+  printe('[PASIS] testu_unikodajn_identigilojn_en_funkcioj')
+hop
+
+loka funkcie testu_unikodajn_iteraciajn_variablojn()
+  -- Unikodaj identigiloj en cikloj
+  loka sumo = 0
+  por ĉapelo = 1, 5 fare
+    sumo = sumo + ĉapelo
+  hop
+  asertu(sumo == 15, 'Ciklo kun unikoda variablo malsukcesis')
+  printe('[PASIS] testu_unikodajn_iteraciajn_variablojn')
+hop
+
+loka funkcie testu_miksitan_asciian_unikodan_uzaĵon()
+  -- Miksitaj ASCII kaj unikodaj identigiloj
+  loka tago1 = 1
+  loka ĵaŭdo = 4
+  loka totalo = tago1 + ĵaŭdo
+  asertu(totalo == 5, 'Miksita ASCII/unikoda aritmetiko malsukcesis')
+  printe('[PASIS] testu_miksitan_asciian_unikodan_uzaĵon')
+hop
+
+loka funkcie testu_unikodajn_identigilojn_en_kondiĉoj()
+  -- Unikodaj identigiloj en kondiĉaj esprimoj
+  loka identigilo = 'testo'
+  se identigilo == 'testo' tiam
+    asertu(vera, 'Kondiĉo devus sukcesi')
+  alie
+    asertu(falsa, 'Kondiĉa testo malsukcesis')
+  hop
+  printe('[PASIS] testu_unikodajn_identigilojn_en_kondiĉoj')
+hop
+
+loka funkcie testu_unikodan_cxenoperaciojn()
+  -- Unikodaj identigiloj kun ĉenaj operacioj
+  loka tekstoA = 'Saluton'
+  loka tekstoB = 'mondo'
+  loka rezulto = tekstoA .. ', ' .. tekstoB .. '!'
+  asertu(rezulto == 'Saluton, mondo!', 'Ĉena kunligo malsukcesis')
+  printe('[PASIS] testu_unikodan_cxenoperaciojn')
+hop
+
+loka funkcie testu_latinajn_ampleksigitajn_signojn()
+  -- Diversaj latinaj ampleksigitaj signoj uzataj en eŭropaj lingvoj
+  loka ĉ = 'ĉapelo'
+  loka ĝ = 'ĝojo'
+  loka ĥ = 'ĥemio'
+  loka ĵ = 'ĵurnalo'
+  loka ŝ = 'ŝipo'
+  loka ŭ = 'aŭ'
+
+  asertu(ĉ == 'ĉapelo', 'Ĉ-signo malsukcesis')
+  asertu(ĝ == 'ĝojo', 'Ĝ-signo malsukcesis')
+  asertu(ĥ == 'ĥemio', 'Ĥ-signo malsukcesis')
+  asertu(ĵ == 'ĵurnalo', 'Ĵ-signo malsukcesis')
+  asertu(ŝ == 'ŝipo', 'Ŝ-signo malsukcesis')
+  asertu(ŭ == 'aŭ', 'Ŭ-signo malsukcesis')
+  printe('[PASIS] testu_latinajn_ampleksigitajn_signojn')
+hop
+
+loka funkcie testu_unikodan_lokan_skopon()
+  -- Unikodaj identigiloj respektas lokan skopon
+  loka ĉapelo_ekstera = 'ekstera'
+  fare
+    loka ĉapelo_ekstera = 'interna'
+    asertu(ĉapelo_ekstera == 'interna', 'Interna skopo malsukcesis')
+  hop
+  asertu(ĉapelo_ekstera == 'ekstera', 'Ekstera skopo malsukcesis')
+  printe('[PASIS] testu_unikodan_lokan_skopon')
+hop
+
+-- Rulu ĉiujn testojn
+loka testoj = {
+  testu_unikodan_identigilan_atribucion,
+  testu_unikodajn_numerojn,
+  testu_unikodajn_identigilojn_en_tabelo,
+  testu_unikodajn_identigilojn_en_funkcioj,
+  testu_unikodajn_iteraciajn_variablojn,
+  testu_miksitan_asciian_unikodan_uzaĵon,
+  testu_unikodajn_identigilojn_en_kondiĉoj,
+  testu_unikodan_cxenoperaciojn,
+  testu_latinajn_ampleksigitajn_signojn,
+  testu_unikodan_lokan_skopon,
+}
+
+printe('\n=== Rulado de unikodaj identigilaj testoj ===')
+loka pasis = 0
+loka malsukcesis = 0
+
+por _, testo el induktparodonu(testoj) fare
+  loka sukceso, eraro = sxirmvoku(testo)
+  se ne sukceso tiam
+    printe('[MALSUKCESIS] ' .. tostring(testo) .. ': ' .. tostring(eraro))
+    malsukcesis = malsukcesis + 1
+  alie
+    pasis = pasis + 1
+  hop
+hop
+
+printe('\n=== Testrezultoj ===')
+printe('Pasis: ' .. pasis)
+printe('Malsukcesis: ' .. malsukcesis)
+printe('Entute:  ' .. (pasis + malsukcesis))
+
+se malsukcesis > 0 tiam
+  os.exit(1)
+hop

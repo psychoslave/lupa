@@ -39,9 +39,9 @@ $ # simpla rapida kontrolo de la interpretilo
 $ ./fare testi
 ```
 
-# Sinonimoj kaj fallback
+# Sinonimoj kaj retrodefaŭltaĵoj
 
-Detala dokumentado pri ĉiuj Esperantaj sinonimoj (inkluzive `-x` fallback-formoj) troviĝas en:
+Detala dokumentado pri ĉiuj Esperantaj sinonimoj (inkluzive `-x` retrodefaŭlta-formoj) troviĝas en:
 
 - `dokumentaro/esperantaj-sinonimoj.md`
 

@@ -6,7 +6,7 @@ Tiu ĉi dokumento estas la fonto de vero pri la Esperantaj (kaj `-x`) formoj en 
 - Bazbiblioteko: `fontaro/lbaselib.c`
 - Pakaĵa/ŝarga biblioteko: `fontaro/loadlib.c`
 
-## Noto pri `-x` fallback
+## Noto pri `-x` retrodefaŭlta
 
 Kiam klavaro ne facile tajpas diakritojn, Lupa subtenas `-x` formojn (ekz. `ŝargu`/`sxargu`, `ŝirmvoku`/`sxirmvoku`).
 
@@ -15,7 +15,7 @@ Kiam klavaro ne facile tajpas diakritojn, Lupa subtenas `-x` formojn (ekz. `ŝar
 ### Ŝlosilvortoj
 
 - `and` -> `kaj`
-- `break` -> `ekstersxalte`, `eksterŝalte`
+- `break` -> `eksterŝalte`, `ekstersxalte`
 - `do` -> `fare`
 - `else` -> `alie`
 - `elseif` -> `alise`
@@ -23,44 +23,44 @@ Kiam klavaro ne facile tajpas diakritojn, Lupa subtenas `-x` formojn (ekz. `ŝar
 - `false` -> `falsa`
 - `for` -> `por`
 - `function` -> `funkcie`, `tie`
-- `goto` -> `sxalte`, `ŝalte`
+- `goto` -> `ŝalte`, `sxalte`
 - `if` -> `se`
 - `in` -> `el`
-- `local` -> `loka`, `loke`, `ĉi`
+- `local` -> `loka`, `loke`, `ĉi`, `cxi`
 - `nil` -> `nilo`
 - `not` -> `ne`
-- `or` -> `aux`, `aŭ`
+- `or` -> `aŭ`, `aux`
 - `repeat` -> `cikle`
 - `return` -> `reŝalte`, `resxalte`
 - `then` -> `tiam`
 - `true` -> `vera`
-- `until` -> `gxis`
+- `until` -> `ĝis`, `gxis`
 - `while` -> `dum`
 
 ### Operatoroj kaj signoj
 
 - `//` -> `onige`, `parte`, `pece`, `kvociente`
-- `..` -> `lige`, `krocxe`, `kroĉe`
+- `..` -> `lige`, `kroĉe`, `krocxe`
 - `...` -> `ktp`
 - `==` -> `egalas`, `samas`
-- `>=` -> `almenauxas`, `almenaŭas`, `suras`, `malsubas`
-- `<=` -> `maksimumas`, `subas`, `malsuras`, `malalmenauxas`, `malalmenaŭas`
+- `>=` -> `almenaŭas`, `almenauxas`, `suras`, `malsubas`
+- `<=` -> `maksimumas`, `subas`, `malsuras`, `malalmenaŭas`, `malalmenauxas`
 - `~=` -> `malegalas`, `malsamas`, `neegalas`, `nesamas`
 - `~` (unuargumenta bitinverso) -> `nee`
-- `~` (duargumenta bit-XOR) -> `disauxe`, `disaŭe`
+- `~` (duargumenta bit-XOR) -> `disaŭe`, `disauxe`
 - `>` -> `superas`, `malinfraas`
 - `<` -> `infraas`, `malsuperas`
 - `&` -> `kaje`
-- `|` -> `auxe`, `aŭe`
-- `>>` -> `sobsxove`, `sobŝove`
-- `<<` -> `sorsxove`, `sorŝove`
+- `|` -> `aŭe`, `auxe`
+- `>>` -> `sobŝove`, `sobsxove`
+- `<<` -> `sorŝove`, `sorsxove`
 - `+` -> `plus`
-- `-` (unuargumenta minuso) -> `mal`, `kontraŭ`
+- `-` (unuargumenta minuso) -> `mal`, `kontraŭ`, `kontraux`
 - `-` (duargumenta subtraho) -> `minus`
 - `/` -> `disige`, `divide`, `ozle`
 - `%` -> `module`, `kongrue`
 - `^` -> `alt`, `potencige`
-- `:` -> `sin`, `:`
+- `:` -> `sin`
 
 ## Bazbibliotekaj sinonimoj (`lbaselib`)
 
@@ -70,12 +70,12 @@ Kiam klavaro ne facile tajpas diakritojn, Lupa subtenas `-x` formojn (ekz. `ŝar
 - `error` -> `eraravizu`
 - `getmetatable` -> `metatabelodonu`
 - `ipairs` -> `induktparodonu`
-- `loadfile` -> `dosiersxargu`, `dosierŝargu`
-- `load` -> `sxargu`, `ŝargu`
-- `loadstring` -> `cxensxargu`, `ĉenŝargu`
+- `loadfile` -> `dosierŝargu`, `dosiersxargu`
+- `load` -> `ŝargu`, `sxargu`
+- `loadstring` -> `ĉenŝargu`, cxensxargu`
 - `next` -> `sekvdonu`
 - `pairs` -> `parodonu`
-- `pcall` -> `sxirmvoku`, `ŝirmvoku`
+- `pcall` -> `ŝirmvoku`, `sxirmvoku`
 - `print` -> `printe`, `printu`
 - `rawequal` -> `rektegalu`
 - `rawlen` -> `rektpesu`
@@ -84,13 +84,13 @@ Kiam klavaro ne facile tajpas diakritojn, Lupa subtenas `-x` formojn (ekz. `ŝar
 - `select` -> `selektu`
 - `setmetatable` -> `metatabelloku`
 - `tonumber` -> `nombrigu`
-- `tostring` -> `cxenigu`, `ĉenigu`
+- `tostring` -> `ĉenigu`, `cxenigu`
 - `type` -> `tipdonu`
-- `xpcall` -> `traktsxirmvoku`, `traktŝirmvoku`
+- `xpcall` -> `traktŝirmvoku`, `traktsxirmvoku`
 
 ## Pakaĵaj kaj ŝargaj sinonimoj (`loadlib`)
 
-- `loadlib` -> `teksxargu`, `tekŝargu`
+- `loadlib` -> `tekŝargu`, `teksxargu`
 - `searchpath` -> `dosierindikosercxu`, `dosierindikoserĉu`
 - `seeall` -> `plenvidu` (nur en `LUA_COMPAT_MODULE`)
 - `require` -> `necesu`

@@ -1,0 +1,65 @@
+#!/usr/bin/env lupe
+-- Kongrua testo inter Lua 5.3 kaj Lupa por kanona Lua-kodo.
+
+ĉi tie ruli(cmd)
+  loke p = io.popen(cmd .. " 2>&1")
+  se ne p tiam reŝalte falsa, "" hop
+  loke eligo = p:read("*a") aŭ ""
+  loke statuso = p:close()
+  se statuso == vera tiam reŝalte vera, eligo hop
+  se tipdonu(statuso) == "number" tiam reŝalte statuso == 0, eligo hop
+  reŝalte falsa, eligo
+hop
+
+ĉi tie havas_lua53()
+  loke statuso, eligo = ruli("lua -v")
+  se ne statuso tiam reŝalte falsa hop
+  reŝalte eligo:find("Lua 5%.3", 1, falsa) ~= nilo
+hop
+
+se ne havas_lua53() tiam
+  printe("[MISE] lua53-kongruo.lua: Lua 5.3 ne disponeblas en PATH")
+  os.exit(0)
+hop
+
+loke src = [[
+local table = {1, 2, 3, 4}
+local sum = 0
+for rug, value in ipairs(table) do
+  sum = sum + value
+end
+local dosiero = function(x) return (x * 3) // 2 end
+print("sumo=" .. sum)
+print("dosiero(9)=" .. dosiero(9))
+print("tipo=" .. type(table))
+]]
+
+-- FARINDA: traduki la uzivarajn (API) elementojn kiel "os", ktp
+loke provizoringo = os.tmpname() .. ".lua"
+loke dosiero = asertu(io.open(provizoringo, "w"))
+dosiero:write(src)
+dosiero:close()
+
+loke bone·lua, lua·eligo = ruli("lua " .. provizoringo)
+loke bone·lupa, lupa·eligo = ruli("./fontaro/lupe " .. provizoringo)
+os.remove(provizoringo)
+
+se ne bone·lua tiam
+  io.stderr:write("[MISE] lua53-kongruo.lua: Lua 5.3 MISE\n" .. lua·eligo)
+  os.exit(1)
+hop
+
+se ne bone·lupa tiam
+  io.stderr:write("[MISE] lua53-kongruo.lua: Lupa MISE\n" .. lupa·eligo)
+  os.exit(1)
+hop
+
+se lua·eligo ~= lupa·eligo tiam
+  io.stderr:write("[MISE] lua53-kongruo.lua: Eligoj malkongruas\n")
+  io.stderr:write("--- Lua 5.3 ---\n" .. lua·eligo)
+  io.stderr:write("--- Lupa ---\n" .. lupa·eligo)
+  os.exit(1)
+hop
+
+printe("[BONE] lua53-kongruo.lua")
+

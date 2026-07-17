@@ -1,11 +1,11 @@
 #!/usr/bin/env lupe
 -- Regresaj testoj por leksilaj sinonimoj en llex.
 
-loke funkcie ŝlosilvortoj_testi()
-  asertu((vera kaj ne falsa) == vera, 'kaj/ne/falsa/vera malsukcesis')
-  asertu((falsa aux vera) == vera, 'aux malsukcesis')
-  asertu((falsa aŭ vera) == vera, 'aŭ malsukcesis')
-  asertu(nilo == nil, 'nilo malsukcesis')
+loke funkcie ŝlosilvortoj·testi()
+  asertu((vera kaj ne falsa) == vera, 'kaj/ne/falsa/vera MISE')
+  asertu((falsa aŭ vera) == vera, 'aŭ MISE')
+  asertu((falsa aux vera) == vera, 'aux MISE')
+  asertu(nilo == nil, 'nilo MISE')
 
   loke valoro = 0
   se 2 superas 1 tiam
@@ -15,34 +15,40 @@ loke funkcie ŝlosilvortoj_testi()
   alie
     valoro = 3
   hop
-  asertu(valoro == 1, 'se/alise/alie/tiam malsukcesis')
+  asertu(valoro == 1, 'se/alise/alie/tiam MISE')
 
   loke sumo = 0
-  por i = 1, 4 fare
-    sumo = sumo + i
+  por entjero = 1, 4 fare
+    sumo = sumo + entjero
   hop
-  asertu(sumo == 10, 'por/fare/hop malsukcesis')
+  asertu(sumo == 10, 'por/fare/hop MISE')
 
   loke sumo2 = 0
-  por _, v el induktparodonu({2, 3, 4}) fare
+  por ba, v el induktparodonu({2, 3, 4}) fare
     sumo2 = sumo2 + v
   hop
-  asertu(sumo2 == 9, 'el malsukcesis')
+  asertu(sumo2 == 9, 'el MISE')
 
-  loke i = 0
+  loke entjero = 0
   cikle
-    i = i + 1
-  gxis i == 3
-  asertu(i == 3, 'cikle/gxis malsukcesis')
+    entjero = entjero + 1
+  ĝis entjero == 3
+  asertu(entjero == 3, 'cikle/ĝis MISE')
+
+  entjero = 0
+  cikle
+    entjero = entjero + 1
+  gxis entjero == 3
+  asertu(entjero == 3, 'cikle/gxis MISE')
 
   loke w = 0
   dum vera fare
     w = w + 1
     se w > 2 tiam
-      ekstersxalte
+      eksterŝalte
     hop
   hop
-  asertu(w == 3, 'ekstersxalte malsukcesis')
+  asertu(w == 3, 'eksterŝalte MISE')
 
   loke w2 = 0
   dum vera fare
@@ -51,137 +57,138 @@ loke funkcie ŝlosilvortoj_testi()
       eksterŝalte
     hop
   hop
-  asertu(w2 == 3, 'eksterŝalte malsukcesis')
+  asertu(w2 == 3, 'eksterŝalte MISE')
 
   fare
     loke interna = 42
-    asertu(interna == 42, 'fare-bloko malsukcesis')
+    asertu(interna == 42, 'fare-bloko MISE')
   hop
 
   loka x = 5
   loke y = 6
   ĉi z = 7
-  asertu(x + y + z == 18, 'loka/loke/ĉi malsukcesis')
+  cxi a = 1
+  asertu(x + y + z + a == 19, 'loka/loke/ĉi/cxi MISE')
 
   funkcie f1()
     reŝalte 11
   hop
   funkcie f2()
-    resxalte 13
+    reŝalte 13
   hop
   ĉi tie f3()
     reŝalte 17
   hop
-  asertu(f1() == 11, 'reŝalte malsukcesis')
-  asertu(f2() == 13, 'resxalte malsukcesis')
-  asertu(f3() == 17, 'ĉi tie/funkcie malsukcesis')
+  asertu(f1() == 11, 'reŝalte MISE')
+  asertu(f2() == 13, 'reŝalte MISE')
+  asertu(f3() == 17, 'ĉi tie/funkcie MISE')
 
   loka g = 0
-  sxalte L1
+  ŝalte L1
   g = 99
   ::L1::
-  asertu(g == 0, 'sxalte malsukcesis')
+  asertu(g == 0, 'ŝalte MISE')
 
   loka g2 = 0
   ŝalte L2
   g2 = 99
   ::L2::
-  asertu(g2 == 0, 'ŝalte malsukcesis')
+  asertu(g2 == 0, 'ŝalte MISE')
 
   reŝalte vera
 hop
 
-loke funkcie operatoroj_testi()
-  asertu((7 onige 3) == 2, 'onige malsukcesis')
-  asertu((7 parte 3) == 2, 'parte malsukcesis')
-  asertu((7 pece 3) == 2, 'pece malsukcesis')
-  asertu((7 kvociente 3) == 2, 'kvociente malsukcesis')
+loke funkcie operatoroj·testi()
+  asertu((7 onige 3) == 2, 'onige MISE')
+  asertu((7 parte 3) == 2, 'parte MISE')
+  asertu((7 pece 3) == 2, 'pece MISE')
+  asertu((7 kvociente 3) == 2, 'kvociente MISE')
 
-  asertu(('sa' lige 'lu') == 'salu', 'lige malsukcesis')
-  asertu(('sa' krocxe 'lu') == 'salu', 'krocxe malsukcesis')
-  asertu(('sa' kroĉe 'lu') == 'salu', 'kroĉe malsukcesis')
+  asertu(('sa' lige 'lu') == 'salu', 'lige MISE')
+  asertu(('sa' krocxe 'lu') == 'salu', 'krocxe MISE')
+  asertu(('sa' kroĉe 'lu') == 'salu', 'kroĉe MISE')
 
-  asertu((3 egalas 3) == vera, 'egalas malsukcesis')
-  asertu((3 samas 3) == vera, 'samas malsukcesis')
-  asertu((3 malegalas 4) == vera, 'malegalas malsukcesis')
-  asertu((3 malsamas 4) == vera, 'malsamas malsukcesis')
-  asertu((3 neegalas 4) == vera, 'neegalas malsukcesis')
-  asertu((3 nesamas 4) == vera, 'nesamas malsukcesis')
+  asertu((3 egalas 3) == vera, 'egalas MISE')
+  asertu((3 samas 3) == vera, 'samas MISE')
+  asertu((3 malegalas 4) == vera, 'malegalas MISE')
+  asertu((3 malsamas 4) == vera, 'malsamas MISE')
+  asertu((3 neegalas 4) == vera, 'neegalas MISE')
+  asertu((3 nesamas 4) == vera, 'nesamas MISE')
 
-  asertu((4 almenauxas 4) == vera, 'almenauxas malsukcesis')
-  asertu((4 almenaŭas 4) == vera, 'almenaŭas malsukcesis')
-  asertu((4 suras 4) == vera, 'suras malsukcesis')
-  asertu((4 malsubas 4) == vera, 'malsubas malsukcesis')
+  asertu((4 almenauxas 4) == vera, 'almenauxas MISE')
+  asertu((4 almenaŭas 4) == vera, 'almenaŭas MISE')
+  asertu((4 suras 4) == vera, 'suras MISE')
+  asertu((4 malsubas 4) == vera, 'malsubas MISE')
 
-  asertu((4 maksimumas 4) == vera, 'maksimumas malsukcesis')
-  asertu((4 subas 4) == vera, 'subas malsukcesis')
-  asertu((4 malsuras 4) == vera, 'malsuras malsukcesis')
-  asertu((4 malalmenauxas 4) == vera, 'malalmenauxas malsukcesis')
-  asertu((4 malalmenaŭas 4) == vera, 'malalmenaŭas malsukcesis')
+  asertu((4 maksimumas 4) == vera, 'maksimumas MISE')
+  asertu((4 subas 4) == vera, 'subas MISE')
+  asertu((4 malsuras 4) == vera, 'malsuras MISE')
+  asertu((4 malalmenauxas 4) == vera, 'malalmenauxas MISE')
+  asertu((4 malalmenaŭas 4) == vera, 'malalmenaŭas MISE')
 
-  asertu((5 superas 4) == vera, 'superas malsukcesis')
-  asertu((5 malinfraas 4) == vera, 'malinfraas malsukcesis')
-  asertu((4 infraas 5) == vera, 'infraas malsukcesis')
-  asertu((4 malsuperas 5) == vera, 'malsuperas malsukcesis')
+  asertu((5 superas 4) == vera, 'superas MISE')
+  asertu((5 malinfraas 4) == vera, 'malinfraas MISE')
+  asertu((4 infraas 5) == vera, 'infraas MISE')
+  asertu((4 malsuperas 5) == vera, 'malsuperas MISE')
 
-  asertu((6 kaje 3) == 2, 'kaje malsukcesis')
-  asertu((6 auxe 3) == 7, 'auxe malsukcesis')
-  asertu((6 aŭe 3) == 7, 'aŭe malsukcesis')
-  asertu((6 disauxe 3) == 5, 'disauxe malsukcesis')
-  asertu((6 disaŭe 3) == 5, 'disaŭe malsukcesis')
-  asertu((nee 0) == -1, 'nee malsukcesis')
-  asertu((16 sobsxove 2) == 4, 'sobsxove malsukcesis')
-  asertu((16 sobŝove 2) == 4, 'sobŝove malsukcesis')
-  asertu((1 sorsxove 3) == 8, 'sorsxove malsukcesis')
-  asertu((1 sorŝove 3) == 8, 'sorŝove malsukcesis')
+  asertu((6 kaje 3) == 2, 'kaje MISE')
+  asertu((6 auxe 3) == 7, 'auxe MISE')
+  asertu((6 aŭe 3) == 7, 'aŭe MISE')
+  asertu((6 disauxe 3) == 5, 'disauxe MISE')
+  asertu((6 disaŭe 3) == 5, 'disaŭe MISE')
+  asertu((nee 0) == -1, 'nee MISE')
+  asertu((16 sobŝove 2) == 4, 'sobŝove MISE')
+  asertu((16 sobŝove 2) == 4, 'sobŝove MISE')
+  asertu((1 sorŝove 3) == 8, 'sorŝove MISE')
+  asertu((1 sorŝove 3) == 8, 'sorŝove MISE')
 
-  asertu((20 plus 22) == 42, 'plus malsukcesis')
-  asertu((20 minus 2) == 18, 'minus malsukcesis')
-  asertu((mal 9) == -9, 'mal malsukcesis')
-  asertu((kontraŭ 9) == -9, 'kontraŭ malsukcesis')
-  asertu((8 disige 2) == 4, 'disige malsukcesis')
-  asertu((8 divide 2) == 4, 'divide malsukcesis')
-  asertu((8 ozle 2) == 4, 'ozle malsukcesis')
-  asertu((8 module 3) == 2, 'module malsukcesis')
-  asertu((8 kongrue 3) == 2, 'kongrue malsukcesis')
-  asertu((2 alt 5) == 32, 'alt malsukcesis')
-  asertu((2 potencige 5) == 32, 'potencige malsukcesis')
+  asertu((20 plus 22) == 42, 'plus MISE')
+  asertu((20 minus 2) == 18, 'minus MISE')
+  asertu((mal 9) == -9, 'mal MISE')
+  asertu((kontraŭ 9) == -9, 'kontraŭ MISE')
+  asertu((8 disige 2) == 4, 'disige MISE')
+  asertu((8 divide 2) == 4, 'divide MISE')
+  asertu((8 ozle 2) == 4, 'ozle MISE')
+  asertu((8 module 3) == 2, 'module MISE')
+  asertu((8 kongrue 3) == 2, 'kongrue MISE')
+  asertu((2 alt 5) == 32, 'alt MISE')
+  asertu((2 potencige 5) == 32, 'potencige MISE')
 
   loka o = { b = 40 }
   funkcie o.aldonu(self, x)
     reŝalte self.b + x
   hop
-  asertu(o:aldonu(2) == 42, ': malsukcesis')
-  asertu((o sin aldonu(2)) == 42, 'sin malsukcesis')
+  asertu(o:aldonu(2) == 42, ': MISE')
+  asertu((o sin aldonu(2)) == 42, 'sin MISE')
 
   ĉi tie nombri(ktp)
     reŝalte select('#', ktp)
   hop
-  asertu(nombri(1, 2, 3) == 3, 'ktp malsukcesis')
+  asertu(nombri(1, 2, 3) == 3, 'ktp MISE')
 
   reŝalte vera
 hop
 
 loke testoj = {
-  ŝlosilvortoj_testi,
-  operatoroj_testi,
+  ŝlosilvortoj·testi,
+  operatoroj·testi,
 }
 
 loke pasis = 0
-por _, testo el induktparodonu(testoj) fare
+por ba, testo el induktparodonu(testoj) fare
   loke ok, eraro = ŝirmvoku(testo)
   se ok tiam
     pasis = pasis + 1
   alie
-    printe('[MALSUKCESIS] ' .. tostring(eraro))
+    printe('[MISE] ' .. tostring(eraro))
   hop
 hop
 
 se pasis ~= #testoj tiam
-  printe('Malsukcesis ' .. (#testoj - pasis) .. ' testo(j) en sinonimoj-leksilo.lupa')
+  printe('MISE ' .. (#testoj - pasis) .. ' testo(j) en sinonimoj-leksilo.lupa')
   os.exit(1)
 alie
-  printe('[PASIS] sinonimoj-leksilo.lupa')
+  printe('[BONE] sinonimoj-leksilo.lupa')
 hop
 
 

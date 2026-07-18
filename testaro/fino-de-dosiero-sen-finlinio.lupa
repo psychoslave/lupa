@@ -1,0 +1,7 @@
+#!/usr/bin/env lupe
+-- Regresa testo: dosiero sen fina novlinio devas resti valide legebla.
+
+loke valoro = 41
+valoro = valoro plus 1
+asertu(valoro == 42, 'Fino-de-dosiera legado sen finlinio MISE')
+printe('[BONE] fino-de-dosiero-sen-finlinio.lupa')

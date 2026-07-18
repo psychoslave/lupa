@@ -1,7 +1,7 @@
 #!/usr/bin/env lupe
 -- Regresaj testoj por leksilaj sinonimoj en llex.
 
-loke funkcie ŝlosilvortoj·testi()
+loke funkcie ŝlosilvortaro·testi()
   asertu((vera kaj ne falsa) == vera, 'kaj/ne/falsa/vera MISE')
   asertu((falsa aŭ vera) == vera, 'aŭ MISE')
   asertu((falsa aux vera) == vera, 'aux MISE')
@@ -105,8 +105,8 @@ loke funkcie operatoroj·testi()
   asertu((7 kvociente 3) == 2, 'kvociente MISE')
 
   asertu(('sa' lige 'lu') == 'salu', 'lige MISE')
-  asertu(('sa' krocxe 'lu') == 'salu', 'krocxe MISE')
   asertu(('sa' kroĉe 'lu') == 'salu', 'kroĉe MISE')
+  asertu(('sa' krocxe 'lu') == 'salu', 'krocxe MISE')
 
   asertu((3 egalas 3) == vera, 'egalas MISE')
   asertu((3 samas 3) == vera, 'samas MISE')
@@ -115,16 +115,16 @@ loke funkcie operatoroj·testi()
   asertu((3 neegalas 4) == vera, 'neegalas MISE')
   asertu((3 nesamas 4) == vera, 'nesamas MISE')
 
-  asertu((4 almenauxas 4) == vera, 'almenauxas MISE')
   asertu((4 almenaŭas 4) == vera, 'almenaŭas MISE')
+  asertu((4 almenauxas 4) == vera, 'almenauxas MISE')
   asertu((4 suras 4) == vera, 'suras MISE')
   asertu((4 malsubas 4) == vera, 'malsubas MISE')
 
   asertu((4 maksimumas 4) == vera, 'maksimumas MISE')
   asertu((4 subas 4) == vera, 'subas MISE')
   asertu((4 malsuras 4) == vera, 'malsuras MISE')
-  asertu((4 malalmenauxas 4) == vera, 'malalmenauxas MISE')
   asertu((4 malalmenaŭas 4) == vera, 'malalmenaŭas MISE')
+  asertu((4 malalmenauxas 4) == vera, 'malalmenauxas MISE')
 
   asertu((5 superas 4) == vera, 'superas MISE')
   asertu((5 malinfraas 4) == vera, 'malinfraas MISE')
@@ -134,18 +134,19 @@ loke funkcie operatoroj·testi()
   asertu((6 kaje 3) == 2, 'kaje MISE')
   asertu((6 auxe 3) == 7, 'auxe MISE')
   asertu((6 aŭe 3) == 7, 'aŭe MISE')
-  asertu((6 disauxe 3) == 5, 'disauxe MISE')
   asertu((6 disaŭe 3) == 5, 'disaŭe MISE')
+  asertu((6 disauxe 3) == 5, 'disauxe MISE')
   asertu((nee 0) == -1, 'nee MISE')
   asertu((16 sobŝove 2) == 4, 'sobŝove MISE')
-  asertu((16 sobŝove 2) == 4, 'sobŝove MISE')
+  asertu((16 sobsxove 2) == 4, 'sobsxove MISE')
   asertu((1 sorŝove 3) == 8, 'sorŝove MISE')
-  asertu((1 sorŝove 3) == 8, 'sorŝove MISE')
+  asertu((1 sorsxove 3) == 8, 'sorsxove MISE')
 
   asertu((20 plus 22) == 42, 'plus MISE')
   asertu((20 minus 2) == 18, 'minus MISE')
   asertu((mal 9) == -9, 'mal MISE')
   asertu((kontraŭ 9) == -9, 'kontraŭ MISE')
+  asertu((kontraux 9) == -9, 'kontraux MISE')
   asertu((8 disige 2) == 4, 'disige MISE')
   asertu((8 divide 2) == 4, 'divide MISE')
   asertu((8 ozle 2) == 4, 'ozle MISE')
@@ -170,7 +171,7 @@ loke funkcie operatoroj·testi()
 hop
 
 loke testoj = {
-  ŝlosilvortoj·testi,
+  ŝlosilvortaro·testi,
   operatoroj·testi,
 }
 
@@ -190,5 +191,3 @@ se pasis ~= #testoj tiam
 alie
   printe('[BONE] sinonimoj-leksilo.lupa')
 hop
-
-

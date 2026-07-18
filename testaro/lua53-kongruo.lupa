@@ -1,11 +1,12 @@
 #!/usr/bin/env lupe
 -- Kongrua testo inter Lua 5.3 kaj Lupa por kanona Lua-kodo.
 
-ĉi tie ruli(cmd)
-  loke p = io.popen(cmd .. " 2>&1")
-  se ne p tiam reŝalte falsa, "" hop
-  loke eligo = p:read("*a") aŭ ""
-  loke statuso = p:close()
+ĉi tie ruli(komando)
+  -- FARINDA: traduki la uzivarajn (API) elementojn kiel "io.popen", "os.exit", ktp
+  loke procezo = io.popen(komando .. " 2>&1")
+  se ne procezo tiam reŝalte falsa, "" hop
+  loke eligo = procezo:read("*a") aŭ ""
+  loke statuso = procezo:close()
   se statuso == vera tiam reŝalte vera, eligo hop
   se tipdonu(statuso) == "number" tiam reŝalte statuso == 0, eligo hop
   reŝalte falsa, eligo
@@ -22,22 +23,21 @@ se ne havas_lua53() tiam
   os.exit(0)
 hop
 
-loke src = [[
+loke fontkodo = [[
 local table = {1, 2, 3, 4}
 local sum = 0
 for rug, value in ipairs(table) do
   sum = sum + value
 end
-local dosiero = function(x) return (x * 3) // 2 end
+local semitriple = function(number) return (number * 3) // 2 end
 print("sumo=" .. sum)
-print("dosiero(9)=" .. dosiero(9))
+print("duontrioble(9)=" .. semitriple(9))
 print("tipo=" .. type(table))
 ]]
 
--- FARINDA: traduki la uzivarajn (API) elementojn kiel "os", ktp
 loke provizoringo = os.tmpname() .. ".lua"
 loke dosiero = asertu(io.open(provizoringo, "w"))
-dosiero:write(src)
+dosiero:write(fontkodo)
 dosiero:close()
 
 loke bone·lua, lua·eligo = ruli("lua " .. provizoringo)

@@ -535,6 +535,10 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
 ** Handles multi-byte sequences transparently
 */
 static int isidentifiercont(LexState *ls) {
+  /* ponytail: EOZ is -1; casting to unsigned makes it 255 and would
+     incorrectly look like a UTF-8 continuation byte at end-of-file. */
+  if (ls->current == EOZ)
+    return 0;
   unsigned char c1 = (unsigned char)ls->current;
   /* ASCII identifier continuation or any non-ASCII UTF-8 byte. */
   return lislalnum(c1) || c1 >= 0x80;

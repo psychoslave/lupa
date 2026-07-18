@@ -99,4 +99,3 @@ if ! grep -q "OK" "$LUPA_OUT"; then
 fi
 
 echo "[PASIS] lua53-oficialaj-testoj.sh"
-

@@ -42,7 +42,7 @@ AŬTOPLATFORMO := $(if $(filter Darwin,$(SISTEMNOMO)),macosx,$(if $(filter Linux
 
 # Testaj dosieroj
 TESTDOSIERUJO= testaro
-TESTODOSIEROJ := $(sort $(wildcard $(TESTDOSIERUJO)/*.lupa) $(wildcard $(TESTDOSIERUJO)/*.lua))
+TESTODOSIEROJ := $(sort $(wildcard $(TESTDOSIERUJO)/*.lupa) $(wildcard $(TESTDOSIERUJO)/*.lua) $(wildcard $(TESTDOSIERUJO)/*.sh))
 
 # Kion instali.
 AL_DUUMDOSIERO= lupe lupkodu
@@ -80,7 +80,11 @@ plentesti:	vaki
 	malsukcesoj=0; \
 	for dosiero in $(TESTODOSIEROJ); do \
 		echo "-> $$dosiero"; \
-		if ./fontaro/lupe "$$dosiero"; then \
+		case "$$dosiero" in \
+			*.sh) rulkmd="sh \"$$dosiero\"" ;; \
+			*)    rulkmd="./fontaro/lupe \"$$dosiero\"" ;; \
+		esac; \
+		if eval $$rulkmd; then \
 			:; \
 		else \
 			malsukcesoj=`expr $$malsukcesoj + 1`; \

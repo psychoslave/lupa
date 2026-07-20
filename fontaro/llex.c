@@ -37,6 +37,7 @@
 
 
 /* ORDER RESERVED */
+
 static const char *const luaX_tokens [] = {
   "and", "break",       "do",   "else", "elseif",
   "end",  "false", "for", "function", "goto",  "if",
@@ -47,52 +48,54 @@ static const char *const luaX_tokens [] = {
 };
 
 static const struct {
-    const char *name;
-    int token;
+  const char *name;
+  int token;
 } aliases [] = {
   { "kaj", TK_AND },            // and
-  { "ekstersxalte", TK_BREAK }, // break
   { "eksterŝalte", TK_BREAK }, // break
+  { "ekstersxalte", TK_BREAK }, // break
   { "fare", TK_DO },            // do
   { "alie", TK_ELSE },          // else
   { "alise", TK_ELSEIF },       // elseif
   { "hop", TK_END },            // end
   { "falsa", TK_FALSE },        // false
-  { "por", TK_FOR },            // for 
+  { "por", TK_FOR },            // for
   { "funkcie", TK_FUNCTION },   // function
   { "tie", TK_FUNCTION },       // function
-  { "sxalte", TK_GOTO },        // goto
   { "ŝalte", TK_GOTO },        // goto
+  { "sxalte", TK_GOTO },        // goto
   { "se", TK_IF },              // if
   { "el", TK_IN },              // in
   { "loka", TK_LOCAL },         // local
   { "loke", TK_LOCAL },         // local
-  { "ĉi", TK_LOCAL },           // local
+  { "ĉi", TK_LOCAL },          // local
+  { "cxi", TK_LOCAL },           // local
   { "nilo", TK_NIL },           // nil
   { "ne", TK_NOT },             // not
-  { "aux", TK_OR },             // or
   { "aŭ", TK_OR },              // or
+  { "aux", TK_OR },             // or
   { "cikle", TK_REPEAT },       // repeat
   { "reŝalte", TK_RETURN },     // return
   { "resxalte", TK_RETURN },    // return
   { "tiam", TK_THEN },          // then
   { "vera", TK_TRUE },          // true
+  { "ĝis", TK_UNTIL },         // until
   { "gxis", TK_UNTIL },         // until
   { "dum", TK_WHILE },          // while
   { "onige",  TK_IDIV },        // //
   { "lige", TK_CONCAT },         // ..
   { "ktp", TK_DOTS },           // ...
   { "egalas",   TK_EQ },        // ==
-  { "almenauxas", TK_GE },      // >=
   { "almenaŭas", TK_GE },       // >=
+  { "almenauxas", TK_GE },      // >=
   { "maksimumas", TK_LE },      // <=
   { "malegalas", TK_NE },       // ~=
   // end of luaX_tokens aliases
 
   // pli da sinonimoj
   { "nee",     TK_BNOT },
-  { "disauxe", TK_BXOR },
   { "disaŭe", TK_BXOR },
+  { "disauxe", TK_BXOR },
   { "superas", TK_GT },
   { "malinfraas", TK_GT },
   { "suras", TK_GE },
@@ -105,18 +108,19 @@ static const struct {
   { "malsuperas", TK_LT },
   { "subas", TK_LE },
   { "malsuras", TK_LE },
-  { "malalmenauxas", TK_LE },
   { "malalmenaŭas", TK_LE },
+  { "malalmenauxas", TK_LE },
   { "kaje", TK_BAND },
-  { "auxe", TK_BOR },
   { "aŭe", TK_BOR },
-  { "sobsxove", TK_SHR },
+  { "auxe", TK_BOR },
   { "sobŝove", TK_SHR },
-  { "sorsxove", TK_SHL },
+  { "sobsxove", TK_SHR },
   { "sorŝove", TK_SHL },
+  { "sorsxove", TK_SHL },
   { "plus", TK_ADD },
   { "mal", TK_MINUS },
   { "kontraŭ", TK_MINUS },
+{ "kontraux", TK_MINUS },
   { "minus", TK_SUB },
   { "disige", TK_DIV },
   { "divide", TK_DIV },
@@ -128,8 +132,8 @@ static const struct {
   { "kongrue", TK_MOD },
   { "alt", TK_POW },
   { "potencige", TK_POW },
-  { "krocxe",TK_CONCAT }, //
   { "kroĉe",TK_CONCAT }, // ..
+  { "krocxe",TK_CONCAT }, //
   { "sin", TK_COLON }, // :
   { ":", TK_COLON } // :
 };
@@ -531,6 +535,10 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
 ** Handles multi-byte sequences transparently
 */
 static int isidentifiercont(LexState *ls) {
+  /* ponytail: EOZ is -1; casting to unsigned makes it 255 and would
+     incorrectly look like a UTF-8 continuation byte at end-of-file. */
+  if (ls->current == EOZ)
+    return 0;
   unsigned char c1 = (unsigned char)ls->current;
   /* ASCII identifier continuation or any non-ASCII UTF-8 byte. */
   return lislalnum(c1) || c1 >= 0x80;

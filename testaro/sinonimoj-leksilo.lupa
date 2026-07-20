@@ -1,0 +1,193 @@
+#!/usr/bin/env lupe
+-- Regresaj testoj por leksilaj sinonimoj en llex.
+
+loke funkcie ŝlosilvortaro·testi()
+  asertu((vera kaj ne falsa) == vera, 'kaj/ne/falsa/vera MISE')
+  asertu((falsa aŭ vera) == vera, 'aŭ MISE')
+  asertu((falsa aux vera) == vera, 'aux MISE')
+  asertu(nilo == nil, 'nilo MISE')
+
+  loke valoro = 0
+  se 2 superas 1 tiam
+    valoro = 1
+  alise 1 superas 2 tiam
+    valoro = 2
+  alie
+    valoro = 3
+  hop
+  asertu(valoro == 1, 'se/alise/alie/tiam MISE')
+
+  loke sumo = 0
+  por entjero = 1, 4 fare
+    sumo = sumo + entjero
+  hop
+  asertu(sumo == 10, 'por/fare/hop MISE')
+
+  loke sumo2 = 0
+  por ba, v el induktparodonu({2, 3, 4}) fare
+    sumo2 = sumo2 + v
+  hop
+  asertu(sumo2 == 9, 'el MISE')
+
+  loke entjero = 0
+  cikle
+    entjero = entjero + 1
+  ĝis entjero == 3
+  asertu(entjero == 3, 'cikle/ĝis MISE')
+
+  entjero = 0
+  cikle
+    entjero = entjero + 1
+  gxis entjero == 3
+  asertu(entjero == 3, 'cikle/gxis MISE')
+
+  loke w = 0
+  dum vera fare
+    w = w + 1
+    se w > 2 tiam
+      eksterŝalte
+    hop
+  hop
+  asertu(w == 3, 'eksterŝalte MISE')
+
+  loke w2 = 0
+  dum vera fare
+    w2 = w2 + 1
+    se w2 > 2 tiam
+      eksterŝalte
+    hop
+  hop
+  asertu(w2 == 3, 'eksterŝalte MISE')
+
+  fare
+    loke interna = 42
+    asertu(interna == 42, 'fare-bloko MISE')
+  hop
+
+  loka x = 5
+  loke y = 6
+  ĉi z = 7
+  cxi a = 1
+  asertu(x + y + z + a == 19, 'loka/loke/ĉi/cxi MISE')
+
+  funkcie f1()
+    reŝalte 11
+  hop
+  funkcie f2()
+    reŝalte 13
+  hop
+  ĉi tie f3()
+    reŝalte 17
+  hop
+  asertu(f1() == 11, 'reŝalte MISE')
+  asertu(f2() == 13, 'reŝalte MISE')
+  asertu(f3() == 17, 'ĉi tie/funkcie MISE')
+
+  loka g = 0
+  ŝalte L1
+  g = 99
+  ::L1::
+  asertu(g == 0, 'ŝalte MISE')
+
+  loka g2 = 0
+  ŝalte L2
+  g2 = 99
+  ::L2::
+  asertu(g2 == 0, 'ŝalte MISE')
+
+  reŝalte vera
+hop
+
+loke funkcie operatoroj·testi()
+  asertu((7 onige 3) == 2, 'onige MISE')
+  asertu((7 parte 3) == 2, 'parte MISE')
+  asertu((7 pece 3) == 2, 'pece MISE')
+  asertu((7 kvociente 3) == 2, 'kvociente MISE')
+
+  asertu(('sa' lige 'lu') == 'salu', 'lige MISE')
+  asertu(('sa' kroĉe 'lu') == 'salu', 'kroĉe MISE')
+  asertu(('sa' krocxe 'lu') == 'salu', 'krocxe MISE')
+
+  asertu((3 egalas 3) == vera, 'egalas MISE')
+  asertu((3 samas 3) == vera, 'samas MISE')
+  asertu((3 malegalas 4) == vera, 'malegalas MISE')
+  asertu((3 malsamas 4) == vera, 'malsamas MISE')
+  asertu((3 neegalas 4) == vera, 'neegalas MISE')
+  asertu((3 nesamas 4) == vera, 'nesamas MISE')
+
+  asertu((4 almenaŭas 4) == vera, 'almenaŭas MISE')
+  asertu((4 almenauxas 4) == vera, 'almenauxas MISE')
+  asertu((4 suras 4) == vera, 'suras MISE')
+  asertu((4 malsubas 4) == vera, 'malsubas MISE')
+
+  asertu((4 maksimumas 4) == vera, 'maksimumas MISE')
+  asertu((4 subas 4) == vera, 'subas MISE')
+  asertu((4 malsuras 4) == vera, 'malsuras MISE')
+  asertu((4 malalmenaŭas 4) == vera, 'malalmenaŭas MISE')
+  asertu((4 malalmenauxas 4) == vera, 'malalmenauxas MISE')
+
+  asertu((5 superas 4) == vera, 'superas MISE')
+  asertu((5 malinfraas 4) == vera, 'malinfraas MISE')
+  asertu((4 infraas 5) == vera, 'infraas MISE')
+  asertu((4 malsuperas 5) == vera, 'malsuperas MISE')
+
+  asertu((6 kaje 3) == 2, 'kaje MISE')
+  asertu((6 auxe 3) == 7, 'auxe MISE')
+  asertu((6 aŭe 3) == 7, 'aŭe MISE')
+  asertu((6 disaŭe 3) == 5, 'disaŭe MISE')
+  asertu((6 disauxe 3) == 5, 'disauxe MISE')
+  asertu((nee 0) == -1, 'nee MISE')
+  asertu((16 sobŝove 2) == 4, 'sobŝove MISE')
+  asertu((16 sobsxove 2) == 4, 'sobsxove MISE')
+  asertu((1 sorŝove 3) == 8, 'sorŝove MISE')
+  asertu((1 sorsxove 3) == 8, 'sorsxove MISE')
+
+  asertu((20 plus 22) == 42, 'plus MISE')
+  asertu((20 minus 2) == 18, 'minus MISE')
+  asertu((mal 9) == -9, 'mal MISE')
+  asertu((kontraŭ 9) == -9, 'kontraŭ MISE')
+  asertu((kontraux 9) == -9, 'kontraux MISE')
+  asertu((8 disige 2) == 4, 'disige MISE')
+  asertu((8 divide 2) == 4, 'divide MISE')
+  asertu((8 ozle 2) == 4, 'ozle MISE')
+  asertu((8 module 3) == 2, 'module MISE')
+  asertu((8 kongrue 3) == 2, 'kongrue MISE')
+  asertu((2 alt 5) == 32, 'alt MISE')
+  asertu((2 potencige 5) == 32, 'potencige MISE')
+
+  loka o = { b = 40 }
+  funkcie o.aldonu(self, x)
+    reŝalte self.b + x
+  hop
+  asertu(o:aldonu(2) == 42, ': MISE')
+  asertu((o sin aldonu(2)) == 42, 'sin MISE')
+
+  ĉi tie nombri(ktp)
+    reŝalte select('#', ktp)
+  hop
+  asertu(nombri(1, 2, 3) == 3, 'ktp MISE')
+
+  reŝalte vera
+hop
+
+loke testoj = {
+  ŝlosilvortaro·testi,
+  operatoroj·testi,
+}
+
+loke pasis = 0
+por ba, testo el induktparodonu(testoj) fare
+  loke ok, eraro = ŝirmvoku(testo)
+  se ok tiam
+    pasis = pasis + 1
+  alie
+    printe('[MISE] ' .. tostring(eraro))
+  hop
+hop
+
+se pasis ~= #testoj tiam
+  printe('MISE ' .. (#testoj - pasis) .. ' testo(j) en sinonimoj-leksilo.lupa')
+  os.exit(1)
+alie
+  printe('[BONE] sinonimoj-leksilo.lupa')
+hop

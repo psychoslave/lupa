@@ -1,0 +1,110 @@
+#!/usr/bin/env lupe
+-- Testoj por bibliotekaj sinonimoj en lbaselib/loadlib.
+
+loke misoj = 0
+
+loke funkcie postuli(kondiĉo, mesaĝo)
+  se ne kondiĉo tiam
+    printe('[misIS] ' .. mesaĝo)
+    misoj = misoj + 1
+  hop
+hop
+
+loke funkcie testi·grupon(tabelo, radiko, etikedo)
+  por kanonaĵo, sinonimoj el parodonu(tabelo) fare
+    loke bazo = radiko[kanonaĵo]
+    postuli(bazo ~= nilo, etikedo .. ': mankas kanona funkcio `' .. kanonaĵo .. '`')
+    por ba, nomo el induktparodonu(sinonimoj) fare
+      postuli(radiko[nomo] == bazo, etikedo .. ': `' .. nomo .. '` ne kongruas kun `' .. kanonaĵo .. '`')
+    hop
+  hop
+hop
+
+loke bazaj = {
+  assert = {'asertu'},
+  collectgarbage = {'senrubigu'},
+  dofile = {'dosierrulu'},
+  error = {'eraravizu'},
+  getmetatable = {'metatabelodonu'},
+  ipairs = {'induktparodonu'},
+  loadfile = {'dosiersxargu', 'dosierŝargu'},
+  load = {'sxargu', 'ŝargu'},
+  next = {'sekvdonu'},
+  pairs = {'parodonu'},
+  pcall = {'sxirmvoku', 'ŝirmvoku'},
+  print = {'printe', 'printu'},
+  rawequal = {'rektegalu'},
+  rawlen = {'rektpesu'},
+  rawget = {'rektdonu'},
+  rawset = {'rektloku'},
+  select = {'selektu'},
+  setmetatable = {'metatabelloku'},
+  tonumber = {'nombrigu'},
+  tostring = {'cxenigu', 'ĉenigu'},
+  type = {'tipdonu'},
+  xpcall = {'traktsxirmvoku', 'traktŝirmvoku'},
+}
+
+loke pakaĵoj = {
+  loadlib = {'teksxargu', 'tekŝargu'},
+  searchpath = {'dosierindikosercxu', 'dosierindikoserĉu'},
+}
+
+testi·grupon(bazaj, _G, 'lbaselib')
+postuli(package ~= nilo, 'mankas `package`')
+se package tiam
+  testi·grupon(pakaĵoj, package, 'loadlib/package')
+  se package.seeall ~= nilo tiam
+    postuli(package.plenvidu == package.seeall, 'loadlib/package: `plenvidu` ne kongruas kun `seeall`')
+  hop
+hop
+
+-- `require`/`necesu` estas en _G, ne en package.
+postuli(_G.require ~= nilo, 'mankas `require`')
+postuli(_G.necesu ~= nilo, 'mankas `necesu`')
+se _G.require kaj _G.necesu tiam
+  loke prastato, prateko = ŝirmvoku(require, 'math')
+  loke novstato, novteko = ŝirmvoku(necesu, 'math')
+  postuli(prastato == novstato, '`require` kaj `necesu` malsame kondutis')
+  se prastato kaj novstato tiam
+    postuli(tostring(prateko) == tostring(novteko), '`require` kaj `necesu` liveris malsamajn modulojn')
+  hop
+hop
+
+-- `loadstring` povas manki depende de konstruaj opcioj.
+se _G.loadstring ~= nilo tiam
+  postuli(_G.ĉenŝargu == _G.loadstring, '`ĉenŝargu` ne kongruas kun `loadstring`')
+  postuli(_G.cxensxargu == _G.loadstring, '`cxensxargu` ne kongruas kun `loadstring`')
+hop
+
+-- Rekta funkcia provo por ŝargu/sxargu.
+loke kodo = 'reŝalte 41 + 1'
+loke ajn·funkcio, ajn·eraro = ŝargu(kodo)
+loke ali·funkcio, ali·eraro = sxargu(kodo)
+postuli(ajn·funkcio ~= nilo kaj ajn·eraro == nilo, '`ŝargu` ne ŝargis validan kodon')
+postuli(ali·funkcio ~= nilo kaj ali·eraro == nilo, '`sxargu` ne ŝargis validan kodon')
+se ajn·funkcio kaj ali·funkcio tiam
+  postuli(ajn·funkcio() == 42, '`ŝargu` liveris malĝustan rezulton')
+  postuli(ali·funkcio() == 42, '`sxargu` liveris malĝustan rezulton')
+hop
+
+-- Rekta funkcia provo por ŝirmvoku/sxirmvoku.
+loke funkcie paneu()
+  eraravizu('testa-eraro')
+hop
+loke prastato = ŝirmvoku(paneu)
+loke novstato = sxirmvoku(paneu)
+postuli(prastato == falsa, '`ŝirmvoku` devus kapti eraron')
+postuli(novstato == falsa, '`sxirmvoku` devus kapti eraron')
+
+se misoj > 0 tiam
+  printe('misis ' .. misoj .. ' testo(j) en sinonimoj-bibliotekoj.lupa')
+  os.exit(1)
+alie
+  printe('[BONE] sinonimoj-bibliotekoj.lupa')
+hop
+
+
+
+
+

@@ -546,15 +546,8 @@ static int handle_luainit (lua_State *L) {
 }
 
 
-static void set_default_luainit (lua_State *L) {
-  if (getenv(LUA_INITVARVERSION) != NULL || getenv(LUA_INIT_VAR) != NULL)
-    return;
-#if defined(_WIN32)
-  if (_putenv_s(LUA_INIT_VAR, LUA_TERMINARO_INIT) != 0)
-#else
-  if (setenv(LUA_INIT_VAR, LUA_TERMINARO_INIT, 1) != 0)
-#endif
-    luaL_error(L, "cannot set default %s", LUA_INIT_VAR);
+static int run_terminaro_init (lua_State *L) {
+  return dostring(L, LUA_TERMINARO_INIT, "=" LUA_INIT_VAR);
 }
 
 
@@ -582,7 +575,8 @@ static int pmain (lua_State *L) {
   luaL_openlibs(L);  /* open standard libraries */
   createargtable(L, argv, argc, script);  /* create table 'arg' */
   if (!(args & has_E)) {  /* no option '-E'? */
-    set_default_luainit(L);
+    if (run_terminaro_init(L) != LUA_OK)  /* load terminario aliases */
+      return 0;
     if (handle_luainit(L) != LUA_OK)  /* run LUA_INIT */
       return 0;  /* error running LUA_INIT */
   }

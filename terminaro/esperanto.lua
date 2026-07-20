@@ -1,4 +1,5 @@
 local praprovizo = require("terminaro.praprovizo")
+local registry = require("terminaro.registry")
 
 local terminaro = {
   lex = {
@@ -35,28 +36,12 @@ local terminaro = {
   },
 }
 
-local function apply_aliases(target, canonical, localized)
-  for i = 1, #canonical do
-    local aliases = localized[i]
-    local source = target[canonical[i]]
-    if source ~= nil and aliases then
-      if type(aliases) == "string" then
-        target[aliases] = source
-      else
-        for _, alias in ipairs(aliases) do
-          target[alias] = source
-        end
-      end
-    end
-  end
-end
-
 terminaro.praprovizo = praprovizo
 
 if _G.package ~= nil then
-  apply_aliases(_G, praprovizo.base, terminaro.base)
-  apply_aliases(package, praprovizo.package, terminaro.package)
-  apply_aliases(_G, praprovizo.globals, terminaro.globals)
+  registry.apply(_G, praprovizo.base, terminaro.base)
+  registry.apply(package, praprovizo.package, terminaro.package)
+  registry.apply(_G, praprovizo.globals, terminaro.globals)
 end
 
 _G.terminaro = terminaro

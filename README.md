@@ -1,53 +1,185 @@
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/psychoslave/lupa/master/bildaro/lupa%20emblemo.png" alt="Lupa logotipo" title="Lupu vin!" />
 </p>
 
-Lupa estas disbranĉiĝo de Lua, kiu celas ebli kodi plene per Esperanta
-vortprovizo, kiam resti plene kongruan kun Lua 5.3.
+# Lupa
 
-Ankaŭ ekzistas la fratan projekton [Mallupa](https://github.com/psychoslave/mallupa), kiu tradukas dialektojn, el kiu
-Esperantajn dialektojn, al plena Lua kodo.
+**Lupa estas Lua 5.3-kongrua lingvaĵo por verki Lua-programojn per Esperanta vortprovizo.**
 
-# Ek!
+Lupa estas disbranĉiĝo de Lua 5.3.3 kun Esperantaj sinonimoj por ŝlosilvortoj, operatoroj kaj parto de la normaj bibliotekoj.
+
+Frata projekto: [Mallupa](https://github.com/psychoslave/mallupa), kiu tradukas dialektojn al kanona Lua-kodo.
+
+## Rapida komenco
+
+### Antaŭkondiĉoj
+
+- `make` (uzata tra `./fare`)
+- C-kompililo (`gcc` aŭ `cc`)
+- bazaj iloj: `ar`, `ranlib`, `rm`
+- por iuj platformoj: `readline`
+
+### Minimumaj paŝoj por ekkuri
+
 ```bash
-$ ./fare
-Bonvolu taski 'faru PALTFORMO' kie PALTFORMO estas valoro el la sekvantaj:
- aix bsd c89 freebsd generic linux macosx mingw posix solaris
-Vidu dokumentaro/leginda.html por plenaj instrukcioj.
-$ # ekzemple por linux platformo
-$ ./fare linux 
-$ ./fontaro/lupe ekzemplaro/saluti.lupa
-$ sudo ./fare instali
-$ cd ekzemplaro
-$ lupe saluti.lupa
+# 1) konstrui (aŭtomata platformdetekto)
+./fare aŭtokonstrui
+
+# 2) rapida kontrolo
+./fare testi
+
+# 3) ruli ekzemplon
+./fontaro/lupe ekzemplaro/saluti.lupa
 ```
 
-# Testado
+
+## Konstruado
+
 ```bash
-$ # ruli ĉiujn testojn en testaro/ (inkluzive .lupa kaj .lua)
-$ ./fare plentesti
+# aŭtomata platformdetekto
+./fare aŭtokonstrui
 
-$ # opcie ankaŭ ruli oficialan Lua 5.3 testaron kontraŭ lupe
-$ # (bezonas: lua 5.3 + reto por unua elŝuto)
-$ LUPA_RUN_LUA53_OFICIALA=1 ./fare plentesti
-
-$ # nur konstrui per aŭtomata platformdetekto
-$ ./fare aŭtokonstrui
-
-$ # simpla rapida kontrolo de la interpretilo
-$ ./fare testi
+# mane elekti platformon
+./fare linux
+./fare macosx
+./fare freebsd
 ```
 
-# Sinonimoj kaj fallback
+## Testado
 
-Detala dokumentado pri ĉiuj Esperantaj sinonimoj (inkluzive `-x` fallback-formoj) troviĝas en:
+```bash
+# plena testaro (ĉiuj .lupa, .lua kaj .sh en testaro/)
+./fare plentesti
+
+# rapida kontrolo de interpretilo
+./fare testi
+```
+
+## Instalado
+
+```bash
+# sisteme (defaŭlta prefikso: /usr/local)
+sudo ./fare instali
+
+# loka instalado por provado (en ../instali)
+./fare lokali
+
+# malinstali
+sudo ./fare malinstali
+```
+
+## Tipaj ordonoj (`./fare ...`)
+
+| Ordo | Kion ĝi faras |
+| --- | --- |
+| `./fare aŭtokonstrui` | Detektas sistemon kaj konstruas per taŭga platforma celo |
+| `./fare plentesti` | Konstruas kaj rulas la tutan testaron |
+| `./fare testi` | Rulas rapidan versian kontrolon de `lupe` |
+| `./fare instali` | Instalas duumaĵojn, inkluzivaron, bibliotekon kaj manpaĝojn |
+| `./fare lokali` | Instalas loke sub `../instali` |
+| `./fare malinstali` | Forigas instalitajn dosierojn |
+| `./fare eĥi` | Montras la aktivajn agordajn parametrojn |
+
+## Subtenataj platformoj kaj limigoj
+
+Subtenataj platformaj celoj en `fareblaro`:
+`aix`, `bsd`, `c89`, `freebsd`, `generic`, `linux`, `macosx`, `mingw`, `posix`, `solaris`.
+
+Gravaj notoj:
+
+- `aŭtokonstrui` aŭtomate mapigas al `macosx`, `linux`, `freebsd`, `mingw` aŭ `posix`.
+- En iuj sistemoj necesas `readline` por ligi la interpretilon.
+- `c89` ekzistas por kongrueco, sed ne garantias 64-bitajn entjerojn.
+- `mingw` kreas `.exe`-duumaĵojn laŭ la tradicia Lua-fluo.
+
+## Lua kontraŭ Lupa (flank-al-flanke)
+
+Jen pli reala ekzemplo: malantaŭenspura **N-reĝina serĉado**, fame popularigita en la Lua-komunumo.
+
+<table>
+  <tr>
+    <th>Originala Lua</th>
+    <th>Lupa-traduko</th>
+  </tr>
+  <tr>
+    <td>
+<pre><code class="language-lua">local function estas_sekura(vico_posteno, kolumno_posteno, pozicioj)
+  for antaŭa_vico = 1, vico_posteno - 1 do
+    local antaŭa_kolumno = pozicioj[antaŭa_vico]
+    if antaŭa_kolumno == kolumno_posteno then
+      return false
+    end
+    if math.abs(antaŭa_kolumno - kolumno_posteno) == (vico_posteno - antaŭa_vico) then
+      return false
+    end
+  end
+  return true
+end
+
+local function metu_reĝinojn(vico_posteno, tabulo_grando, pozicioj)
+  if vico_posteno > tabulo_grando then
+    return true
+  end
+  for kolumno_posteno = 1, tabulo_grando do
+    if estas_sekura(vico_posteno, kolumno_posteno, pozicioj) then
+      pozicioj[vico_posteno] = kolumno_posteno
+      if metu_reĝinojn(vico_posteno + 1, tabulo_grando, pozicioj) then
+        return true
+      end
+    end
+  end
+  return false
+end
+</code>
+</pre>
+    </td>
+    <td>
+
+<pre><code class="language-lua">loka funkcio estas_sekura(vico_posteno, kolumno_posteno, pozicioj)
+  por antaŭa_vico = 1, vico_posteno - 1 fare
+    loka antaŭa_kolumno = pozicioj[antaŭa_vico]
+    se antaŭa_kolumno == kolumno_posteno tiam
+      reŝalte falsa
+    hop
+    se matematiko.abs(antaŭa_kolumno - kolumno_posteno) == (vico_posteno - antaŭa_vico) tiam
+      reŝalte falsa
+    hop
+  hop
+  reŝalte vera
+hop
+
+loka funkcio metu_reĝinojn(vico_posteno, tabulo_grando, pozicioj)
+  se vico_posteno > tabulo_grando tiam
+    reŝalte vera
+  hop
+  por kolumno_posteno = 1, tabulo_grando fare
+    se estas_sekura(vico_posteno, kolumno_posteno, pozicioj) tiam
+      pozicioj[vico_posteno] = kolumno_posteno
+      se metu_reĝinojn(vico_posteno + 1, tabulo_grando, pozicioj) tiam
+        reŝalte vera
+      hop
+    hop
+  hop
+  reŝalte falsa
+hop</code></pre>
+    </td>
+  </tr>
+</table>
+
+## Sinonimoj kaj fallback
+
+Detala dokumentado pri Esperantaj sinonimoj (inkluzive `-x` fallback-formoj) troviĝas en:
 
 - `dokumentaro/esperantaj-sinonimoj.md`
 
-Tio inkluzivas:
+## Kontribuado
 
-- ŝlosilvortajn/operatorajn sinonimojn el `llex`
-- bazbibliotekajn sinonimojn el `lbaselib`
-- pakaĵajn/ŝargajn sinonimojn el `loadlib`
+Kontribuoj estas bonvenaj per:
 
+- Eldonoj: <https://github.com/psychoslave/lupa/issues>
+- Tirpetoj: <https://github.com/psychoslave/lupa/pulls>
+
+## Licenco
+
+La projekto uzas la **MIT-licencon**.
+Vidu [licenco](./LICENSE) kaj la Esperantan referencon [`PERMISILO.md`](./PERMISILO.md).

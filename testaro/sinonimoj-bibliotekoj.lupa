@@ -1,21 +1,21 @@
 #!/usr/bin/env lupe
 -- Testoj por bibliotekaj sinonimoj en lbaselib/loadlib.
 
-loke malsukcesoj = 0
+loke misoj = 0
 
 loke funkcie postuli(kondiĉo, mesaĝo)
   se ne kondiĉo tiam
-    printe('[MALSUKCESIS] ' .. mesaĝo)
-    malsukcesoj = malsukcesoj + 1
+    printe('[misIS] ' .. mesaĝo)
+    misoj = misoj + 1
   hop
 hop
 
-loke funkcie testi_grupon(tabelo, radiko, etikedo)
-  por kanona, sinonimoj el parodonu(tabelo) fare
-    loke baza = radiko[kanona]
-    postuli(baza ~= nilo, etikedo .. ': mankas kanona funkcio `' .. kanona .. '`')
-    por _, nomo el induktparodonu(sinonimoj) fare
-      postuli(radiko[nomo] == baza, etikedo .. ': `' .. nomo .. '` ne kongruas kun `' .. kanona .. '`')
+loke funkcie testi·grupon(tabelo, radiko, etikedo)
+  por kanonaĵo, sinonimoj el parodonu(tabelo) fare
+    loke bazo = radiko[kanonaĵo]
+    postuli(bazo ~= nilo, etikedo .. ': mankas kanona funkcio `' .. kanonaĵo .. '`')
+    por ba, nomo el induktparodonu(sinonimoj) fare
+      postuli(radiko[nomo] == bazo, etikedo .. ': `' .. nomo .. '` ne kongruas kun `' .. kanonaĵo .. '`')
     hop
   hop
 hop
@@ -45,15 +45,15 @@ loke bazaj = {
   xpcall = {'traktsxirmvoku', 'traktŝirmvoku'},
 }
 
-loke pakaj = {
+loke pakaĵoj = {
   loadlib = {'teksxargu', 'tekŝargu'},
   searchpath = {'dosierindikosercxu', 'dosierindikoserĉu'},
 }
 
-testi_grupon(bazaj, _G, 'lbaselib')
+testi·grupon(bazaj, _G, 'lbaselib')
 postuli(package ~= nilo, 'mankas `package`')
 se package tiam
-  testi_grupon(pakaj, package, 'loadlib/package')
+  testi·grupon(pakaĵoj, package, 'loadlib/package')
   se package.seeall ~= nilo tiam
     postuli(package.plenvidu == package.seeall, 'loadlib/package: `plenvidu` ne kongruas kun `seeall`')
   hop
@@ -63,45 +63,45 @@ hop
 postuli(_G.require ~= nilo, 'mankas `require`')
 postuli(_G.necesu ~= nilo, 'mankas `necesu`')
 se _G.require kaj _G.necesu tiam
-  loke ok1, m1 = ŝirmvoku(require, 'math')
-  loke ok2, m2 = ŝirmvoku(necesu, 'math')
-  postuli(ok1 == ok2, '`require` kaj `necesu` malsame kondutis')
-  se ok1 kaj ok2 tiam
-    postuli(tostring(m1) == tostring(m2), '`require` kaj `necesu` liveris malsamajn modulojn')
+  loke prastato, prateko = ŝirmvoku(require, 'math')
+  loke novstato, novteko = ŝirmvoku(necesu, 'math')
+  postuli(prastato == novstato, '`require` kaj `necesu` malsame kondutis')
+  se prastato kaj novstato tiam
+    postuli(tostring(prateko) == tostring(novteko), '`require` kaj `necesu` liveris malsamajn modulojn')
   hop
 hop
 
 -- `loadstring` povas manki depende de konstruaj opcioj.
 se _G.loadstring ~= nilo tiam
-  postuli(_G.cxensxargu == _G.loadstring, '`cxensxargu` ne kongruas kun `loadstring`')
   postuli(_G.ĉenŝargu == _G.loadstring, '`ĉenŝargu` ne kongruas kun `loadstring`')
+  postuli(_G.cxensxargu == _G.loadstring, '`cxensxargu` ne kongruas kun `loadstring`')
 hop
 
 -- Rekta funkcia provo por ŝargu/sxargu.
 loke kodo = 'reŝalte 41 + 1'
-loke f1, e1 = ŝargu(kodo)
-loke f2, e2 = sxargu(kodo)
-postuli(f1 ~= nilo kaj e1 == nilo, '`ŝargu` ne ŝargis validan kodon')
-postuli(f2 ~= nilo kaj e2 == nilo, '`sxargu` ne ŝargis validan kodon')
-se f1 kaj f2 tiam
-  postuli(f1() == 42, '`ŝargu` liveris malĝustan rezulton')
-  postuli(f2() == 42, '`sxargu` liveris malĝustan rezulton')
+loke ajn·funkcio, ajn·eraro = ŝargu(kodo)
+loke ali·funkcio, ali·eraro = sxargu(kodo)
+postuli(ajn·funkcio ~= nilo kaj ajn·eraro == nilo, '`ŝargu` ne ŝargis validan kodon')
+postuli(ali·funkcio ~= nilo kaj ali·eraro == nilo, '`sxargu` ne ŝargis validan kodon')
+se ajn·funkcio kaj ali·funkcio tiam
+  postuli(ajn·funkcio() == 42, '`ŝargu` liveris malĝustan rezulton')
+  postuli(ali·funkcio() == 42, '`sxargu` liveris malĝustan rezulton')
 hop
 
 -- Rekta funkcia provo por ŝirmvoku/sxirmvoku.
 loke funkcie paneu()
   eraravizu('testa-eraro')
 hop
-loke ok1 = ŝirmvoku(paneu)
-loke ok2 = sxirmvoku(paneu)
-postuli(ok1 == falsa, '`ŝirmvoku` devus kapti eraron')
-postuli(ok2 == falsa, '`sxirmvoku` devus kapti eraron')
+loke prastato = ŝirmvoku(paneu)
+loke novstato = sxirmvoku(paneu)
+postuli(prastato == falsa, '`ŝirmvoku` devus kapti eraron')
+postuli(novstato == falsa, '`sxirmvoku` devus kapti eraron')
 
-se malsukcesoj > 0 tiam
-  printe('Malsukcesis ' .. malsukcesoj .. ' testo(j) en sinonimoj-bibliotekoj.lupa')
+se misoj > 0 tiam
+  printe('misis ' .. misoj .. ' testo(j) en sinonimoj-bibliotekoj.lupa')
   os.exit(1)
 alie
-  printe('[PASIS] sinonimoj-bibliotekoj.lupa')
+  printe('[BONE] sinonimoj-bibliotekoj.lupa')
 hop
 
 

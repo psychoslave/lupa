@@ -47,7 +47,7 @@ TESTODOSIEROJ := $(sort $(wildcard $(TESTDOSIERUJO)/*.lupa) $(wildcard $(TESTDOS
 # Kion instali.
 AL_DUUMDOSIERO= lupe lupkodu
 TO_INKLUZIVARO= lua.h luaconf.h lualib.h lauxlib.h lua.hpp
-TO_TERMINARO := $(wildcard terminaro/*.lua)
+TO_TERMINARO := $(wildcard terminaro/*.lua terminaro/*.terms)
 TO_LIB= liblua.a
 TO_MAN= lua.1 luac.1
 

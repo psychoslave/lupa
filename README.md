@@ -28,10 +28,26 @@ $ lupe saluti.lupa
 $ # ruli ĉiujn testojn en testaro/ (inkluzive .lupa kaj .lua)
 $ ./fare plentesti
 
+$ # opcie ankaŭ ruli oficialan Lua 5.3 testaron kontraŭ lupe
+$ # (bezonas: lua 5.3 + reto por unua elŝuto)
+$ LUPA_RUN_LUA53_OFICIALA=1 ./fare plentesti
+
 $ # nur konstrui per aŭtomata platformdetekto
 $ ./fare aŭtokonstrui
 
 $ # simpla rapida kontrolo de la interpretilo
 $ ./fare testi
 ```
+
+# Sinonimoj kaj fallback
+
+Detala dokumentado pri ĉiuj Esperantaj sinonimoj (inkluzive `-x` fallback-formoj) troviĝas en:
+
+- `dokumentaro/esperantaj-sinonimoj.md`
+
+Tio inkluzivas:
+
+- ŝlosilvortajn/operatorajn sinonimojn el `llex`
+- bazbibliotekajn sinonimojn el `lbaselib`
+- pakaĵajn/ŝargajn sinonimojn el `loadlib`
 

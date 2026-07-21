@@ -10,28 +10,12 @@ Lupa estas disbranĉiĝo de Lua 5.3.3 kun Esperantaj sinonimoj por ŝlosilvortoj
 
 Frata projekto: [Mallupa](https://github.com/psychoslave/mallupa), kiu tradukas dialektojn al kanona Lua-kodo.
 
-## Rapida komenco
-
-### Antaŭkondiĉoj
+## Antaŭkondiĉoj
 
 - `make` (uzata tra `./fare`)
 - C-kompililo (`gcc` aŭ `cc`)
 - bazaj iloj: `ar`, `ranlib`, `rm`
 - por iuj platformoj: `readline`
-
-### Minimumaj paŝoj por ekkuri
-
-```bash
-# 1) konstrui (aŭtomata platformdetekto)
-./fare aŭtokonstrui
-
-# 2) rapida kontrolo
-./fare testi
-
-# 3) ruli ekzemplon
-./fontaro/lupe ekzemplaro/saluti.lupa
-```
-
 
 ## Konstruado
 
@@ -39,7 +23,7 @@ Frata projekto: [Mallupa](https://github.com/psychoslave/mallupa), kiu tradukas 
 # aŭtomata platformdetekto
 ./fare aŭtokonstrui
 
-# mane elekti platformon
+# mane elekti celotan platformon
 ./fare linux
 ./fare macosx
 ./fare freebsd
@@ -92,79 +76,77 @@ Gravaj notoj:
 - `c89` ekzistas por kongrueco, sed ne garantias 64-bitajn entjerojn.
 - `mingw` kreas `.exe`-duumaĵojn laŭ la tradicia Lua-fluo.
 
-## Lua kontraŭ Lupa (flank-al-flanke)
+## Lua kontraŭ Lupa (flank-ĉe-flanke)
 
 Jen pli reala ekzemplo: malantaŭenspura **N-reĝina serĉado**, fame popularigita en la Lua-komunumo.
 
-<table>
-  <tr>
-    <th>Originala Lua</th>
-    <th>Lupa-traduko</th>
-  </tr>
-  <tr>
-    <td>
-<pre><code class="language-lua">local function estas_sekura(vico_posteno, kolumno_posteno, pozicioj)
-  for antaŭa_vico = 1, vico_posteno - 1 do
-    local antaŭa_kolumno = pozicioj[antaŭa_vico]
-    if antaŭa_kolumno == kolumno_posteno then
+En la maldekstra flanko, la Lua-kodo restas kun tute anglaj identigiloj.  
+En la dekstra flanko, la Lupa-kodo montras Esperantajn identigilojn kun la meza punkto (`·`) por kunmetitaj nomoj.  
+Tio estas **eblo, ne devigo**: vi povas uzi ankaŭ simplajn identigilojn laŭ via prefero.
+
+<div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start;">
+  <div style="flex: 1 1 24rem; min-width: 20rem;">
+    <strong>Originala Lua</strong>
+<pre><code class="language-lua">local function is_safe(row_index, column_index, queen_positions)
+  for previous_row = 1, row_index - 1 do
+    local previous_column = queen_positions[previous_row]
+    if previous_column == column_index then
       return false
     end
-    if math.abs(antaŭa_kolumno - kolumno_posteno) == (vico_posteno - antaŭa_vico) then
+    if math.abs(previous_column - column_index) == (row_index - previous_row) then
       return false
     end
   end
   return true
 end
 
-local function metu_reĝinojn(vico_posteno, tabulo_grando, pozicioj)
-  if vico_posteno > tabulo_grando then
+local function place_queens(row_index, board_size, queen_positions)
+  if row_index > board_size then
     return true
   end
-  for kolumno_posteno = 1, tabulo_grando do
-    if estas_sekura(vico_posteno, kolumno_posteno, pozicioj) then
-      pozicioj[vico_posteno] = kolumno_posteno
-      if metu_reĝinojn(vico_posteno + 1, tabulo_grando, pozicioj) then
+  for column_index = 1, board_size do
+    if is_safe(row_index, column_index, queen_positions) then
+      queen_positions[row_index] = column_index
+      if place_queens(row_index + 1, board_size, queen_positions) then
         return true
       end
     end
   end
   return false
 end
-</code>
-</pre>
-    </td>
-    <td>
-
-<pre><code class="language-lua">loka funkcio estas_sekura(vico_posteno, kolumno_posteno, pozicioj)
-  por antaŭa_vico = 1, vico_posteno - 1 fare
-    loka antaŭa_kolumno = pozicioj[antaŭa_vico]
-    se antaŭa_kolumno == kolumno_posteno tiam
+</code></pre>
+  </div>
+  <div style="flex: 1 1 24rem; min-width: 20rem;">
+    <strong>Lupa-adaptaĵo</strong>
+<pre><code class="language-lua">loka funkcio estas·sekura(vico·indekso, kolumno·indekso, reĝino·pozicioj)
+  por antaŭa·vico = 1, vico·indekso - 1 fare
+    loka antaŭa·kolumno = reĝino·pozicioj[antaŭa·vico]
+    se antaŭa·kolumno == kolumno·indekso tiam
       reŝalte falsa
     hop
-    se matematiko.abs(antaŭa_kolumno - kolumno_posteno) == (vico_posteno - antaŭa_vico) tiam
+    se matematiko.abs(antaŭa·kolumno - kolumno·indekso) == (vico·indekso - antaŭa·vico) tiam
       reŝalte falsa
     hop
   hop
   reŝalte vera
 hop
 
-loka funkcio metu_reĝinojn(vico_posteno, tabulo_grando, pozicioj)
-  se vico_posteno > tabulo_grando tiam
+loka funkcio metu·reĝinojn(vico·indekso, tabulo·grando, reĝino·pozicioj)
+  se vico·indekso > tabulo·grando tiam
     reŝalte vera
   hop
-  por kolumno_posteno = 1, tabulo_grando fare
-    se estas_sekura(vico_posteno, kolumno_posteno, pozicioj) tiam
-      pozicioj[vico_posteno] = kolumno_posteno
-      se metu_reĝinojn(vico_posteno + 1, tabulo_grando, pozicioj) tiam
+  por kolumno·indekso = 1, tabulo·grando fare
+    se estas·sekura(vico·indekso, kolumno·indekso, reĝino·pozicioj) tiam
+      reĝino·pozicioj[vico·indekso] = kolumno·indekso
+      se metu·reĝinojn(vico·indekso + 1, tabulo·grando, reĝino·pozicioj) tiam
         reŝalte vera
       hop
     hop
   hop
   reŝalte falsa
 hop</code></pre>
-    </td>
-  </tr>
-</table>
+  </div>
+</div>
 
 ## Sinonimoj kaj fallback
 

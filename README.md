@@ -1,53 +1,167 @@
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/psychoslave/lupa/master/bildaro/lupa%20emblemo.png" alt="Lupa logotipo" title="Lupu vin!" />
 </p>
 
-Lupa estas disbranĉiĝo de Lua, kiu celas ebli kodi plene per Esperanta
-vortprovizo, kiam resti plene kongruan kun Lua 5.3.
+# Lupa
 
-Ankaŭ ekzistas la fratan projekton [Mallupa](https://github.com/psychoslave/mallupa), kiu tradukas dialektojn, el kiu
-Esperantajn dialektojn, al plena Lua kodo.
+**Lupa estas Lua 5.3-kongrua lingvaĵo por verki Lua-programojn per Esperanta vortprovizo.**
 
-# Ek!
+Lupa estas disbranĉiĝo de Lua 5.3.3 kun Esperantaj sinonimoj por ŝlosilvortoj, operatoroj kaj parto de la normaj bibliotekoj.
+
+Frata projekto: [Mallupa](https://github.com/psychoslave/mallupa), kiu tradukas dialektojn al kanona Lua-kodo.
+
+## Antaŭkondiĉoj
+
+- `make` (uzata tra `./fare`)
+- C-kompililo (`gcc` aŭ `cc`)
+- bazaj iloj: `ar`, `ranlib`, `rm`
+- por iuj platformoj: `readline`
+
+## Konstruado
+
 ```bash
-$ ./fare
-Bonvolu taski 'faru PALTFORMO' kie PALTFORMO estas valoro el la sekvantaj:
- aix bsd c89 freebsd generic linux macosx mingw posix solaris
-Vidu dokumentaro/leginda.html por plenaj instrukcioj.
-$ # ekzemple por linux platformo
-$ ./fare linux 
-$ ./fontaro/lupe ekzemplaro/saluti.lupa
-$ sudo ./fare instali
-$ cd ekzemplaro
-$ lupe saluti.lupa
+# aŭtomata platformdetekto
+./fare aŭtokonstrui
+
+# mane elekti celotan platformon
+./fare linux
+./fare macosx
+./fare freebsd
 ```
 
-# Testado
+## Testado
+
 ```bash
-$ # ruli ĉiujn testojn en testaro/ (inkluzive .lupa kaj .lua)
-$ ./fare plentesti
+# plena testaro (ĉiuj .lupa, .lua kaj .sh en testaro/)
+./fare plentesti
 
-$ # opcie ankaŭ ruli oficialan Lua 5.3 testaron kontraŭ lupe
-$ # (bezonas: lua 5.3 + reto por unua elŝuto)
-$ LUPA_RUN_LUA53_OFICIALA=1 ./fare plentesti
-
-$ # nur konstrui per aŭtomata platformdetekto
-$ ./fare aŭtokonstrui
-
-$ # simpla rapida kontrolo de la interpretilo
-$ ./fare testi
+# rapida kontrolo de interpretilo
+./fare testi
 ```
 
-# Sinonimoj kaj fallback
+## Instalado
 
-Detala dokumentado pri ĉiuj Esperantaj sinonimoj (inkluzive `-x` fallback-formoj) troviĝas en:
+```bash
+# sisteme (defaŭlta prefikso: /usr/local)
+sudo ./fare instali
+
+# loka instalado por provado (en ../instali)
+./fare lokali
+
+# malinstali
+sudo ./fare malinstali
+```
+
+## Tipaj ordonoj (`./fare ...`)
+
+| Ordo | Kion ĝi faras |
+| --- | --- |
+| `./fare aŭtokonstrui` | Detektas sistemon kaj konstruas per taŭga platforma celo |
+| `./fare plentesti` | Konstruas kaj rulas la tutan testaron |
+| `./fare testi` | Rulas rapidan versian kontrolon de `lupe` |
+| `./fare instali` | Instalas duumaĵojn, inkluzivaron, bibliotekon kaj manpaĝojn |
+| `./fare lokali` | Instalas loke sub `../instali` |
+| `./fare malinstali` | Forigas instalitajn dosierojn |
+| `./fare eĥi` | Montras la aktivajn agordajn parametrojn |
+
+## Subtenataj platformoj kaj limigoj
+
+Subtenataj platformaj celoj en `fareblaro`:
+`aix`, `bsd`, `c89`, `freebsd`, `generic`, `linux`, `macosx`, `mingw`, `posix`, `solaris`.
+
+Gravaj notoj:
+
+- `aŭtokonstrui` aŭtomate mapigas al `macosx`, `linux`, `freebsd`, `mingw` aŭ `posix`.
+- En iuj sistemoj necesas `readline` por ligi la interpretilon.
+- `c89` ekzistas por kongrueco, sed ne garantias 64-bitajn entjerojn.
+- `mingw` kreas `.exe`-duumaĵojn laŭ la tradicia Lua-fluo.
+
+## Lua kontraŭ Lupa (flank-ĉe-flanke)
+
+Jen pli reala ekzemplo: malantaŭenspura **N-reĝina serĉado**, fame popularigita en la Lua-komunumo.
+
+En la maldekstra flanko, la Lua-kodo restas kun tute anglaj identigiloj.  
+En la dekstra flanko, la Lupa-kodo montras Esperantajn identigilojn kun la meza punkto (`·`) por kunmetitaj nomoj.  
+Tio estas **eblo, ne devigo**: vi povas uzi ankaŭ simplajn identigilojn laŭ via prefero.
+
+<div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start;">
+  <div style="flex: 1 1 24rem; min-width: 20rem;">
+    <strong>Originala Lua</strong>
+<pre><code class="language-lua">local function is_safe(row_index, column_index, queen_positions)
+  for previous_row = 1, row_index - 1 do
+    local previous_column = queen_positions[previous_row]
+    if previous_column == column_index then
+      return false
+    end
+    if math.abs(previous_column - column_index) == (row_index - previous_row) then
+      return false
+    end
+  end
+  return true
+end
+
+local function place_queens(row_index, board_size, queen_positions)
+  if row_index > board_size then
+    return true
+  end
+  for column_index = 1, board_size do
+    if is_safe(row_index, column_index, queen_positions) then
+      queen_positions[row_index] = column_index
+      if place_queens(row_index + 1, board_size, queen_positions) then
+        return true
+      end
+    end
+  end
+  return false
+end
+</code></pre>
+  </div>
+  <div style="flex: 1 1 24rem; min-width: 20rem;">
+    <strong>Lupa-adaptaĵo</strong>
+<pre><code class="language-lua">loka funkcio estas·sekura(vico·indekso, kolumno·indekso, reĝino·pozicioj)
+  por antaŭa·vico = 1, vico·indekso - 1 fare
+    loka antaŭa·kolumno = reĝino·pozicioj[antaŭa·vico]
+    se antaŭa·kolumno == kolumno·indekso tiam
+      reŝalte falsa
+    hop
+    se matematiko.abs(antaŭa·kolumno - kolumno·indekso) == (vico·indekso - antaŭa·vico) tiam
+      reŝalte falsa
+    hop
+  hop
+  reŝalte vera
+hop
+
+loka funkcio metu·reĝinojn(vico·indekso, tabulo·grando, reĝino·pozicioj)
+  se vico·indekso > tabulo·grando tiam
+    reŝalte vera
+  hop
+  por kolumno·indekso = 1, tabulo·grando fare
+    se estas·sekura(vico·indekso, kolumno·indekso, reĝino·pozicioj) tiam
+      reĝino·pozicioj[vico·indekso] = kolumno·indekso
+      se metu·reĝinojn(vico·indekso + 1, tabulo·grando, reĝino·pozicioj) tiam
+        reŝalte vera
+      hop
+    hop
+  hop
+  reŝalte falsa
+hop</code></pre>
+  </div>
+</div>
+
+## Sinonimoj kaj fallback
+
+Detala dokumentado pri Esperantaj sinonimoj (inkluzive `-x` fallback-formoj) troviĝas en:
 
 - `dokumentaro/esperantaj-sinonimoj.md`
 
-Tio inkluzivas:
+## Kontribuado
 
-- ŝlosilvortajn/operatorajn sinonimojn el `llex`
-- bazbibliotekajn sinonimojn el `lbaselib`
-- pakaĵajn/ŝargajn sinonimojn el `loadlib`
+Kontribuoj estas bonvenaj per:
 
+- Eldonoj: <https://github.com/psychoslave/lupa/issues>
+- Tirpetoj: <https://github.com/psychoslave/lupa/pulls>
+
+## Licenco
+
+La projekto uzas la **MIT-licencon**.
+Vidu [licenco](./LICENSE) kaj la Esperantan referencon [`PERMISILO.md`](./PERMISILO.md).

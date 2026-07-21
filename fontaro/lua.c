@@ -40,6 +40,8 @@
 #define LUA_INITVARVERSION  \
 	LUA_INIT_VAR "_" LUA_VERSION_MAJOR "_" LUA_VERSION_MINOR
 
+#define LUA_TERMINARO_INIT "require(\"terminaro.esperanto\")"
+
 
 /*
 ** lua_stdin_is_tty detects whether the standard input is a 'tty' (that
@@ -544,6 +546,11 @@ static int handle_luainit (lua_State *L) {
 }
 
 
+static int run_terminaro_init (lua_State *L) {
+  return dostring(L, LUA_TERMINARO_INIT, "=" LUA_INIT_VAR);
+}
+
+
 /*
 ** Main body of stand-alone interpreter (to be called in protected mode).
 ** Reads the options and handles them all.
@@ -568,6 +575,8 @@ static int pmain (lua_State *L) {
   luaL_openlibs(L);  /* open standard libraries */
   createargtable(L, argv, argc, script);  /* create table 'arg' */
   if (!(args & has_E)) {  /* no option '-E'? */
+    if (run_terminaro_init(L) != LUA_OK)  /* load terminario aliases */
+      return 0;
     if (handle_luainit(L) != LUA_OK)  /* run LUA_INIT */
       return 0;  /* error running LUA_INIT */
   }
@@ -606,4 +615,3 @@ int main (int argc, char **argv) {
   lua_close(L);
   return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-

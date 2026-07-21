@@ -10,10 +10,14 @@
 #include "lprefix.h"
 
 
+#include <ctype.h>
 #include <locale.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "lua.h"
+
+#include "lauxlib.h"
 
 #include "lctype.h"
 #include "ldebug.h"
@@ -38,119 +42,116 @@
 
 /* ORDER RESERVED */
 
-static const char *const luaX_tokens [] = {
-  "and", "break",       "do",   "else", "elseif",
-  "end",  "false", "for", "function", "goto",  "if",
-  "in", "local",  "nil",  "not", "or", "repeat",
-  "return",  "then", "true", "until", "while",
-  "//", "..",   "...", "==",     ">=",         "<=", "~=",
-  "<nombra>", "<indukta>", "<noma>", "<ĉena>"
+#define LEXTERM_RELATIVE	"./terminaro/llex.terms"
+#define LEXTERM_INSTALLED	LUA_LDIR "terminaro/llex.terms"
+#define LEXTERM_COUNT		(TK_EOS - FIRST_RESERVED + 1)
+#define LEXERROR_COUNT		17
+
+static TString *luaX_tokens[LEXTERM_COUNT];
+static TString *luaX_envname;
+static TString *luaX_messages[LEXERROR_COUNT];
+
+static const int luaX_alias_tokens[] = {
+ TK_AND, TK_BREAK, TK_BREAK, TK_DO, TK_ELSE, TK_ELSEIF, TK_END, TK_FALSE,
+ TK_FOR, TK_FUNCTION, TK_FUNCTION, TK_GOTO, TK_GOTO, TK_IF, TK_IN, TK_LOCAL,
+ TK_LOCAL, TK_LOCAL, TK_LOCAL, TK_NIL, TK_NOT, TK_OR, TK_OR, TK_REPEAT,
+ TK_RETURN, TK_RETURN, TK_THEN, TK_TRUE, TK_UNTIL, TK_UNTIL, TK_WHILE,
+ TK_IDIV, TK_CONCAT, TK_DOTS, TK_EQ, TK_EQ, TK_GE, TK_GE, TK_LE, TK_NE,
+ TK_BNOT, TK_BXOR, TK_BXOR, TK_GT, TK_GT, TK_GE, TK_GE, TK_EQ, TK_NE,
+ TK_NE, TK_NE, TK_LT, TK_LT, TK_LE, TK_LE, TK_LE, TK_LE, TK_BAND, TK_BOR,
+ TK_BOR, TK_SHR, TK_SHR, TK_SHL, TK_SHL, TK_ADD, TK_MINUS, TK_MINUS,
+ TK_MINUS, TK_SUB, TK_DIV, TK_DIV, TK_DIV, TK_IDIV, TK_IDIV, TK_IDIV,
+ TK_MOD, TK_MOD, TK_POW, TK_POW, TK_CONCAT, TK_CONCAT, TK_COLON
 };
 
-static const struct {
-  const char *name;
-  int token;
-} aliases [] = {
-  { "kaj", TK_AND },            // and
-  { "eksterŝalte", TK_BREAK }, // break
-  { "ekstersxalte", TK_BREAK }, // break
-  { "fare", TK_DO },            // do
-  { "alie", TK_ELSE },          // else
-  { "alise", TK_ELSEIF },       // elseif
-  { "hop", TK_END },            // end
-  { "falsa", TK_FALSE },        // false
-  { "por", TK_FOR },            // for
-  { "funkcie", TK_FUNCTION },   // function
-  { "tie", TK_FUNCTION },       // function
-  { "ŝalte", TK_GOTO },        // goto
-  { "sxalte", TK_GOTO },        // goto
-  { "se", TK_IF },              // if
-  { "el", TK_IN },              // in
-  { "loka", TK_LOCAL },         // local
-  { "loke", TK_LOCAL },         // local
-  { "ĉi", TK_LOCAL },          // local
-  { "cxi", TK_LOCAL },           // local
-  { "nilo", TK_NIL },           // nil
-  { "ne", TK_NOT },             // not
-  { "aŭ", TK_OR },              // or
-  { "aux", TK_OR },             // or
-  { "cikle", TK_REPEAT },       // repeat
-  { "reŝalte", TK_RETURN },     // return
-  { "resxalte", TK_RETURN },    // return
-  { "tiam", TK_THEN },          // then
-  { "vera", TK_TRUE },          // true
-  { "ĝis", TK_UNTIL },         // until
-  { "gxis", TK_UNTIL },         // until
-  { "dum", TK_WHILE },          // while
-  { "onige",  TK_IDIV },        // //
-  { "lige", TK_CONCAT },         // ..
-  { "ktp", TK_DOTS },           // ...
-  { "egalas",   TK_EQ },        // ==
-  { "almenaŭas", TK_GE },       // >=
-  { "almenauxas", TK_GE },      // >=
-  { "maksimumas", TK_LE },      // <=
-  { "malegalas", TK_NE },       // ~=
-  // end of luaX_tokens aliases
-
-  // pli da sinonimoj
-  { "nee",     TK_BNOT },
-  { "disaŭe", TK_BXOR },
-  { "disauxe", TK_BXOR },
-  { "superas", TK_GT },
-  { "malinfraas", TK_GT },
-  { "suras", TK_GE },
-  { "malsubas", TK_GE },
-  { "samas",   TK_EQ },
-  { "malsamas",TK_NE },
-  { "neegalas",TK_NE },
-  { "nesamas",TK_NE },
-  { "infraas", TK_LT },
-  { "malsuperas", TK_LT },
-  { "subas", TK_LE },
-  { "malsuras", TK_LE },
-  { "malalmenaŭas", TK_LE },
-  { "malalmenauxas", TK_LE },
-  { "kaje", TK_BAND },
-  { "aŭe", TK_BOR },
-  { "auxe", TK_BOR },
-  { "sobŝove", TK_SHR },
-  { "sobsxove", TK_SHR },
-  { "sorŝove", TK_SHL },
-  { "sorsxove", TK_SHL },
-  { "plus", TK_ADD },
-  { "mal", TK_MINUS },
-  { "kontraŭ", TK_MINUS },
-{ "kontraux", TK_MINUS },
-  { "minus", TK_SUB },
-  { "disige", TK_DIV },
-  { "divide", TK_DIV },
-  { "ozle", TK_DIV },
-  { "parte", TK_IDIV },
-  { "pece", TK_IDIV },
-  { "kvociente", TK_IDIV },
-  { "module", TK_MOD },
-  { "kongrue", TK_MOD },
-  { "alt", TK_POW },
-  { "potencige", TK_POW },
-  { "kroĉe",TK_CONCAT }, // ..
-  { "krocxe",TK_CONCAT }, //
-  { "sin", TK_COLON }, // :
+enum LexMsg {
+ LXM_QUOTED_CHAR,
+ LXM_QUOTED_STRING,
+ LXM_NEAR,
+ LXM_LEX_TOO_LONG,
+ LXM_TOO_MANY_LINES,
+ LXM_MALFORMED_NUMBER,
+ LXM_HEXA_DIGIT,
+ LXM_UTF8_TOO_LARGE,
+ LXM_MISSING_LBRACE,
+ LXM_MISSING_RBRACE,
+ LXM_UNFINISHED_STRING,
+ LXM_INVALID_ESCAPE,
+ LXM_DEC_ESCAPE_TOO_LARGE,
+ LXM_INVALID_LONG_DELIM,
+ LXM_UNFINISHED_LONG,
+ LXM_COMMENT,
+ LXM_STRING
 };
+
+static int load_terminario_terms (lua_State *L, const char *path) {
+ FILE *f = fopen(path, "r");
+ char line[1024];
+ int tok = 0;
+ int ali = 0;
+ int err = 0;
+ if (f == NULL)
+   return 0;
+ while (fgets(line, sizeof(line), f) != NULL) {
+   char *p = line;
+   char *end;
+   while (*p != '\0' && isspace((unsigned char)*p)) p++;
+   if (*p == '\0' || *p == '#')
+     continue;
+   end = p + strlen(p);
+   while (end > p && (end[-1] == '\n' || end[-1] == '\r' || isspace((unsigned char)end[-1])))
+     *--end = '\0';
+   if (strncmp(p, "ENV ", 4) == 0) {
+     const char *s = p + 4;
+     luaX_envname = luaS_newlstr(L, s, strlen(s));
+     luaC_fix(L, obj2gco(luaX_envname));
+   }
+   else if (strncmp(p, "TOK ", 4) == 0) {
+     const char *s = p + 4;
+     TString *ts = luaS_newlstr(L, s, strlen(s));
+     luaC_fix(L, obj2gco(ts));
+     ts->extra = cast_byte(tok + 1);
+     luaX_tokens[tok++] = ts;
+   }
+   else if (strncmp(p, "ALIAS ", 6) == 0) {
+     const char *s = p + 6;
+     TString *ts;
+     if (ali >= (int)(sizeof(luaX_alias_tokens) / sizeof(luaX_alias_tokens[0])))
+       luaL_error(L, "too many terminario aliases");
+     ts = luaS_newlstr(L, s, strlen(s));
+     luaC_fix(L, obj2gco(ts));
+     ts->extra = cast_byte(luaX_alias_tokens[ali++] - FIRST_RESERVED + 1);
+   }
+   else if (strncmp(p, "ERR ", 4) == 0) {
+     const char *s = p + 4;
+     TString *ts;
+     if (err >= LEXERROR_COUNT)
+       luaL_error(L, "too many terminario errors");
+     ts = luaS_newlstr(L, s, strlen(s));
+     luaC_fix(L, obj2gco(ts));
+     luaX_messages[err++] = ts;
+   }
+   else
+     luaL_error(L, "bad terminario line: %s", p);
+ }
+ fclose(f);
+ if (tok != LEXTERM_COUNT || ali != (int)(sizeof(luaX_alias_tokens) / sizeof(luaX_alias_tokens[0])) ||
+     err != LEXERROR_COUNT || luaX_envname == NULL)
+   luaL_error(L, "incomplete terminario terms from %s", path);
+ return 1;
+}
+
+static void load_terminario_lex (lua_State *L) {
+ if (!load_terminario_terms(L, LEXTERM_RELATIVE))
+   if (!load_terminario_terms(L, LEXTERM_INSTALLED))
+     luaL_error(L, "cannot load terminario lex terms");
+}
 
 #define save_and_next(ls) (save(ls, ls->current), next(ls))
 
-
-static void init_aliases (lua_State *L) {
-  int i;
-  int n = sizeof(aliases)/sizeof(aliases[0]);
-  for (i=0; i<n; i++) {
-    TString *ts = luaS_new(L, aliases[i].name);
-    luaC_fix(L, obj2gco(ts));
-    ts->extra = cast_byte(aliases[i].token);
-  }
-}
-
 static l_noret lexerror (LexState *ls, const char *msg, int token);
+
+#define termmsg(i)	getstr(luaX_messages[(i)])
 
 
 static void save (LexState *ls, int c) {
@@ -158,7 +159,7 @@ static void save (LexState *ls, int c) {
   if (luaZ_bufflen(b) + 1 > luaZ_sizebuffer(b)) {
     size_t newsize;
     if (luaZ_sizebuffer(b) >= MAX_SIZE/2)
-      lexerror(ls, "lexical element too long", 0);
+    lexerror(ls, termmsg(LXM_LEX_TOO_LONG), 0);
     newsize = luaZ_sizebuffer(b) * 2;
     luaZ_resizebuffer(ls->L, b, newsize);
   }
@@ -168,30 +169,23 @@ static void save (LexState *ls, int c) {
 
 void luaX_init (lua_State *L) {
   int i;
-  TString *e = luaS_newliteral(L, LUA_ENV);  /* create env name */
-  luaC_fix(L, obj2gco(e));  /* never collect this name */
-  for (i=0; i<NUM_RESERVED; i++) {
-    TString *ts = luaS_new(L, luaX_tokens[i]);
-    luaC_fix(L, obj2gco(ts));  /* reserved words are never collected */
-    ts->extra = cast_byte(i+1);  /* reserved word */
+  load_terminario_lex(L);
+  for (i=0; i<LEXTERM_COUNT; i++) {
+    if (luaX_tokens[i] == NULL)
+      luaL_error(L, "missing terminario token #%d", i + 1);
   }
-
-    TString *ts = luaS_new(L, "egaligxas");
-    luaC_fix(L, obj2gco(ts));  /* reserved words are never collected */
-    ts->extra = cast_byte(TK_EQ+1-FIRST_RESERVED);  /* reserved word */
-    init_aliases(L);
 }
 
 
 const char *luaX_token2str (LexState *ls, int token) {
   if (token < FIRST_RESERVED) {  /* single-byte symbols? */
     lua_assert(token == cast_uchar(token));
-    return luaO_pushfstring(ls->L, "'%c'", token);
+    return luaO_pushfstring(ls->L, termmsg(LXM_QUOTED_CHAR), token);
   }
   else {
-    const char *s = luaX_tokens[token - FIRST_RESERVED];
+    const char *s = getstr(luaX_tokens[token - FIRST_RESERVED]);
     if (token < TK_EOS)  /* fixed format (symbols and reserved words)? */
-      return luaO_pushfstring(ls->L, "'%s'", s);
+      return luaO_pushfstring(ls->L, termmsg(LXM_QUOTED_STRING), s);
     else  /* names, strings, and numerals */
       return s;
   }
@@ -203,7 +197,7 @@ static const char *txtToken (LexState *ls, int token) {
     case TK_NAME: case TK_STRING:
     case TK_FLT: case TK_INT:
       save(ls, '\0');
-      return luaO_pushfstring(ls->L, "'%s'", luaZ_buffer(ls->buff));
+      return luaO_pushfstring(ls->L, termmsg(LXM_QUOTED_STRING), luaZ_buffer(ls->buff));
     default:
       return luaX_token2str(ls, token);
   }
@@ -213,7 +207,7 @@ static const char *txtToken (LexState *ls, int token) {
 static l_noret lexerror (LexState *ls, const char *msg, int token) {
   msg = luaG_addinfo(ls->L, msg, ls->source, ls->linenumber);
   if (token)
-    luaO_pushfstring(ls->L, "%s near %s", msg, txtToken(ls, token));
+    luaO_pushfstring(ls->L, termmsg(LXM_NEAR), msg, txtToken(ls, token));
   luaD_throw(ls->L, LUA_ERRSYNTAX);
 }
 
@@ -259,7 +253,7 @@ static void inclinenumber (LexState *ls) {
   if (currIsNewline(ls) && ls->current != old)
     next(ls);  /* skip '\n\r' or '\r\n' */
   if (++ls->linenumber >= MAX_INT)
-    lexerror(ls, "chunk has too many lines", 0);
+    lexerror(ls, termmsg(LXM_TOO_MANY_LINES), 0);
 }
 
 
@@ -274,7 +268,7 @@ void luaX_setinput (lua_State *L, LexState *ls, ZIO *z, TString *source,
   ls->linenumber = 1;
   ls->lastline = 1;
   ls->source = source;
-  ls->envn = luaS_newliteral(L, LUA_ENV);  /* get env name */
+  ls->envn = luaX_envname;  /* get env name */
   luaZ_resizebuffer(ls->L, ls->buff, LUA_MINBUFFER);  /* initialize buffer */
 }
 
@@ -334,7 +328,7 @@ static int read_numeral (LexState *ls, SemInfo *seminfo) {
   }
   save(ls, '\0');
   if (luaO_str2num(luaZ_buffer(ls->buff), &obj) == 0)  /* format error? */
-    lexerror(ls, "malformed number", TK_FLT);
+    lexerror(ls, termmsg(LXM_MALFORMED_NUMBER), TK_FLT);
   if (ttisinteger(&obj)) {
     seminfo->i = ivalue(&obj);
     return TK_INT;
@@ -373,9 +367,9 @@ static void read_long_string (LexState *ls, SemInfo *seminfo, int sep) {
   for (;;) {
     switch (ls->current) {
       case EOZ: {  /* error */
-        const char *what = (seminfo ? "string" : "comment");
+        const char *what = (seminfo ? termmsg(LXM_STRING) : termmsg(LXM_COMMENT));
         const char *msg = luaO_pushfstring(ls->L,
-                     "unfinished long %s (starting at line %d)", what, line);
+                     termmsg(LXM_UNFINISHED_LONG), what, line);
         lexerror(ls, msg, TK_EOS);
         break;  /* to avoid warnings */
       }
@@ -415,7 +409,7 @@ static void esccheck (LexState *ls, int c, const char *msg) {
 
 static int gethexa (LexState *ls) {
   save_and_next(ls);
-  esccheck (ls, lisxdigit(ls->current), "hexadecimal digit expected");
+  esccheck (ls, lisxdigit(ls->current), termmsg(LXM_HEXA_DIGIT));
   return luaO_hexavalue(ls->current);
 }
 
@@ -432,14 +426,14 @@ static unsigned long readutf8esc (LexState *ls) {
   unsigned long r;
   int i = 4;  /* chars to be removed: '\\', 'u', '{', and first digit */
   save_and_next(ls);  /* skip 'u' */
-  esccheck(ls, ls->current == '{', "missing '{'");
+  esccheck(ls, ls->current == '{', termmsg(LXM_MISSING_LBRACE));
   r = gethexa(ls);  /* must have at least one digit */
   while ((save_and_next(ls), lisxdigit(ls->current))) {
     i++;
     r = (r << 4) + luaO_hexavalue(ls->current);
-    esccheck(ls, r <= 0x10FFFF, "UTF-8 value too large");
+    esccheck(ls, r <= 0x10FFFF, termmsg(LXM_UTF8_TOO_LARGE));
   }
-  esccheck(ls, ls->current == '}', "missing '}'");
+  esccheck(ls, ls->current == '}', termmsg(LXM_MISSING_RBRACE));
   next(ls);  /* skip '}' */
   luaZ_buffremove(ls->buff, i);  /* remove saved chars from buffer */
   return r;
@@ -461,7 +455,7 @@ static int readdecesc (LexState *ls) {
     r = 10*r + ls->current - '0';
     save_and_next(ls);
   }
-  esccheck(ls, r <= UCHAR_MAX, "decimal escape too large");
+  esccheck(ls, r <= UCHAR_MAX, termmsg(LXM_DEC_ESCAPE_TOO_LARGE));
   luaZ_buffremove(ls->buff, i);  /* remove read digits from buffer */
   return r;
 }
@@ -472,11 +466,11 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
   while (ls->current != del) {
     switch (ls->current) {
       case EOZ:
-        lexerror(ls, "unfinished string", TK_EOS);
+        lexerror(ls, termmsg(LXM_UNFINISHED_STRING), TK_EOS);
         break;  /* to avoid warnings */
       case '\n':
       case '\r':
-        lexerror(ls, "unfinished string", TK_STRING);
+        lexerror(ls, termmsg(LXM_UNFINISHED_STRING), TK_STRING);
         break;  /* to avoid warnings */
       case '\\': {  /* escape sequences */
         int c;  /* final character to be saved */
@@ -506,7 +500,7 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
             goto no_save;
           }
           default: {
-            esccheck(ls, lisdigit(ls->current), "invalid escape sequence");
+            esccheck(ls, lisdigit(ls->current), termmsg(LXM_INVALID_ESCAPE));
             c = readdecesc(ls);  /* digital escape '\\ddd' */
             goto only_save;
           }
@@ -598,7 +592,7 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           return TK_STRING;
         }
         else if (sep != -1)  /* '[=...' missing second bracket */
-          lexerror(ls, "invalid long string delimiter", TK_STRING);
+          lexerror(ls, termmsg(LXM_INVALID_LONG_DELIM), TK_STRING);
         return '[';
       }
       case '=': {

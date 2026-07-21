@@ -47,6 +47,7 @@ TESTODOSIEROJ := $(sort $(wildcard $(TESTDOSIERUJO)/*.lupa) $(wildcard $(TESTDOS
 # Kion instali.
 AL_DUUMDOSIERO= lupe lupkodu
 TO_INKLUZIVARO= lua.h luaconf.h lualib.h lauxlib.h lua.hpp
+TO_TERMINARO := $(wildcard terminaro/*.lua terminaro/*.terms)
 TO_LIB= liblua.a
 TO_MAN= lua.1 luac.1
 
@@ -101,12 +102,15 @@ instali: vaki
 	cd fontaro && $(INSTALORULAĴO) $(AL_DUUMDOSIERO) $(INSTALODUUMDOSIERUJO)
 	cd fontaro && $(INSTALODATENO) $(TO_INKLUZIVARO) $(INSTALOINKLUZIVARO)
 	cd fontaro && $(INSTALODATENO) $(TO_LIB) $(INSTALOTEKARO)
+	cd . && $(DOSIERKREU) $(INSTALOLMOD)/terminaro
+	$(INSTALODATENO) $(TO_TERMINARO) $(INSTALOLMOD)/terminaro
 	cd dokumentaro && $(INSTALODATENO) $(TO_MAN) $(INSTALOMANLIBRARO)
 
 malinstali:
 	cd fontaro && cd $(INSTALODUUMDOSIERUJO) && $(FORIGU) $(AL_DUUMDOSIERO)
 	cd fontaro && cd $(INSTALOINKLUZIVARO) && $(FORIGU) $(TO_INKLUZIVARO)
 	cd fontaro && cd $(INSTALOTEKARO) && $(FORIGU) $(TO_LIB)
+	cd $(INSTALOLMOD) && $(FORIGU) terminaro/*.lua
 	cd dokumentaro && cd $(INSTALOMANLIBRARO) && $(FORIGU) $(TO_MAN)
 
 lokali:

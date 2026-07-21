@@ -1,0 +1,137 @@
+# Lexer terms for bootstrap
+ENV _ENV
+
+TOK and
+TOK break
+TOK do
+TOK else
+TOK elseif
+TOK end
+TOK false
+TOK for
+TOK function
+TOK goto
+TOK if
+TOK in
+TOK local
+TOK nil
+TOK not
+TOK or
+TOK repeat
+TOK return
+TOK then
+TOK true
+TOK until
+TOK while
+TOK //
+TOK ..
+TOK ...
+TOK ==
+TOK >=
+TOK <=
+TOK ~=
+TOK <nombra>
+TOK <indukta>
+TOK <noma>
+TOK <ĉena>
+
+ALIAS kaj
+ALIAS eksterŝalte
+ALIAS ekstersxalte
+ALIAS fare
+ALIAS alie
+ALIAS alise
+ALIAS hop
+ALIAS falsa
+ALIAS por
+ALIAS funkcie
+ALIAS tie
+ALIAS ŝalte
+ALIAS sxalte
+ALIAS se
+ALIAS el
+ALIAS loka
+ALIAS loke
+ALIAS ĉi
+ALIAS cxi
+ALIAS nilo
+ALIAS ne
+ALIAS aŭ
+ALIAS aux
+ALIAS cikle
+ALIAS reŝalte
+ALIAS resxalte
+ALIAS tiam
+ALIAS vera
+ALIAS ĝis
+ALIAS gxis
+ALIAS dum
+ALIAS onige
+ALIAS lige
+ALIAS ktp
+ALIAS egalas
+ALIAS egaligxas
+ALIAS almenaŭas
+ALIAS almenauxas
+ALIAS maksimumas
+ALIAS malegalas
+ALIAS nee
+ALIAS disaŭe
+ALIAS disauxe
+ALIAS superas
+ALIAS malinfraas
+ALIAS suras
+ALIAS malsubas
+ALIAS samas
+ALIAS malsamas
+ALIAS neegalas
+ALIAS nesamas
+ALIAS infraas
+ALIAS malsuperas
+ALIAS subas
+ALIAS malsuras
+ALIAS malalmenaŭas
+ALIAS malalmenauxas
+ALIAS kaje
+ALIAS aŭe
+ALIAS auxe
+ALIAS sobŝove
+ALIAS sobsxove
+ALIAS sorŝove
+ALIAS sorsxove
+ALIAS plus
+ALIAS mal
+ALIAS kontraŭ
+ALIAS kontraux
+ALIAS minus
+ALIAS disige
+ALIAS divide
+ALIAS ozle
+ALIAS parte
+ALIAS pece
+ALIAS kvociente
+ALIAS module
+ALIAS kongrue
+ALIAS alt
+ALIAS potencige
+ALIAS kroĉe
+ALIAS krocxe
+ALIAS sin
+
+ERR '%c'
+ERR '%s'
+ERR %s near %s
+ERR lexical element too long
+ERR chunk has too many lines
+ERR malformed number
+ERR hexadecimal digit expected
+ERR UTF-8 value too large
+ERR missing '{'
+ERR missing '}'
+ERR unfinished string
+ERR invalid escape sequence
+ERR decimal escape too large
+ERR invalid long string delimiter
+ERR unfinished long %s (starting at line %d)
+ERR comment
+ERR string

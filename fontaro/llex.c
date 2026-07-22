@@ -112,6 +112,7 @@ static const struct {
   { "neegalas",TK_NE },
   { "nesamas",TK_NE },
   { "en", TK_LT },
+  { "suf", TK_LT },
   { "infraas", TK_LT },
   { "malsuperas", TK_LT },
   { "sub", TK_LE },

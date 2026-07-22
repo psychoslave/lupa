@@ -152,6 +152,7 @@ loke funkcie operatoroj·testi()
   asertu((5 superas 4) == vera, 'superas MISE')
   asertu((5 malinfraas 4) == vera, 'malinfraas MISE')
   asertu((4 en 5) == vera, 'en MISE')
+  asertu((4 suf 5) == vera, 'suf MISE')
   asertu((4 infraas 5) == vera, 'infraas MISE')
   asertu((4 malsuperas 5) == vera, 'malsuperas MISE')
 

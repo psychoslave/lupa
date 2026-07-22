@@ -103,6 +103,8 @@ static const struct {
   { "sur", TK_GE },
   { "suras", TK_GE },
   { "malsubas", TK_GE },
+  { "baŭ",   TK_EQ },
+  { "baux",   TK_EQ },
   { "samas",   TK_EQ },
   { "zaŭ",     TK_NE },
   { "zaux",    TK_NE },
@@ -125,6 +127,8 @@ static const struct {
   { "sorŝove", TK_SHL },
   { "sorsxove", TK_SHL },
   { "plus", TK_ADD },
+  { "oble", TK_MUL },
+  { "multiplike", TK_MUL },
   { "mal", TK_MINUS },
   { "kontraŭ", TK_MINUS },
   { "kontraux", TK_MINUS },
@@ -650,6 +654,10 @@ static int llex (LexState *ls, SemInfo *seminfo) {
         next(ls);
         if (check_next1(ls, '/')) return TK_IDIV;
         else return '/';
+      }
+      case '*': {
+        next(ls);
+        return TK_MUL;
       }
       case '~': {
         next(ls);

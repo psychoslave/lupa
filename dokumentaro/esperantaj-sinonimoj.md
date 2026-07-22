@@ -51,7 +51,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `//` -> `onige`, `parte`, `pece`, `kvociente`
 - `..` -> `lige`, `kroĉe`, `krocxe`
 - `...` -> `ktp`
-- `==` -> `egalas`, `samas`
+- `==` -> `baŭ`, `egalas`, `samas`
 - `>=` -> `sur`, `suras`, `almenaŭas`, `almenauxas`, `malsubas`
 - `<=` -> `sub`, `subas`, `maksimumas`, `malsuras`, `malalmenaŭas`, `malalmenauxas`
 - `~=` -> `zaŭ`, `zaux`, `malsamas`, `neegalas`, `nesamas`
@@ -64,6 +64,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `>>` -> `sobŝove`, `sobsxove`
 - `<<` -> `sorŝove`, `sorsxove`
 - `+` -> `plus`
+- `*` -> `oble`, `multiplike`
 - `-` (unuargumenta minuso) -> `mal`, `kontraŭ`, `kontraux`
 - `-` (duargumenta subtraho) -> `minus`
 - `/` -> `disige`, `divide`, `ozle`
@@ -71,6 +72,18 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `^` -> `alt`, `potencige`
 - `:` -> `sin`
 - `=` -> `iĝu`, `igxu`, `iĝe`, `igxe`
+
+### Notoj pri leksema simetrion
+
+**Baŭ** por `==` (egaleco) kaj **zaŭ** por `~=` (neegaleco) kreigas etimologian simetrion:
+- **`baŭ`**: Unua konsonanto de la esperanta alfabeto (b)
+- **`zaŭ`**: Lasta konsonanto de la esperanta alfabeto (z)
+
+Simile, **oble** por `*` (multiplikado) kaj **ozle** por `/` (dividado) kreigas lekseman simetrion:
+- **`oble`**: Enhavas "b" (unua konsonanto) - konstruita analoge al "duplo" kaj "triplo"
+- **`ozle`**: Enhavas "z" (lasta konsonanto) - konstruita kiel spegulo al "oble"
+
+Ĉi tiu simetrio reflektas la operacian simetrion de multiplikado kaj dividado, kaj evitas kolizion kun PIV-aj vortoj.
 
 ### Notoj pri mallongaj relacianoj
 

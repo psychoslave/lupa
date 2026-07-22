@@ -41,6 +41,7 @@ enum RESERVED {
   , TK_GT /* greater than operator */
   , TK_LT /* lower than operator */
   , TK_ADD /* addition operator */
+  , TK_MUL /* multiplication operator */
   , TK_MINUS /* unary opposite operator */
   , TK_SUB /* substraction */
   , TK_DIV /* double division */

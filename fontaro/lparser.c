@@ -1002,6 +1002,7 @@ static BinOpr getbinopr (int op) {
     case '-': return OPR_SUB;
     case TK_SUB: return OPR_SUB;
     case '*': return OPR_MUL;
+    case TK_MUL: return OPR_MUL;
     case '%': return OPR_MOD;
     case TK_MOD: return OPR_MOD;
     case '^': return OPR_POW;

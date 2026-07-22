@@ -596,6 +596,18 @@ static int issemicolonalias (TString *ts) {
   return (longo == 2 && memcmp(nomo, "nu", 2) == 0);
 }
 
+static int isdotalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return (longo == 6 && memcmp(nomo, "propra", 6) == 0);
+}
+
+static int isselfalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return (longo == 3 && memcmp(nomo, "sia", 3) == 0);
+}
+
 static int nametotoken (TString *ts) {
   if (isreserved(ts)) {
     int token = ts->extra - 1 + FIRST_RESERVED;
@@ -607,6 +619,8 @@ static int nametotoken (TString *ts) {
     return ',';
   if (issemicolonalias(ts))
     return ';';
+  if (isdotalias(ts))
+    return '.';
   return TK_NAME;
 }
 
@@ -719,6 +733,8 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           }
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
+          if (isselfalias(ts))
+            ts = luaS_newliteral(ls->L, "self");
           seminfo->ts = ts;
           return nametotoken(ts);
         }
@@ -771,6 +787,8 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
+          if (isselfalias(ts))
+            ts = luaS_newliteral(ls->L, "self");
           seminfo->ts = ts;
           return nametotoken(ts);
         }

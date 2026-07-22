@@ -92,6 +92,9 @@ loke funkcie ŝlosilvortaro·testi()
   asertu(p1 + p2 == 42, 'plie MISE')
   ĉi m1 tuj m2 plie m3 = 10 plie 20 tuj 12
   asertu(m1 + m2 + m3 == 42, 'tuj/plie miksita MISE')
+  ĉi io iĝu 0
+  io iĝe 1 nu io iĝe io plus 41
+  asertu(io baŭ 42, 'nu MISE')
 
   funkcie f1()
     reŝalte 11

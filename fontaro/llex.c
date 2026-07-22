@@ -590,6 +590,12 @@ static int iscommaalias (TString *ts) {
           (longo == 4 && memcmp(nomo, "plie", 4) == 0));
 }
 
+static int issemicolonalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return (longo == 2 && memcmp(nomo, "nu", 2) == 0);
+}
+
 static int nametotoken (TString *ts) {
   if (isreserved(ts)) {
     int token = ts->extra - 1 + FIRST_RESERVED;
@@ -599,6 +605,8 @@ static int nametotoken (TString *ts) {
     return '=';
   if (iscommaalias(ts))
     return ',';
+  if (issemicolonalias(ts))
+    return ';';
   return TK_NAME;
 }
 

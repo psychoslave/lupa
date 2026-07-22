@@ -135,17 +135,22 @@ loke funkcie operatoroj·testi()
 
   asertu((4 almenaŭas 4) == vera, 'almenaŭas MISE')
   asertu((4 almenauxas 4) == vera, 'almenauxas MISE')
+  asertu((4 sur 4) == vera, 'sur MISE')
   asertu((4 suras 4) == vera, 'suras MISE')
   asertu((4 malsubas 4) == vera, 'malsubas MISE')
 
   asertu((4 maksimumas 4) == vera, 'maksimumas MISE')
+  asertu((4 sub 4) == vera, 'sub MISE')
   asertu((4 subas 4) == vera, 'subas MISE')
   asertu((4 malsuras 4) == vera, 'malsuras MISE')
   asertu((4 malalmenaŭas 4) == vera, 'malalmenaŭas MISE')
   asertu((4 malalmenauxas 4) == vera, 'malalmenauxas MISE')
 
+  asertu((5 sup 4) == vera, 'sup MISE')
+  asertu((5 super 4) == vera, 'super MISE')
   asertu((5 superas 4) == vera, 'superas MISE')
   asertu((5 malinfraas 4) == vera, 'malinfraas MISE')
+  asertu((4 en 5) == vera, 'en MISE')
   asertu((4 infraas 5) == vera, 'infraas MISE')
   asertu((4 malsuperas 5) == vera, 'malsuperas MISE')
 

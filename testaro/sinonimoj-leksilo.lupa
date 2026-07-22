@@ -64,6 +64,22 @@ loke funkcie ŝlosilvortaro·testi()
     asertu(interna == 42, 'fare-bloko MISE')
   hop
 
+  loka asignita iĝu 9
+  asertu(asignita == 9, 'iĝu MISE')
+  asignita iĝe asignita + 1
+  asertu(asignita == 10, 'iĝe MISE')
+
+  loka dua igxu 3
+  dua igxe dua * 2
+  asertu(dua == 6, 'igxu/igxe MISE')
+  asertu((dua == 6) == vera, 'iĝu/iĝe ne rompu == MISE')
+
+  --[=[ Longa komento kun "=" kaj "==" ne rajtas influi leksadon.
+  iĝu iĝe igxu igxe = ==
+  ]=]
+  loka post_komento iĝe 4
+  asertu(post_komento == 4, '--[=[ ... ]=] MISE')
+
   loka x = 5
   loke y = 6
   ĉi z = 7
@@ -111,6 +127,8 @@ loke funkcie operatoroj·testi()
   asertu((3 egalas 3) == vera, 'egalas MISE')
   asertu((3 samas 3) == vera, 'samas MISE')
   asertu((3 malegalas 4) == vera, 'malegalas MISE')
+  asertu((3 zaŭ 4) == vera, 'zaŭ MISE')
+  asertu((3 zaux 4) == vera, 'zaux MISE')
   asertu((3 malsamas 4) == vera, 'malsamas MISE')
   asertu((3 neegalas 4) == vera, 'neegalas MISE')
   asertu((3 nesamas 4) == vera, 'nesamas MISE')
@@ -150,6 +168,8 @@ loke funkcie operatoroj·testi()
   asertu((8 disige 2) == 4, 'disige MISE')
   asertu((8 divide 2) == 4, 'divide MISE')
   asertu((8 ozle 2) == 4, 'ozle MISE')
+  asertu((8 laŭ 3) == 2, 'laŭ MISE')
+  asertu((8 laux 3) == 2, 'laux MISE')
   asertu((8 module 3) == 2, 'module MISE')
   asertu((8 kongrue 3) == 2, 'kongrue MISE')
   asertu((2 alt 5) == 32, 'alt MISE')

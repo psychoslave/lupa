@@ -18,6 +18,15 @@ Kiam klavaro ne facile tajpas diakritojn, Lupa subtenas `-x` formojn (ekz. `ŝar
 - `break` -> `eksterŝalte`, `ekstersxalte`
 - `do` -> `fare`
 - `else` -> `alie`
+
+### Noto pri `~=` (neegala) kaj `zaŭ` neologismo
+
+Antaŭe, `alie` servis kaŭ sinonimo de ambeŭ `else` (ŝlosilvortoj) kaj `~=` (operatoro). Tio kreis semantikan konflikon. Pro tio, ni revenis `alie` al eksklusiva rolo kiel `else`.
+
+Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiajn `-x` formon **`zaux`**) kiel mallongan alternativon al `malsamas`.
+
+*Zaŭ* estas libere inspirata de *kvazaŭ* (= Latina *quasi*) por providi mallongan terminon. Kvankam etimologie neĉiela, ĝi ŝajnas ege taŭga opsiono, konsiderante la celon de klareco kaj breveco.
+
 - `elseif` -> `alise`
 - `end` -> `hop`
 - `false` -> `falsa`
@@ -45,7 +54,7 @@ Kiam klavaro ne facile tajpas diakritojn, Lupa subtenas `-x` formojn (ekz. `ŝar
 - `==` -> `egalas`, `samas`
 - `>=` -> `almenaŭas`, `almenauxas`, `suras`, `malsubas`
 - `<=` -> `maksimumas`, `subas`, `malsuras`, `malalmenaŭas`, `malalmenauxas`
-- `~=` -> `malegalas`, `malsamas`, `neegalas`, `nesamas`
+- `~=` -> `zaŭ`, `zaux`, `malsamas`, `neegalas`, `nesamas`
 - `~` (unuargumenta bitinverso) -> `nee`
 - `~` (duargumenta bit-XOR) -> `disaŭe`, `disauxe`
 - `>` -> `superas`, `malinfraas`
@@ -58,9 +67,10 @@ Kiam klavaro ne facile tajpas diakritojn, Lupa subtenas `-x` formojn (ekz. `ŝar
 - `-` (unuargumenta minuso) -> `mal`, `kontraŭ`, `kontraux`
 - `-` (duargumenta subtraho) -> `minus`
 - `/` -> `disige`, `divide`, `ozle`
-- `%` -> `module`, `kongrue`
+- `%` -> `laŭ`, `laux`, `module`, `kongrue`
 - `^` -> `alt`, `potencige`
 - `:` -> `sin`
+- `=` -> `iĝu`, `igxu`, `iĝe`, `igxe`
 
 ## Bazbibliotekaj sinonimoj (`lbaselib`)
 

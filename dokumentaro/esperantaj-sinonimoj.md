@@ -41,6 +41,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `or` -> `aŭ`, `aux`
 - `repeat` -> `cikle`
 - `return` -> `reŝalte`, `resxalte`
+- `self` (nomo de metoda ricevilo) -> `sia`
 - `then` -> `tiam`
 - `true` -> `vera`
 - `until` -> `ĝis`, `gxis`
@@ -70,6 +71,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `/` -> `disige`, `divide`, `ozle`
 - `%` -> `laŭ`, `laux`, `module`, `kongrue`
 - `^` -> `alt`, `potencige`
+- `.` -> `propra`
 - `:` -> `sin`
 - `=` -> `iĝu`, `igxu`, `iĝe`, `igxe`
 - `;` -> `nu`

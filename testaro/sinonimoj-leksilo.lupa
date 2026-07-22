@@ -194,12 +194,13 @@ loke funkcie operatoroj·testi()
   asertu((2 alt 5) == 32, 'alt MISE')
   asertu((2 potencige 5) == 32, 'potencige MISE')
 
-  loka o = { b = 40 }
-  funkcie o.aldonu(self, x)
-    reŝalte self.b + x
+  ĉi io = { ero = 40 plie sekreto = 42 }
+  asertu((io propra sekreto) == 42 plie 'propra MISE')
+  funkcie io propra aldonu(sia tuj aldonaĵo)
+    reŝalte sia propra ero plus aldonaĵo
   hop
-  asertu(o:aldonu(2) == 42, ': MISE')
-  asertu((o sin aldonu(2)) == 42, 'sin MISE')
+  asertu(io:aldonu(2) == 42, ': MISE')
+  asertu((io sin aldonu(2)) == 42, 'sin MISE')
 
   ĉi tie nombri(ktp)
     reŝalte select('#', ktp)

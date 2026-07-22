@@ -101,6 +101,8 @@ static const struct {
   { "suras", TK_GE },
   { "malsubas", TK_GE },
   { "samas",   TK_EQ },
+  { "zaŭ",     TK_NE },
+  { "zaux",    TK_NE },
   { "malsamas",TK_NE },
   { "neegalas",TK_NE },
   { "nesamas",TK_NE },
@@ -120,7 +122,7 @@ static const struct {
   { "plus", TK_ADD },
   { "mal", TK_MINUS },
   { "kontraŭ", TK_MINUS },
-{ "kontraux", TK_MINUS },
+  { "kontraux", TK_MINUS },
   { "minus", TK_SUB },
   { "disige", TK_DIV },
   { "divide", TK_DIV },
@@ -128,6 +130,8 @@ static const struct {
   { "parte", TK_IDIV },
   { "pece", TK_IDIV },
   { "kvociente", TK_IDIV },
+  { "laŭ", TK_MOD },
+  { "laux", TK_MOD },
   { "module", TK_MOD },
   { "kongrue", TK_MOD },
   { "alt", TK_POW },
@@ -560,6 +564,25 @@ static void saveutf8seq(LexState *ls) {
   }
 }
 
+static int isassignalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return ((longo == 4 && memcmp(nomo, "iĝu", 4) == 0) ||
+          (longo == 4 && memcmp(nomo, "igxu", 4) == 0) ||
+          (longo == 4 && memcmp(nomo, "iĝe", 4) == 0) ||
+          (longo == 4 && memcmp(nomo, "igxe", 4) == 0));
+}
+
+static int nametotoken (TString *ts) {
+  if (isreserved(ts)) {
+    int token = ts->extra - 1 + FIRST_RESERVED;
+    return token;
+  }
+  if (isassignalias(ts))
+    return '=';
+  return TK_NAME;
+}
+
 static int llex (LexState *ls, SemInfo *seminfo) {
   luaZ_resetbuffer(ls->buff);
   for (;;) {
@@ -666,11 +689,7 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
           seminfo->ts = ts;
-          if (isreserved(ts))  /* reserved word? */
-            return ts->extra - 1 + FIRST_RESERVED;
-          else {
-            return TK_NAME;
-          }
+          return nametotoken(ts);
         }
         /* UTF-8 identifier start (non-ASCII) */
         else if ((unsigned char)ls->current >= 0xC0) {
@@ -722,11 +741,7 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
           seminfo->ts = ts;
-          if (isreserved(ts))  /* reserved word? */
-            return ts->extra - 1 + FIRST_RESERVED;
-          else {
-            return TK_NAME;
-          }
+          return nametotoken(ts);
         }
         else {  /* single-char tokens (+ - / ...) */
           int c = ls->current;

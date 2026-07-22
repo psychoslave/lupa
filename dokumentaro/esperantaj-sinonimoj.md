@@ -85,9 +85,9 @@ Simile, **oble** por `*` (multiplikado) kaj **ozle** por `/` (dividado) kreigas 
 
 Ĉi tiu simetrio reflektas la operacian simetrion de multiplikado kaj dividado, kaj evitas kolizion kun PIV-aj vortoj.
 
-### Notoj pri mallongaj relacianoj
+### Notoj pri mallongaj rilatsignoj
 
-Ĉiuj relaciai operatoroj havas almenaŭ unu mallongan (maksimume 3-signa) sinonimo:
+Ĉiuj rilataj operatoroj havas almenaŭ unu mallongan (maksimume 3-signa) sinonimo:
 
 - **`sup`** por `>` (mallongigo de *supra* = supra/super, kiu parigas bone kun *sub*). 
   Atestita en [tekstaro.com](https://tekstaro.com/t?nomo=ondo-de-esperanto&uzistreketojn=0&tipo=&sekcio=LOdE-1999-10&antauasekcio=1&postasekcio=1):

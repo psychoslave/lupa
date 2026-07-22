@@ -52,13 +52,13 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `..` -> `lige`, `kroĉe`, `krocxe`
 - `...` -> `ktp`
 - `==` -> `egalas`, `samas`
-- `>=` -> `almenaŭas`, `almenauxas`, `suras`, `malsubas`
-- `<=` -> `maksimumas`, `subas`, `malsuras`, `malalmenaŭas`, `malalmenauxas`
+- `>=` -> `sur`, `suras`, `almenaŭas`, `almenauxas`, `malsubas`
+- `<=` -> `sub`, `subas`, `maksimumas`, `malsuras`, `malalmenaŭas`, `malalmenauxas`
 - `~=` -> `zaŭ`, `zaux`, `malsamas`, `neegalas`, `nesamas`
 - `~` (unuargumenta bitinverso) -> `nee`
 - `~` (duargumenta bit-XOR) -> `disaŭe`, `disauxe`
-- `>` -> `superas`, `malinfraas`
-- `<` -> `infraas`, `malsuperas`
+- `>` -> `sup`, `super`, `superas`, `malinfraas`
+- `<` -> `en`, `infraas`, `malsuperas`
 - `&` -> `kaje`
 - `|` -> `aŭe`, `auxe`
 - `>>` -> `sobŝove`, `sobsxove`
@@ -71,6 +71,20 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `^` -> `alt`, `potencige`
 - `:` -> `sin`
 - `=` -> `iĝu`, `igxu`, `iĝe`, `igxe`
+
+### Notoj pri mallongaj relacianoj
+
+Ĉiuj relaciai operatoroj havas almenaŭ unu mallongan (maksimume 3-signa) sinonimo:
+
+- **`sup`** por `>` (mallongigo de *supra* = supra/super, kiu parigas bone kun *sub*). 
+  Atestita en [tekstaro.com](https://tekstaro.com/t?nomo=ondo-de-esperanto&uzistreketojn=0&tipo=&sekcio=LOdE-1999-10&antauasekcio=1&postasekcio=1):
+  > "SVI aperas averaĝe ĉiun trian semajnon, sup aperis kvinfoje en la jaro."
+  
+  Verŝajne apokopio de "supra", kaj ĝi eĉ bone respondas al "sub" laŭ terminaloga formo.
+
+- **`sur`** por `>=` (de *supra* + direkto)
+- **`sub`** por `<=` (de *sub* = sub/malsupra, kiu parigas bone kun *sup*)
+- **`en`** por `<` (semantike: "3 estas *en* 5" = 3 estas *interne de* 5, ĉar 3 < 5)
 
 ## Bazbibliotekaj sinonimoj (`lbaselib`)
 

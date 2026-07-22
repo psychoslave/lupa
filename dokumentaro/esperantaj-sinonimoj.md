@@ -58,7 +58,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `~` (unuargumenta bitinverso) -> `nee`
 - `~` (duargumenta bit-XOR) -> `disaŭe`, `disauxe`
 - `>` -> `sup`, `super`, `superas`, `malinfraas`
-- `<` -> `en`, `infraas`, `malsuperas`
+- `<` -> `en`, `suf`, `infraas`, `malsuperas`
 - `&` -> `kaje`
 - `|` -> `aŭe`, `auxe`
 - `>>` -> `sobŝove`, `sobsxove`
@@ -97,6 +97,7 @@ Simile, **oble** por `*` (multiplikado) kaj **ozle** por `/` (dividado) kreigas 
 
 - **`sur`** por `>=` (de *supra* + direkto)
 - **`sub`** por `<=` (de *sub* = sub/malsupra, kiu parigas bone kun *sup*)
+- **`suf`** por `<` (mallonga membro de la sama `su-` familio; postfakta etimologia subteno eblas per formoj kiel *sufiĉa* < lat. *subfacere*, *sufikso* < lat. *subfigere*, k.a.)
 - **`en`** por `<` (semantike: "3 estas *en* 5" = 3 estas *interne de* 5, ĉar 3 < 5)
 
 ## Bazbibliotekaj sinonimoj (`lbaselib`)
@@ -141,4 +142,3 @@ La rilataj testoj troviĝas en:
 - `testaro/lua53-kongruo.lua`
 
 La tria testdosiero provas kondutan kongruon inter Lua 5.3 kaj Lupa por kanona Lua-kodo (sen Lupa-specifaj sinonimoj).
-

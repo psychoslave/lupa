@@ -86,6 +86,13 @@ loke funkcie ŝlosilvortaro·testi()
   cxi a = 1
   asertu(x + y + z + a == 19, 'loka/loke/ĉi/cxi MISE')
 
+  ĉi t1 tuj t2 = 11 tuj 31
+  asertu(t1 + t2 == 42, 'tuj MISE')
+  ĉi p1 plie p2 = 19 plie 23
+  asertu(p1 + p2 == 42, 'plie MISE')
+  ĉi m1 tuj m2 plie m3 = 10 plie 20 tuj 12
+  asertu(m1 + m2 + m3 == 42, 'tuj/plie miksita MISE')
+
   funkcie f1()
     reŝalte 11
   hop

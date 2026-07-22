@@ -72,6 +72,9 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `^` -> `alt`, `potencige`
 - `:` -> `sin`
 - `=` -> `iĝu`, `igxu`, `iĝe`, `igxe`
+- `,` -> `tuj`, `plie`
+
+La parsero jam distingas la kuntekstojn de `,` (ekz. disigo de esprimoj, nomlistoj, argumentoj); `tuj` kaj `plie` mapigas al la sama komo-signo.
 
 ### Notoj pri leksema simetrion
 

@@ -583,6 +583,13 @@ static int isassignalias (TString *ts) {
           (longo == 4 && memcmp(nomo, "igxe", 4) == 0));
 }
 
+static int iscommaalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return ((longo == 3 && memcmp(nomo, "tuj", 3) == 0) ||
+          (longo == 4 && memcmp(nomo, "plie", 4) == 0));
+}
+
 static int nametotoken (TString *ts) {
   if (isreserved(ts)) {
     int token = ts->extra - 1 + FIRST_RESERVED;
@@ -590,6 +597,8 @@ static int nametotoken (TString *ts) {
   }
   if (isassignalias(ts))
     return '=';
+  if (iscommaalias(ts))
+    return ',';
   return TK_NAME;
 }
 

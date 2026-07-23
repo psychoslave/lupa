@@ -150,6 +150,7 @@ static const struct {
   { "krocxe",TK_CONCAT }, //
   { "sin", TK_COLON }, // :
   { "ke", TK_COLON }, // :
+  { "ho", TK_DBCOLON }, // ::
 };
 
 #define save_and_next(ls) (save(ls, ls->current), next(ls))

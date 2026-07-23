@@ -73,11 +73,14 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `^` -> `alt`, `potencige`
 - `.` -> `propra`
 - `:` -> `sin`, `ke`
+- `::` -> `ho`
 - `=` -> `iĝu`, `igxu`, `iĝe`, `igxe`
 - `;` -> `nu`
 - `,` -> `tuj`, `plie`
 
 La parsero jam distingas la kuntekstojn de `,` (ekz. disigo de esprimoj, nomlistoj, argumentoj); `tuj` kaj `plie` mapigas al la sama komo-signo.
+
+Por `::`, la sinonimo `ho` baziĝas sur la vokativa interjekcio en Esperanto: ĝi semantike markas alvokon/alparolon al etikedo-celo (`ho etikedo ho`).
 
 ### Notoj pri leksema simetrion
 

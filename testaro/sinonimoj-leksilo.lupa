@@ -109,17 +109,23 @@ loke funkcie ŝlosilvortaro·testi()
   asertu(f2() == 13, 'reŝalte MISE')
   asertu(f3() == 17, 'ĉi tie/funkcie MISE')
 
-  loka g = 0
-  ŝalte L1
-  g = 99
-  ::L1::
-  asertu(g == 0, 'ŝalte MISE')
+  loka elemento = 0
+  ŝalte poste
+  elemento = 99
+  ::poste::
+  asertu(elemento == 0, 'ŝalte MISE')
 
-  loka g2 = 0
-  ŝalte L2
-  g2 = 99
-  ::L2::
-  asertu(g2 == 0, 'ŝalte MISE')
+  loka objekto = 1
+  ŝalte ĉi·poste
+  objekto = 99
+  ::ĉi·poste::
+  asertu(objekto == 1, 'ŝalte MISE')
+
+  ĉi aĵo iĝu 2
+  ŝalte ŝparvojo
+  aĵo iĝe 99
+  ho ŝparvojo ho
+  asertu(aĵo baŭ 2, 'ho/ŝalte MISE')
 
   reŝalte vera
 hop

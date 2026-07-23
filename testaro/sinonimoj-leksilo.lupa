@@ -201,6 +201,7 @@ loke funkcie operatoroj·testi()
   hop
   asertu(io:aldonu(2) == 42, ': MISE')
   asertu((io sin aldonu(2)) == 42, 'sin MISE')
+  asertu((io ke aldonu(2)) == 42, 'ke MISE')
 
   ĉi tie nombri(ktp)
     reŝalte select('#', ktp)

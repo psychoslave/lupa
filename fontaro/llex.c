@@ -601,7 +601,9 @@ static int issemicolonalias (TString *ts) {
 static int isdotalias (TString *ts) {
   size_t longo = tsslen(ts);
   const char *nomo = getstr(ts);
-  return (longo == 6 && memcmp(nomo, "propra", 6) == 0);
+  return ((longo == 2 && memcmp(nomo, "ie", 2) == 0) ||
+          (longo == 4 && memcmp(nomo, "ties", 4) == 0) ||
+          (longo == 6 && memcmp(nomo, "propra", 6) == 0));
 }
 
 static int isselfalias (TString *ts) {

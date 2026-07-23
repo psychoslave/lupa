@@ -202,6 +202,8 @@ loke funkcie operatoroj·testi()
 
   ĉi io = { ero = 40 plie sekreto = 42 }
   asertu((io propra sekreto) == 42 plie 'propra MISE')
+  asertu((io ie sekreto) == 42 plie 'ie MISE')
+  asertu((io ties sekreto) == 42 plie 'ties MISE')
   funkcie io propra aldonu(sia tuj aldonaĵo)
     reŝalte sia propra ero plus aldonaĵo
   hop

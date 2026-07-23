@@ -71,7 +71,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `/` -> `disige`, `divide`, `ozle`
 - `%` -> `laŭ`, `laux`, `module`, `kongrue`
 - `^` -> `alt`, `potencige`
-- `.` -> `propra`
+- `.` -> `propra`, `ie`, `ties`
 - `:` -> `sin`, `ke`
 - `::` -> `ho`
 - `=` -> `iĝu`, `igxu`, `iĝe`, `igxe`

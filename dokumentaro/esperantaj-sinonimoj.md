@@ -36,7 +36,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `if` -> `se`
 - `in` -> `el`
 - `local` -> `loka`, `loke`, `ĉi`, `cxi`
-- `nil` -> `nilo`
+- `nil` -> `nenio`, `neo`
 - `not` -> `ne`
 - `or` -> `aŭ`, `aux`
 - `repeat` -> `cikle`

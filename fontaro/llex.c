@@ -70,7 +70,8 @@ static const struct {
   { "loke", TK_LOCAL },         // local
   { "ĉi", TK_LOCAL },          // local
   { "cxi", TK_LOCAL },           // local
-  { "nilo", TK_NIL },           // nil
+  { "nenio", TK_NIL },          // nil
+  { "neo", TK_NIL },            // nil
   { "ne", TK_NOT },             // not
   { "aŭ", TK_OR },              // or
   { "aux", TK_OR },             // or

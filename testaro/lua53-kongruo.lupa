@@ -15,7 +15,7 @@ hop
 ĉi tie havas_lua53()
   loke statuso, eligo = ruli("lua -v")
   se ne statuso tiam reŝalte falsa hop
-  reŝalte eligo:find("Lua 5%.3", 1, falsa) ~= nilo
+  reŝalte eligo:find("Lua 5%.3", 1, falsa) ~= nenio
 hop
 
 se ne havas_lua53() tiam
@@ -62,4 +62,3 @@ se lua·eligo ~= lupa·eligo tiam
 hop
 
 printe("[BONE] lua53-kongruo.lua")
-

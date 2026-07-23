@@ -5,7 +5,8 @@ loke funkcie ŝlosilvortaro·testi()
   asertu((vera kaj ne falsa) == vera, 'kaj/ne/falsa/vera MISE')
   asertu((falsa aŭ vera) == vera, 'aŭ MISE')
   asertu((falsa aux vera) == vera, 'aux MISE')
-  asertu(nilo == nil, 'nilo MISE')
+  asertu(nenio == nil, 'nenio MISE')
+  asertu(neo == nil, 'neo MISE')
 
   loke valoro = 0
   se 2 superas 1 tiam

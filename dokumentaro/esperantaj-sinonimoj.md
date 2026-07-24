@@ -79,9 +79,31 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `;` -> `nu`
 - `,` -> `tuj`, `plie`
 
-La parsero jam distingas la kuntekstojn de `,` (ekz. disigo de esprimoj, nomlistoj, argumentoj); `tuj` kaj `plie` mapigas al la sama komo-signo.
+La sintaksanalizilo jam distingas la kuntekstojn de `,` (ekz. disigo de esprimoj, nomlistoj, argumentoj); `tuj` kaj `plie` mapigas al la sama komo-signo.
 
 Por `::`, la sinonimo `ho` baziĝas sur la vokativa interjekcio en Esperanto: ĝi semantike markas alvokon/alparolon al etikedo-celo (`ho etikedo ho`).
+
+### Klarigoj pri la realigitaj formoj
+
+- `break` (`eksterŝalte`, `ekstersxalte`, `rompe`) estas la elireja ordono por tuj forlasi ciklon aŭ blokon; la ŝalt-derivaĵoj emfazas subitan ŝanĝon de stato.
+- `function` (`funkcie`, `tie`, `verbe`, `age`) markas funkciodifinon; la proponoj celas nomi agon aŭ funkcion sen perdi la funkcio-noman rolon.
+- `local` (`loka`, `loke`, `ĉi`, `cxi`) markas lokan amplekson; la tradukoj emfazas ke la sekva nomo restas limigita al la nuna kodo.
+- `return` (`reŝalte`, `resxalte`) estas la kunulo de `break`: ĝi “ŝaltas reen” kun valoro aŭ sen ĝi.
+- `==` (`baŭ`, `egalas`, `samas`) estas egaleco; la mallonga formo `baŭ` tenas la saman b/ z-simetrian ideon kiel `zaŭ`.
+- `~=` (`zaŭ`, `zaux`, `malsamas`, `neegalas`, `nesamas`) estas neegaleco; `zaŭ` estas la spegulo de `baŭ`.
+- `>`/`<`/`>=`/`<=` uzas la mallongajn familiojn `sup`/`sub`/`sur`/`suf` por konservi la ord-rilatan semantikon sen tro longa vortumo.
+- `*` (`oble`, `multiplike`) kaj `/` (`disige`, `divide`, `ozle`) sekvas la saman lekseman simetrion kiel `baŭ`/`zaŭ`.
+- `//` (`onige`, `parte`, `pece`, `kvociente`) estas la kvocienta formo de divido.
+- `%` (`laŭ`, `laux`, `module`, `kongrue`) estas la resta/modula formo; `laŭ` substrekas “proporcie al”.
+- `#` (`pese`, `kiom`, `kvante`, `amplekse`) mezuras la amplekson aŭ longon de la valoro.
+- `^` (`alt`, `potencige`) estas la potenciga operatoro.
+- `.` (`propra`, `ie`, `ties`) estas la membra aliro; `ties` donas la mallongan tabelan aliron.
+- `:` (`sin`, `ke`) estas la refleksiva metodvoko; la ricevilo restas la sama objekto.
+- `::` (`ho`) markas etikedon por `ŝalte`/`sxalte`.
+- `...` (`ktp`) estas la variadika/“variloka” esprimo.
+- `,` (`tuj`, `plie`) apartigas esprimojn, nomlistojn kaj argumentojn; la sintaksanalizilo elektas la ĝustan rolon laŭ kunteksto.
+- `;` (`nu`) estas la propozicia disigilo.
+
 
 ### Notoj pri leksema simetrion
 

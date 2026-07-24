@@ -40,7 +40,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `not` -> `ne`
 - `or` -> `aŭ`, `aux`
 - `repeat` -> `cikle`
-- `return` -> `reŝalte`, `resxalte`
+- `return` -> `reŝalte`, `resxalte`, `raŭ`, `raux`
 - `self` (nomo de metoda ricevilo) -> `sia`
 - `then` -> `tiam`
 - `true` -> `vera`
@@ -62,8 +62,8 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `<` -> `en`, `suf`, `infraas`, `malsuperas`
 - `&` -> `kaje`
 - `|` -> `aŭe`, `auxe`
-- `>>` -> `sobŝove`, `sobsxove`
-- `<<` -> `sorŝove`, `sorsxove`
+- `>>` -> `sob`, `sobŝove`, `sobsxove`
+- `<<` -> `sor`, `sorŝove`, `sorsxove`
 - `+` -> `plus`
 - `*` -> `oble`, `multiplike`
 - `#` -> `pese`, `kiom`, `kvante`, `amplekse`
@@ -88,7 +88,7 @@ Por `::`, la sinonimo `ho` baziĝas sur la vokativa interjekcio en Esperanto: ĝ
 - `break` (`eksterŝalte`, `ekstersxalte`, `rompe`) estas la elireja ordono por tuj forlasi ciklon aŭ blokon; la ŝalt-derivaĵoj emfazas subitan ŝanĝon de stato.
 - `function` (`funkcie`, `tie`, `verbe`, `age`) markas funkciodifinon; la proponoj celas nomi agon aŭ funkcion sen perdi la funkcio-noman rolon.
 - `local` (`loka`, `loke`, `ĉi`, `cxi`) markas lokan amplekson; la tradukoj emfazas ke la sekva nomo restas limigita al la nuna kodo.
-- `return` (`reŝalte`, `resxalte`) estas la kunulo de `break`: ĝi “ŝaltas reen” kun valoro aŭ sen ĝi.
+- `return` (`reŝalte`, `resxalte`, `raŭ`, `raux`) estas la kunulo de `break`: ĝi “ŝaltas reen” kun valoro aŭ sen ĝi.
 - `==` (`baŭ`, `egalas`, `samas`) estas egaleco; la mallonga formo `baŭ` tenas la saman b/ z-simetrian ideon kiel `zaŭ`.
 - `~=` (`zaŭ`, `zaux`, `malsamas`, `neegalas`, `nesamas`) estas neegaleco; `zaŭ` estas la spegulo de `baŭ`.
 - `>`/`<`/`>=`/`<=` uzas la mallongajn familiojn `sup`/`sub`/`sur`/`suf` por konservi la ord-rilatan semantikon sen tro longa vortumo.
@@ -103,6 +103,8 @@ Por `::`, la sinonimo `ho` baziĝas sur la vokativa interjekcio en Esperanto: ĝ
 - `...` (`ktp`) estas la variadika/“variloka” esprimo.
 - `,` (`tuj`, `plie`) apartigas esprimojn, nomlistojn kaj argumentojn; la sintaksanalizilo elektas la ĝustan rolon laŭ kunteksto.
 - `;` (`nu`) estas la propozicia disigilo.
+
+`>>`/`<<` uzas `sob`/`sor` kiel la plej mallongajn ŝovajn formojn; la pli longaj `sobŝove`/`sobsxove` kaj `sorŝove`/`sorsxove` restas pliaj stilaj variantoj.
 
 
 ### Notoj pri leksema simetrion

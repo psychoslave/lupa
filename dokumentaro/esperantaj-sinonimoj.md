@@ -31,7 +31,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `end` -> `hop`
 - `false` -> `falsa`
 - `for` -> `por`
-- `function` -> `funkcie`, `tie`
+- `function` -> `funkcie`, `tie`, `verbe`, `age`
 - `goto` -> `ŝalte`, `sxalte`
 - `if` -> `se`
 - `in` -> `el`

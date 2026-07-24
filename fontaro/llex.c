@@ -62,6 +62,8 @@ static const struct {
   { "por", TK_FOR },            // for
   { "funkcie", TK_FUNCTION },   // function
   { "tie", TK_FUNCTION },       // function
+  { "verbe", TK_FUNCTION },     // function
+  { "age", TK_FUNCTION },       // function
   { "ŝalte", TK_GOTO },        // goto
   { "sxalte", TK_GOTO },        // goto
   { "se", TK_IF },              // if

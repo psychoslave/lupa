@@ -106,9 +106,17 @@ loke funkcie ŝlosilvortaro·testi()
   ĉi tie f3()
     reŝalte 17
   hop
+  verbe f4()
+    reŝalte 19
+  hop
+  age f5()
+    reŝalte 23
+  hop
   asertu(f1() == 11, 'reŝalte MISE')
   asertu(f2() == 13, 'reŝalte MISE')
   asertu(f3() == 17, 'ĉi tie/funkcie MISE')
+  asertu(f4() == 19, 'verbe MISE')
+  asertu(f5() == 23, 'age MISE')
 
   loka elemento = 0
   ŝalte poste

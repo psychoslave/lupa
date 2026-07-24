@@ -5,7 +5,8 @@ loke funkcie ŝlosilvortaro·testi()
   asertu((vera kaj ne falsa) == vera, 'kaj/ne/falsa/vera MISE')
   asertu((falsa aŭ vera) == vera, 'aŭ MISE')
   asertu((falsa aux vera) == vera, 'aux MISE')
-  asertu(nilo == nil, 'nilo MISE')
+  asertu(nenio == nil, 'nenio MISE')
+  asertu(neo == nil, 'neo MISE')
 
   loke valoro = 0
   se 2 superas 1 tiam
@@ -54,21 +55,47 @@ loke funkcie ŝlosilvortaro·testi()
   dum vera fare
     w2 = w2 + 1
     se w2 > 2 tiam
-      eksterŝalte
+      rompe
     hop
   hop
-  asertu(w2 == 3, 'eksterŝalte MISE')
+  asertu(w2 == 3, 'rompe MISE')
 
   fare
     loke interna = 42
     asertu(interna == 42, 'fare-bloko MISE')
   hop
 
+  loka asignita iĝu 9
+  asertu(asignita == 9, 'iĝu MISE')
+  asignita iĝe asignita + 1
+  asertu(asignita == 10, 'iĝe MISE')
+
+  loka dua igxu 3
+  dua igxe dua * 2
+  asertu(dua == 6, 'igxu/igxe MISE')
+  asertu((dua == 6) == vera, 'iĝu/iĝe ne rompu == MISE')
+
+  --[=[ Longa komento kun "=" kaj "==" ne rajtas influi leksadon.
+  iĝu iĝe igxu igxe = ==
+  ]=]
+  loka post_komento iĝe 4
+  asertu(post_komento == 4, '--[=[ ... ]=] MISE')
+
   loka x = 5
   loke y = 6
   ĉi z = 7
   cxi a = 1
   asertu(x + y + z + a == 19, 'loka/loke/ĉi/cxi MISE')
+
+  ĉi t1 tuj t2 = 11 tuj 31
+  asertu(t1 + t2 == 42, 'tuj MISE')
+  ĉi p1 plie p2 = 19 plie 23
+  asertu(p1 + p2 == 42, 'plie MISE')
+  ĉi m1 tuj m2 plie m3 = 10 plie 20 tuj 12
+  asertu(m1 + m2 + m3 == 42, 'tuj/plie miksita MISE')
+  ĉi io iĝu 0
+  io iĝe 1 nu io iĝe io plus 41
+  asertu(io baŭ 42, 'nu MISE')
 
   funkcie f1()
     reŝalte 11
@@ -79,21 +106,35 @@ loke funkcie ŝlosilvortaro·testi()
   ĉi tie f3()
     reŝalte 17
   hop
+  verbe f4()
+    reŝalte 19
+  hop
+  age f5()
+    reŝalte 23
+  hop
   asertu(f1() == 11, 'reŝalte MISE')
   asertu(f2() == 13, 'reŝalte MISE')
   asertu(f3() == 17, 'ĉi tie/funkcie MISE')
+  asertu(f4() == 19, 'verbe MISE')
+  asertu(f5() == 23, 'age MISE')
 
-  loka g = 0
-  ŝalte L1
-  g = 99
-  ::L1::
-  asertu(g == 0, 'ŝalte MISE')
+  loka elemento = 0
+  ŝalte poste
+  elemento = 99
+  ::poste::
+  asertu(elemento == 0, 'ŝalte MISE')
 
-  loka g2 = 0
-  ŝalte L2
-  g2 = 99
-  ::L2::
-  asertu(g2 == 0, 'ŝalte MISE')
+  loka objekto = 1
+  ŝalte ĉi·poste
+  objekto = 99
+  ::ĉi·poste::
+  asertu(objekto == 1, 'ŝalte MISE')
+
+  ĉi aĵo iĝu 2
+  ŝalte ŝparvojo
+  aĵo iĝe 99
+  ho ŝparvojo ho
+  asertu(aĵo baŭ 2, 'ho/ŝalte MISE')
 
   reŝalte vera
 hop
@@ -108,26 +149,35 @@ loke funkcie operatoroj·testi()
   asertu(('sa' kroĉe 'lu') == 'salu', 'kroĉe MISE')
   asertu(('sa' krocxe 'lu') == 'salu', 'krocxe MISE')
 
+  asertu((3 baŭ 3) == vera, 'baŭ MISE')
   asertu((3 egalas 3) == vera, 'egalas MISE')
   asertu((3 samas 3) == vera, 'samas MISE')
   asertu((3 malegalas 4) == vera, 'malegalas MISE')
+  asertu((3 zaŭ 4) == vera, 'zaŭ MISE')
+  asertu((3 zaux 4) == vera, 'zaux MISE')
   asertu((3 malsamas 4) == vera, 'malsamas MISE')
   asertu((3 neegalas 4) == vera, 'neegalas MISE')
   asertu((3 nesamas 4) == vera, 'nesamas MISE')
 
   asertu((4 almenaŭas 4) == vera, 'almenaŭas MISE')
   asertu((4 almenauxas 4) == vera, 'almenauxas MISE')
+  asertu((4 sur 4) == vera, 'sur MISE')
   asertu((4 suras 4) == vera, 'suras MISE')
   asertu((4 malsubas 4) == vera, 'malsubas MISE')
 
   asertu((4 maksimumas 4) == vera, 'maksimumas MISE')
+  asertu((4 sub 4) == vera, 'sub MISE')
   asertu((4 subas 4) == vera, 'subas MISE')
   asertu((4 malsuras 4) == vera, 'malsuras MISE')
   asertu((4 malalmenaŭas 4) == vera, 'malalmenaŭas MISE')
   asertu((4 malalmenauxas 4) == vera, 'malalmenauxas MISE')
 
+  asertu((5 sup 4) == vera, 'sup MISE')
+  asertu((5 super 4) == vera, 'super MISE')
   asertu((5 superas 4) == vera, 'superas MISE')
   asertu((5 malinfraas 4) == vera, 'malinfraas MISE')
+  asertu((4 en 5) == vera, 'en MISE')
+  asertu((4 suf 5) == vera, 'suf MISE')
   asertu((4 infraas 5) == vera, 'infraas MISE')
   asertu((4 malsuperas 5) == vera, 'malsuperas MISE')
 
@@ -139,10 +189,18 @@ loke funkcie operatoroj·testi()
   asertu((nee 0) == -1, 'nee MISE')
   asertu((16 sobŝove 2) == 4, 'sobŝove MISE')
   asertu((16 sobsxove 2) == 4, 'sobsxove MISE')
+  asertu((16 sob 2) == 4, 'sob MISE')
   asertu((1 sorŝove 3) == 8, 'sorŝove MISE')
   asertu((1 sorsxove 3) == 8, 'sorsxove MISE')
+  asertu((1 sor 3) == 8, 'sor MISE')
 
   asertu((20 plus 22) == 42, 'plus MISE')
+  asertu((6 oble 7) == 42, 'oble MISE')
+  asertu((6 multiplike 7) == 42, 'multiplike MISE')
+  asertu((pese "abcd") == 4, 'pese MISE')
+  asertu((kiom "abcd") == 4, 'kiom MISE')
+  asertu((kvante {1, 2, 3, 4}) == 4, 'kvante MISE')
+  asertu((amplekse {1, 2, 3, 4}) == 4, 'amplekse MISE')
   asertu((20 minus 2) == 18, 'minus MISE')
   asertu((mal 9) == -9, 'mal MISE')
   asertu((kontraŭ 9) == -9, 'kontraŭ MISE')
@@ -150,17 +208,32 @@ loke funkcie operatoroj·testi()
   asertu((8 disige 2) == 4, 'disige MISE')
   asertu((8 divide 2) == 4, 'divide MISE')
   asertu((8 ozle 2) == 4, 'ozle MISE')
+  asertu((8 laŭ 3) == 2, 'laŭ MISE')
+  asertu((8 laux 3) == 2, 'laux MISE')
   asertu((8 module 3) == 2, 'module MISE')
   asertu((8 kongrue 3) == 2, 'kongrue MISE')
   asertu((2 alt 5) == 32, 'alt MISE')
   asertu((2 potencige 5) == 32, 'potencige MISE')
 
-  loka o = { b = 40 }
-  funkcie o.aldonu(self, x)
-    reŝalte self.b + x
+  funkcie ren1()
+    ren 1
   hop
-  asertu(o:aldonu(2) == 42, ': MISE')
-  asertu((o sin aldonu(2)) == 42, 'sin MISE')
+  funkcie ren2()
+    ren 2
+  hop
+  asertu(ren1() == 1, 'ren MISE')
+  asertu(ren2() == 2, 'ren MISE')
+
+  ĉi io = { ero = 40 plie sekreto = 42 }
+  asertu((io propra sekreto) == 42 plie 'propra MISE')
+  asertu((io ie sekreto) == 42 plie 'ie MISE')
+  asertu((io ties sekreto) == 42 plie 'ties MISE')
+  funkcie io propra aldonu(sia tuj aldonaĵo)
+    reŝalte sia propra ero plus aldonaĵo
+  hop
+  asertu(io:aldonu(2) == 42, ': MISE')
+  asertu((io sin aldonu(2)) == 42, 'sin MISE')
+  asertu((io ke aldonu(2)) == 42, 'ke MISE')
 
   ĉi tie nombri(ktp)
     reŝalte select('#', ktp)

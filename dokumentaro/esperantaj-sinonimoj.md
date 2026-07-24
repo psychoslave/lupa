@@ -40,7 +40,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `not` -> `ne`
 - `or` -> `aŭ`, `aux`
 - `repeat` -> `cikle`
-- `return` -> `reŝalte`, `resxalte`, `raŭ`, `raux`
+- `return` -> `reŝalte`, `resxalte`, `ren`
 - `self` (nomo de metoda ricevilo) -> `sia`
 - `then` -> `tiam`
 - `true` -> `vera`
@@ -88,7 +88,7 @@ Por `::`, la sinonimo `ho` baziĝas sur la vokativa interjekcio en Esperanto: ĝ
 - `break` (`eksterŝalte`, `ekstersxalte`, `rompe`) estas la elireja ordono por tuj forlasi ciklon aŭ blokon; la ŝalt-derivaĵoj emfazas subitan ŝanĝon de stato.
 - `function` (`funkcie`, `tie`, `verbe`, `age`) markas funkciodifinon; la proponoj celas nomi agon aŭ funkcion sen perdi la funkcio-noman rolon.
 - `local` (`loka`, `loke`, `ĉi`, `cxi`) markas lokan amplekson; la tradukoj emfazas ke la sekva nomo restas limigita al la nuna kodo.
-- `return` (`reŝalte`, `resxalte`, `raŭ`, `raux`) estas la kunulo de `break`: ĝi “ŝaltas reen” kun valoro aŭ sen ĝi.
+- `return` (`reŝalte`, `resxalte`, `ren`) estas la kunulo de `break`: ĝi “ŝaltas reen” kun valoro aŭ sen ĝi. `ren` sekvas la jam proponitan wiki-formon, estas same mallonga kiel la antaŭa varianto, kaj restas natura Esperanto-vorto sen nova neologismo. Kompreneble la `r-` komenco ankaŭ donas mneman proksimon kun *r*eŝalte kaj *r*eturn(ig)/i.
 - `==` (`baŭ`, `egalas`, `samas`) estas egaleco; la mallonga formo `baŭ` tenas la saman b/ z-simetrian ideon kiel `zaŭ`.
 - `~=` (`zaŭ`, `zaux`, `malsamas`, `neegalas`, `nesamas`) estas neegaleco; `zaŭ` estas la spegulo de `baŭ`.
 - `>`/`<`/`>=`/`<=` uzas la mallongajn familiojn `sup`/`sub`/`sur`/`suf` por konservi la ord-rilatan semantikon sen tro longa vortumo.

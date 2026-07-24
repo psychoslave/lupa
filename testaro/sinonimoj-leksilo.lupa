@@ -215,14 +215,14 @@ loke funkcie operatoroj·testi()
   asertu((2 alt 5) == 32, 'alt MISE')
   asertu((2 potencige 5) == 32, 'potencige MISE')
 
-  funkcie raŭ1()
-    raŭ 1
+  funkcie ren1()
+    ren 1
   hop
-  funkcie raŭ2()
-    raux 2
+  funkcie ren2()
+    ren 2
   hop
-  asertu(raŭ1() == 1, 'raŭ MISE')
-  asertu(raŭ2() == 2, 'raux MISE')
+  asertu(ren1() == 1, 'ren MISE')
+  asertu(ren2() == 2, 'ren MISE')
 
   ĉi io = { ero = 40 plie sekreto = 42 }
   asertu((io propra sekreto) == 42 plie 'propra MISE')

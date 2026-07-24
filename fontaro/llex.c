@@ -54,6 +54,7 @@ static const struct {
   { "kaj", TK_AND },            // and
   { "eksterŝalte", TK_BREAK }, // break
   { "ekstersxalte", TK_BREAK }, // break
+  { "rompe", TK_BREAK },        // break
   { "fare", TK_DO },            // do
   { "alie", TK_ELSE },          // else
   { "alise", TK_ELSEIF },       // elseif

@@ -15,7 +15,7 @@ Kiam klavaro ne facile tajpas diakritojn, Lupa subtenas `-x` formojn (ekz. `ŝar
 ### Ŝlosilvortoj
 
 - `and` -> `kaj`
-- `break` -> `eksterŝalte`, `ekstersxalte`
+- `break` -> `eksterŝalte`, `ekstersxalte`, `rompe`
 - `do` -> `fare`
 - `else` -> `alie`
 

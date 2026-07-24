@@ -55,10 +55,10 @@ loke funkcie ŝlosilvortaro·testi()
   dum vera fare
     w2 = w2 + 1
     se w2 > 2 tiam
-      eksterŝalte
+      rompe
     hop
   hop
-  asertu(w2 == 3, 'eksterŝalte MISE')
+  asertu(w2 == 3, 'rompe MISE')
 
   fare
     loke interna = 42

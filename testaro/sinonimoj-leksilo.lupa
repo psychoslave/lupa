@@ -136,6 +136,14 @@ loke funkcie ŝlosilvortaro·testi()
   ho ŝparvojo ho
   asertu(aĵo baŭ 2, 'ho/ŝalte MISE')
 
+  ĉi citaĵo iĝu cit saluton malcit
+  asertu(citaĵo baŭ 'saluton', 'cit/malcit MISE')
+  ĉi plurliniaĵo iĝu cit
+linio-unu
+linio-du
+ĉit
+  asertu(plurliniaĵo baŭ 'linio-unu\nlinio-du\n', 'cit/ĉit MISE')
+
   reŝalte vera
 hop
 

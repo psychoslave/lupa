@@ -397,10 +397,10 @@ static void l_print (lua_State *L) {
 
 
 /*
-** Do the REPL: repeatedly read (load) a line, evaluate (call) it, and
+** Do the LoTPoCIo: repeatedly read (load) a line, evaluate (call) it, and
 ** print any results.
 */
-static void doREPL (lua_State *L) {
+static void doLoTPoCIo (lua_State *L) {
   int status;
   const char *oldprogname = progname;
   progname = NULL;  /* no 'progname' on errors in interactive mode */
@@ -577,11 +577,11 @@ static int pmain (lua_State *L) {
       handle_script(L, argv + script) != LUA_OK)
     return 0;
   if (args & has_i)  /* -i option? */
-    doREPL(L);  /* do read-eval-print loop */
+    doLoTPoCIo(L);  /* do lego-takso-printo-ciklo */
   else if (script == argc && !(args & (has_e | has_v))) {  /* no arguments? */
     if (lua_stdin_is_tty()) {  /* running in interactive mode? */
       print_version();
-      doREPL(L);  /* do read-eval-print loop */
+      doLoTPoCIo(L);  /* do lego-takso-printo-ciklo */
     }
     else dofile(L, NULL);  /* executes stdin as a file */
   }
@@ -606,4 +606,3 @@ int main (int argc, char **argv) {
   lua_close(L);
   return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-

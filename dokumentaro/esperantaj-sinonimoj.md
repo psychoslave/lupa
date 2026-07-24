@@ -25,7 +25,7 @@ Antaŭe, `alie` servis kaŭ sinonimo de ambeŭ `else` (ŝlosilvortoj) kaj `~=` (
 
 Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiajn `-x` formon **`zaux`**) kiel mallongan alternativon al `malsamas`.
 
-*Zaŭ* estas libere inspirata de *kvazaŭ* (= Latina *quasi*) por providi mallongan terminon. Kvankam etimologie neĉiela, ĝi ŝajnas ege taŭga opsiono, konsiderante la celon de klareco kaj breveco.
+*Zaŭ* estas libere inspirata de *kvazaŭ* (= Latina *quasi*) por providi mallongan terminon. Kvankam etimologie neĉiela, ĝi ŝajnas ege taŭga opcio, konsiderante la celon de klareco kaj breveco.
 
 - `elseif` -> `alise`
 - `end` -> `hop`

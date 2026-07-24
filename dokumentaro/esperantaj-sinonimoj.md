@@ -78,10 +78,32 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `=` -> `iĝu`, `igxu`, `iĝe`, `igxe`
 - `;` -> `nu`
 - `,` -> `tuj`, `plie`
+- longĉeno-komenco (`[[`-simile) -> `cit`
+- longĉeno-fino (`]]`-simile) -> `malcit`, `ĉit`
+- en `cit`-ĉeno, laŭvortigi la sekvan signon -> `ĥaŭ`
 
 La sintaksanalizilo jam distingas la kuntekstojn de `,` (ekz. disigo de esprimoj, nomlistoj, argumentoj); `tuj` kaj `plie` mapigas al la sama komo-signo.
 
 Por `::`, la sinonimo `ho` baziĝas sur la vokativa interjekcio en Esperanto: ĝi semantike markas alvokon/alparolon al etikedo-celo (`ho etikedo ho`).
+
+Por `cit`, la unua sekva **apartigila signo** (blanksigno aŭ ne-litera interpunkcio) estas ignorata, kaj same unu apartigila signo tuj antaŭ `malcit`/`ĉit` ne eniras la rezultan ĉenon. La ĉeno povas transiri plurajn liniojn ĝis `malcit` aŭ `ĉit`, por konduto pli proksima al `[[ ... ]]`.
+
+`ĥaŭ` en `cit`-ĉeno malaktivigas la sekvan signon por fermila detekto (ekz. `ĥaŭmalcit`, `ĥaŭĉit`, `ĥaŭĥaŭ`). La formo estis elektita ankaŭ ĉar ĝi ne aperas en Tekstaro (0 trafoj), do kolizio-risko estas minimuma.
+
+### Kiam `cit` efektive malfermas ĉenon
+
+`cit` ŝaltas ĉen-legadon nur kiam ĝi estas legata kiel aparta nomo (`TK_NAME`) kun valoro `cit`.
+
+Praktike tio signifas:
+
+- **Malfermas** kiam la sekva signo ne apartenas al identigilo:
+  - blanksigno (`cit saluton malcit`, `cit\tsaluton malcit`, `cit\n...ĉit`)
+  - interpunkcio/operatoro (`cit,saluton malcit`, `cit^¡saluton!ĉit`, `cit¡saluton!ĉit`, ktp)
+- **Ne malfermas** kiam la sekva signo etendas la saman identigilon:
+  - ASCII litero/cifero/substreko (`citalfa`, `cit1`, `cit_`)
+  - UTF-8 liter-komenco (ekz. `citŝnuro`, `citĉeno`), ĉar tio restas unu identigilo.
+
+Krome, `malcit`/`ĉit` fermas nur ĉe vortlimoj (do internvorta kiel `sinmalciti` aŭ `aĉiti` ne fermas).
 
 ### Klarigoj pri la realigitaj formoj
 
@@ -173,6 +195,8 @@ La rilataj testoj troviĝas en:
 
 - `testaro/sinonimoj-leksilo.lupa`
 - `testaro/sinonimoj-bibliotekoj.lupa`
-- `testaro/lua53-kongruo.lua`
+- `testaro/cit-kazoj.lupa`
+- `testaro/lua53-kongruo.lupa`
+- `testaro/lotpocio-kongruo.sh`
 
 La tria testdosiero provas kondutan kongruon inter Lua 5.3 kaj Lupa por kanona Lua-kodo (sen Lupa-specifaj sinonimoj).

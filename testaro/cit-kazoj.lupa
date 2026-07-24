@@ -1,0 +1,92 @@
+#!/usr/bin/env lupe
+-- Regresaj testoj por cit/malcit/ĉit kaj ĥaŭ-eskapo en llex.
+
+loke misoj = 0
+
+loke funkcie postuli(kondiĉo, mesaĝo)
+  se ne kondiĉo tiam
+    printe('[MISE] ' .. mesaĝo)
+    misoj = misoj + 1
+  hop
+hop
+
+loke funkcie enhavas(teksto, parto)
+  reŝalte teksto:find(parto, 1, vera) ~= nil
+hop
+
+-- 1) Unua blanksigno post cit: neniu/tabo/novlinio.
+loke f = asertu(ŝargu("reŝalte cit,saluton malcit"))
+postuli(f() == "saluton", "cit sen blanko")
+
+f = asertu(ŝargu("reŝalte cit¡saluton!ĉit"))
+postuli(f() == "saluton", "cit kun ne-ASCII interpunkcio")
+
+f = asertu(ŝargu("reŝalte cit¡¡saluton!!ĉit"))
+postuli(f() == "¡saluton!", "cit kun duobla ne-ASCII interpunkcio")
+
+f = asertu(ŝargu("reŝalte cit\tsaluton malcit"))
+postuli(f() == "saluton", "cit kun tabo")
+
+f = asertu(ŝargu("reŝalte cit\nsaluton\nĉit"))
+postuli(f() == "saluton\n", "cit kun novlinio")
+
+-- 2) Delimita konduto kaj Unicode-randoj.
+f = asertu(ŝargu("reŝalte cit xmalcityz malcit"))
+postuli(f() == "xmalcityz", "malcit interne de pli longa vorto ne fermu")
+
+f = asertu(ŝargu("reŝalte cit abc malcit, 7"))
+loke v1, v2 = f()
+postuli(v1 == "abc" kaj v2 == 7, "interpunkcia signo post fermilo")
+
+f = asertu(ŝargu("reŝalte cit aĉitb ĉit"))
+postuli(f() == "aĉitb", "ĉit interne de vorto ne fermu")
+
+-- 3) Nefinita literalo kaj lini-indiko.
+loke nefinita, eraro = ŝargu("reŝalte cit abc")
+postuli(nefinita == nil kaj enhavas(eraro aŭ "", "unfinished cit string"), "EOF antaŭ fermilo")
+postuli(enhavas(eraro aŭ "", "line 1"), "lini-indiko por nefinita cit")
+
+loke nefinita2, eraro2 = ŝargu("\nreŝalte cit abc")
+postuli(nefinita2 == nil kaj enhavas(eraro2 aŭ "", "line 2"), "lini-indiko sur dua linio")
+
+-- 4) Malplena literalo.
+f = asertu(ŝargu("reŝalte cit malcit"))
+postuli(f() == "", "malplena cit ... malcit")
+
+f = asertu(ŝargu("reŝalte cit\nĉit"))
+postuli(f() == "", "malplena cit ... ĉit")
+
+-- 5) Miksitaj fermiloj.
+f = asertu(ŝargu("reŝalte cit unu malcit"))
+postuli(f() == "unu", "fermilo malcit")
+
+f = asertu(ŝargu("reŝalte cit du ĉit"))
+postuli(f() == "du", "fermilo ĉit")
+
+f = asertu(ŝargu("reŝalte cit\nlinio1\nlinio2\nmalcit"))
+postuli(f() == "linio1\nlinio2\n", "plurlinia fermo per malcit")
+
+-- 6) Negativa ne-interfero: 'cit' ne plu uzeblas kiel ordinara identigilo.
+loke identigilo, eraro3 = ŝargu("loka cit = 0")
+postuli(identigilo == nil kaj enhavas(eraro3 aŭ "", "unfinished cit string"),
+        "cit kiel identigilo devas fiaski")
+
+-- Ĥaŭ-eskapo: la sekva signo estas laŭvorta.
+f = asertu(ŝargu("reŝalte cit ĥaŭmalcit malcit"))
+postuli(f() == "malcit", "ĥaŭmalcit")
+
+f = asertu(ŝargu("reŝalte cit ĥaŭĉit ĉit"))
+postuli(f() == "ĉit", "ĥaŭĉit")
+
+f = asertu(ŝargu("reŝalte cit ĥaŭb ĉit"))
+postuli(f() == "b", "ĥaŭb")
+
+f = asertu(ŝargu("reŝalte cit ĥaŭĥaŭ ĉit"))
+postuli(f() == "ĥaŭ", "ĥaŭĥaŭ")
+
+se misoj > 0 tiam
+  printe("MISE " .. misoj .. " testo(j) en cit-kazoj.lupa")
+  os.exit(1)
+alie
+  printe("[BONE] cit-kazoj.lupa")
+hop

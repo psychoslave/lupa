@@ -189,8 +189,10 @@ loke funkcie operatoroj·testi()
   asertu((nee 0) == -1, 'nee MISE')
   asertu((16 sobŝove 2) == 4, 'sobŝove MISE')
   asertu((16 sobsxove 2) == 4, 'sobsxove MISE')
+  asertu((16 sob 2) == 4, 'sob MISE')
   asertu((1 sorŝove 3) == 8, 'sorŝove MISE')
   asertu((1 sorsxove 3) == 8, 'sorsxove MISE')
+  asertu((1 sor 3) == 8, 'sor MISE')
 
   asertu((20 plus 22) == 42, 'plus MISE')
   asertu((6 oble 7) == 42, 'oble MISE')
@@ -212,6 +214,15 @@ loke funkcie operatoroj·testi()
   asertu((8 kongrue 3) == 2, 'kongrue MISE')
   asertu((2 alt 5) == 32, 'alt MISE')
   asertu((2 potencige 5) == 32, 'potencige MISE')
+
+  funkcie raŭ1()
+    raŭ 1
+  hop
+  funkcie raŭ2()
+    raux 2
+  hop
+  asertu(raŭ1() == 1, 'raŭ MISE')
+  asertu(raŭ2() == 2, 'raux MISE')
 
   ĉi io = { ero = 40 plie sekreto = 42 }
   asertu((io propra sekreto) == 42 plie 'propra MISE')

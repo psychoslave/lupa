@@ -81,6 +81,8 @@ static const struct {
   { "cikle", TK_REPEAT },       // repeat
   { "reŝalte", TK_RETURN },     // return
   { "resxalte", TK_RETURN },    // return
+  { "raŭ", TK_RETURN },         // return
+  { "raux", TK_RETURN },        // return
   { "tiam", TK_THEN },          // then
   { "vera", TK_TRUE },          // true
   { "ĝis", TK_UNTIL },         // until
@@ -129,8 +131,10 @@ static const struct {
   { "auxe", TK_BOR },
   { "sobŝove", TK_SHR },
   { "sobsxove", TK_SHR },
+  { "sob", TK_SHR },
   { "sorŝove", TK_SHL },
   { "sorsxove", TK_SHL },
+  { "sor", TK_SHL },
   { "plus", TK_ADD },
   { "oble", TK_MUL },
   { "multiplike", TK_MUL },

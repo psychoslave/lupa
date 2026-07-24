@@ -81,8 +81,7 @@ static const struct {
   { "cikle", TK_REPEAT },       // repeat
   { "reŝalte", TK_RETURN },     // return
   { "resxalte", TK_RETURN },    // return
-  { "raŭ", TK_RETURN },         // return
-  { "raux", TK_RETURN },        // return
+  { "ren", TK_RETURN },         // return
   { "tiam", TK_THEN },          // then
   { "vera", TK_TRUE },          // true
   { "ĝis", TK_UNTIL },         // until

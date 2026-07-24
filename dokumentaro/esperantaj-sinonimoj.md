@@ -66,6 +66,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `<<` -> `sorŝove`, `sorsxove`
 - `+` -> `plus`
 - `*` -> `oble`, `multiplike`
+- `#` -> `pese`, `kiom`, `kvante`, `amplekse`
 - `-` (unuargumenta minuso) -> `mal`, `kontraŭ`, `kontraux`
 - `-` (duargumenta subtraho) -> `minus`
 - `/` -> `disige`, `divide`, `ozle`

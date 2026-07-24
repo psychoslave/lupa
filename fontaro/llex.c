@@ -599,6 +599,15 @@ static int issemicolonalias (TString *ts) {
   return (longo == 2 && memcmp(nomo, "nu", 2) == 0);
 }
 
+static int islenalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return ((longo == 4 && memcmp(nomo, "pese", 4) == 0) ||
+          (longo == 4 && memcmp(nomo, "kiom", 4) == 0) ||
+          (longo == 6 && memcmp(nomo, "kvante", 6) == 0) ||
+          (longo == 8 && memcmp(nomo, "amplekse", 8) == 0));
+}
+
 static int isdotalias (TString *ts) {
   size_t longo = tsslen(ts);
   const char *nomo = getstr(ts);
@@ -624,6 +633,8 @@ static int nametotoken (TString *ts) {
     return ',';
   if (issemicolonalias(ts))
     return ';';
+  if (islenalias(ts))
+    return '#';
   if (isdotalias(ts))
     return '.';
   return TK_NAME;

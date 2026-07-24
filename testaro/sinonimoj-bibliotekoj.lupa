@@ -13,7 +13,7 @@ hop
 loke funkcie testi·grupon(tabelo, radiko, etikedo)
   por kanonaĵo, sinonimoj el parodonu(tabelo) fare
     loke bazo = radiko[kanonaĵo]
-    postuli(bazo ~= nilo, etikedo .. ': mankas kanona funkcio `' .. kanonaĵo .. '`')
+    postuli(bazo ~= nenio, etikedo .. ': mankas kanona funkcio `' .. kanonaĵo .. '`')
     por ba, nomo el induktparodonu(sinonimoj) fare
       postuli(radiko[nomo] == bazo, etikedo .. ': `' .. nomo .. '` ne kongruas kun `' .. kanonaĵo .. '`')
     hop
@@ -51,17 +51,17 @@ loke pakaĵoj = {
 }
 
 testi·grupon(bazaj, _G, 'lbaselib')
-postuli(package ~= nilo, 'mankas `package`')
+postuli(package ~= nenio, 'mankas `package`')
 se package tiam
   testi·grupon(pakaĵoj, package, 'loadlib/package')
-  se package.seeall ~= nilo tiam
+  se package.seeall ~= nenio tiam
     postuli(package.plenvidu == package.seeall, 'loadlib/package: `plenvidu` ne kongruas kun `seeall`')
   hop
 hop
 
 -- `require`/`necesu` estas en _G, ne en package.
-postuli(_G.require ~= nilo, 'mankas `require`')
-postuli(_G.necesu ~= nilo, 'mankas `necesu`')
+postuli(_G.require ~= nenio, 'mankas `require`')
+postuli(_G.necesu ~= nenio, 'mankas `necesu`')
 se _G.require kaj _G.necesu tiam
   loke prastato, prateko = ŝirmvoku(require, 'math')
   loke novstato, novteko = ŝirmvoku(necesu, 'math')
@@ -72,7 +72,7 @@ se _G.require kaj _G.necesu tiam
 hop
 
 -- `loadstring` povas manki depende de konstruaj opcioj.
-se _G.loadstring ~= nilo tiam
+se _G.loadstring ~= nenio tiam
   postuli(_G.ĉenŝargu == _G.loadstring, '`ĉenŝargu` ne kongruas kun `loadstring`')
   postuli(_G.cxensxargu == _G.loadstring, '`cxensxargu` ne kongruas kun `loadstring`')
 hop
@@ -81,8 +81,8 @@ hop
 loke kodo = 'reŝalte 41 + 1'
 loke ajn·funkcio, ajn·eraro = ŝargu(kodo)
 loke ali·funkcio, ali·eraro = sxargu(kodo)
-postuli(ajn·funkcio ~= nilo kaj ajn·eraro == nilo, '`ŝargu` ne ŝargis validan kodon')
-postuli(ali·funkcio ~= nilo kaj ali·eraro == nilo, '`sxargu` ne ŝargis validan kodon')
+postuli(ajn·funkcio ~= nenio kaj ajn·eraro == nenio, '`ŝargu` ne ŝargis validan kodon')
+postuli(ali·funkcio ~= nenio kaj ali·eraro == nenio, '`sxargu` ne ŝargis validan kodon')
 se ajn·funkcio kaj ali·funkcio tiam
   postuli(ajn·funkcio() == 42, '`ŝargu` liveris malĝustan rezulton')
   postuli(ali·funkcio() == 42, '`sxargu` liveris malĝustan rezulton')
@@ -103,7 +103,6 @@ se misoj > 0 tiam
 alie
   printe('[BONE] sinonimoj-bibliotekoj.lupa')
 hop
-
 
 
 

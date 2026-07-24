@@ -54,6 +54,7 @@ static const struct {
   { "kaj", TK_AND },            // and
   { "eksterŝalte", TK_BREAK }, // break
   { "ekstersxalte", TK_BREAK }, // break
+  { "rompe", TK_BREAK },        // break
   { "fare", TK_DO },            // do
   { "alie", TK_ELSE },          // else
   { "alise", TK_ELSEIF },       // elseif
@@ -62,6 +63,8 @@ static const struct {
   { "por", TK_FOR },            // for
   { "funkcie", TK_FUNCTION },   // function
   { "tie", TK_FUNCTION },       // function
+  { "verbe", TK_FUNCTION },     // function
+  { "age", TK_FUNCTION },       // function
   { "ŝalte", TK_GOTO },        // goto
   { "sxalte", TK_GOTO },        // goto
   { "se", TK_IF },              // if
@@ -70,13 +73,15 @@ static const struct {
   { "loke", TK_LOCAL },         // local
   { "ĉi", TK_LOCAL },          // local
   { "cxi", TK_LOCAL },           // local
-  { "nilo", TK_NIL },           // nil
+  { "nenio", TK_NIL },          // nil
+  { "neo", TK_NIL },            // nil
   { "ne", TK_NOT },             // not
   { "aŭ", TK_OR },              // or
   { "aux", TK_OR },             // or
   { "cikle", TK_REPEAT },       // repeat
   { "reŝalte", TK_RETURN },     // return
   { "resxalte", TK_RETURN },    // return
+  { "ren", TK_RETURN },         // return
   { "tiam", TK_THEN },          // then
   { "vera", TK_TRUE },          // true
   { "ĝis", TK_UNTIL },         // until
@@ -96,16 +101,26 @@ static const struct {
   { "nee",     TK_BNOT },
   { "disaŭe", TK_BXOR },
   { "disauxe", TK_BXOR },
+  { "sup", TK_GT },
+  { "super", TK_GT },
   { "superas", TK_GT },
   { "malinfraas", TK_GT },
+  { "sur", TK_GE },
   { "suras", TK_GE },
   { "malsubas", TK_GE },
+  { "baŭ",   TK_EQ },
+  { "baux",   TK_EQ },
   { "samas",   TK_EQ },
+  { "zaŭ",     TK_NE },
+  { "zaux",    TK_NE },
   { "malsamas",TK_NE },
   { "neegalas",TK_NE },
   { "nesamas",TK_NE },
+  { "en", TK_LT },
+  { "suf", TK_LT },
   { "infraas", TK_LT },
   { "malsuperas", TK_LT },
+  { "sub", TK_LE },
   { "subas", TK_LE },
   { "malsuras", TK_LE },
   { "malalmenaŭas", TK_LE },
@@ -115,12 +130,16 @@ static const struct {
   { "auxe", TK_BOR },
   { "sobŝove", TK_SHR },
   { "sobsxove", TK_SHR },
+  { "sob", TK_SHR },
   { "sorŝove", TK_SHL },
   { "sorsxove", TK_SHL },
+  { "sor", TK_SHL },
   { "plus", TK_ADD },
+  { "oble", TK_MUL },
+  { "multiplike", TK_MUL },
   { "mal", TK_MINUS },
   { "kontraŭ", TK_MINUS },
-{ "kontraux", TK_MINUS },
+  { "kontraux", TK_MINUS },
   { "minus", TK_SUB },
   { "disige", TK_DIV },
   { "divide", TK_DIV },
@@ -128,6 +147,8 @@ static const struct {
   { "parte", TK_IDIV },
   { "pece", TK_IDIV },
   { "kvociente", TK_IDIV },
+  { "laŭ", TK_MOD },
+  { "laux", TK_MOD },
   { "module", TK_MOD },
   { "kongrue", TK_MOD },
   { "alt", TK_POW },
@@ -135,6 +156,8 @@ static const struct {
   { "kroĉe",TK_CONCAT }, // ..
   { "krocxe",TK_CONCAT }, //
   { "sin", TK_COLON }, // :
+  { "ke", TK_COLON }, // :
+  { "ho", TK_DBCOLON }, // ::
 };
 
 #define save_and_next(ls) (save(ls, ls->current), next(ls))
@@ -560,6 +583,69 @@ static void saveutf8seq(LexState *ls) {
   }
 }
 
+static int isassignalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return ((longo == 4 && memcmp(nomo, "iĝu", 4) == 0) ||
+          (longo == 4 && memcmp(nomo, "igxu", 4) == 0) ||
+          (longo == 4 && memcmp(nomo, "iĝe", 4) == 0) ||
+          (longo == 4 && memcmp(nomo, "igxe", 4) == 0));
+}
+
+static int iscommaalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return ((longo == 3 && memcmp(nomo, "tuj", 3) == 0) ||
+          (longo == 4 && memcmp(nomo, "plie", 4) == 0));
+}
+
+static int issemicolonalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return (longo == 2 && memcmp(nomo, "nu", 2) == 0);
+}
+
+static int islenalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return ((longo == 4 && memcmp(nomo, "pese", 4) == 0) ||
+          (longo == 4 && memcmp(nomo, "kiom", 4) == 0) ||
+          (longo == 6 && memcmp(nomo, "kvante", 6) == 0) ||
+          (longo == 8 && memcmp(nomo, "amplekse", 8) == 0));
+}
+
+static int isdotalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return ((longo == 2 && memcmp(nomo, "ie", 2) == 0) ||
+          (longo == 4 && memcmp(nomo, "ties", 4) == 0) ||
+          (longo == 6 && memcmp(nomo, "propra", 6) == 0));
+}
+
+static int isselfalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return (longo == 3 && memcmp(nomo, "sia", 3) == 0);
+}
+
+static int nametotoken (TString *ts) {
+  if (isreserved(ts)) {
+    int token = ts->extra - 1 + FIRST_RESERVED;
+    return token;
+  }
+  if (isassignalias(ts))
+    return '=';
+  if (iscommaalias(ts))
+    return ',';
+  if (issemicolonalias(ts))
+    return ';';
+  if (islenalias(ts))
+    return '#';
+  if (isdotalias(ts))
+    return '.';
+  return TK_NAME;
+}
+
 static int llex (LexState *ls, SemInfo *seminfo) {
   luaZ_resetbuffer(ls->buff);
   for (;;) {
@@ -623,6 +709,10 @@ static int llex (LexState *ls, SemInfo *seminfo) {
         if (check_next1(ls, '/')) return TK_IDIV;
         else return '/';
       }
+      case '*': {
+        next(ls);
+        return TK_MUL;
+      }
       case '~': {
         next(ls);
         if (check_next1(ls, '=')) return TK_NE;
@@ -665,12 +755,10 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           }
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
+          if (isselfalias(ts))
+            ts = luaS_newliteral(ls->L, "self");
           seminfo->ts = ts;
-          if (isreserved(ts))  /* reserved word? */
-            return ts->extra - 1 + FIRST_RESERVED;
-          else {
-            return TK_NAME;
-          }
+          return nametotoken(ts);
         }
         /* UTF-8 identifier start (non-ASCII) */
         else if ((unsigned char)ls->current >= 0xC0) {
@@ -721,12 +809,10 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
+          if (isselfalias(ts))
+            ts = luaS_newliteral(ls->L, "self");
           seminfo->ts = ts;
-          if (isreserved(ts))  /* reserved word? */
-            return ts->extra - 1 + FIRST_RESERVED;
-          else {
-            return TK_NAME;
-          }
+          return nametotoken(ts);
         }
         else {  /* single-char tokens (+ - / ...) */
           int c = ls->current;

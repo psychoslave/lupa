@@ -400,7 +400,7 @@ static void l_print (lua_State *L) {
 ** Do the LoTPoCIo: repeatedly read (load) a line, evaluate (call) it, and
 ** print any results.
 */
-static void doLoTPoCIo (lua_State *L) {
+static void LoTPoCIurgu (lua_State *L) {
   int status;
   const char *oldprogname = progname;
   progname = NULL;  /* no 'progname' on errors in interactive mode */
@@ -577,11 +577,11 @@ static int pmain (lua_State *L) {
       handle_script(L, argv + script) != LUA_OK)
     return 0;
   if (args & has_i)  /* -i option? */
-    doLoTPoCIo(L);  /* do lego-takso-printo-ciklo */
+    LoTPoCIurgu(L);  /* do lego-takso-printo-ciklo */
   else if (script == argc && !(args & (has_e | has_v))) {  /* no arguments? */
     if (lua_stdin_is_tty()) {  /* running in interactive mode? */
       print_version();
-      doLoTPoCIo(L);  /* do lego-takso-printo-ciklo */
+      LoTPoCIurgu(L);  /* do lego-takso-printo-ciklo */
     }
     else dofile(L, NULL);  /* executes stdin as a file */
   }

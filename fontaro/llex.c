@@ -596,8 +596,8 @@ static int isworddelimiter_utf8 (unsigned char c1, unsigned char c2, unsigned ch
   if (cat == 23 || cat == 24 || cat == 25)
     return 1;
   
-  /* Punctuation except Pc: Pd, Ps, Pe, Pi, Pf, Po */
-  if ((cat >= 13 && cat <= 17) || cat == 11)  /* Pd, Ps, Pe, Pi, Pf, Po */
+  /* Punctuation and symbols: Pd (13), Ps (14), Pe (15), Pi (16), Pf (17), Po (11), Sm (19), Sc (20), Sk (21), So (22) */
+  if ((cat >= 13 && cat <= 17) || cat == 11 || (cat >= 19 && cat <= 22))
     return 1;
   
   /* Word characters: letters, digits, marks, Pc */
@@ -605,13 +605,6 @@ static int isworddelimiter_utf8 (unsigned char c1, unsigned char c2, unsigned ch
     return 0;
   
   return 1;  /* Everything else is a separator */
-}
-
-static int isworddelimiter (int c) {
-  if (c == EOZ) return 1;
-  if (lisspace(c)) return 1;
-  if ((unsigned char)c >= 0x80) return 0;
-  return !lislalnum(c) && c != '_';
 }
 
 static void skiponeutf8char (LexState *ls) {
@@ -649,16 +642,6 @@ static int currentisseparator (LexState *ls) {
   if (ls->z->n > 1)
     c3 = cast_uchar(ls->z->p[1]);
   return isutf8separator(c1, c2, c3);
-}
-
-/* Check if byte at position pos in buffer is a word delimiter */
-static int isworddelimiter_at_buffer_pos(const unsigned char *buffer, size_t buflen, size_t pos) {
-  if (pos >= buflen)
-    return 1;
-  unsigned char c1 = buffer[pos];
-  unsigned char c2 = (pos + 1 < buflen) ? buffer[pos + 1] : 0;
-  unsigned char c3 = (pos + 2 < buflen) ? buffer[pos + 2] : 0;
-  return isworddelimiter_utf8(c1, c2, c3);
 }
 
 /* Find the start of a UTF-8 character at or before a buffer position */

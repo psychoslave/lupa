@@ -81,6 +81,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - longĉeno-komenco (`[[`-simile) -> `cit`
 - longĉeno-fino (`]]`-simile) -> `malcit`, `ĉit`
 - en `cit`-ĉeno, laŭvortigi la sekvan signon -> `ĥaŭ`
+- en `cit`-ĉeno, speciale interpreti eskapan komandon -> `ĥaĵ`
 
 La sintaksanalizilo jam distingas la kuntekstojn de `,` (ekz. disigo de esprimoj, nomlistoj, argumentoj); `tuj` kaj `plie` mapigas al la sama komo-signo.
 
@@ -89,6 +90,40 @@ Por `::`, la sinonimo `ho` baziĝas sur la vokativa interjekcio en Esperanto: ĝ
 Por `cit`, la unua sekva **apartigila signo** (blanksigno aŭ ne-litera interpunkcio) estas ignorata, kaj same unu apartigila signo tuj antaŭ `malcit`/`ĉit` ne eniras la rezultan ĉenon. La ĉeno povas transiri plurajn liniojn ĝis `malcit` aŭ `ĉit`, por konduto pli proksima al `[[ ... ]]`.
 
 `ĥaŭ` en `cit`-ĉeno malaktivigas la sekvan signon por fermila detekto (ekz. `ĥaŭmalcit`, `ĥaŭĉit`, `ĥaŭĥaŭ`). La formo estis elektita ankaŭ ĉar ĝi ne aperas en Tekstaro (0 trafoj), do kolizio-risko estas minimuma.
+
+`cit` **ne** interpretas `\`-sekvencojn (ekz. `cit \n ĉit` redonas laŭvorte `\n`). Tio estas intenca: laŭvortigo (`ĥaŭ`) kaj speciala interpreto (`ĥaĵ`) estas apartaj mekanismoj por minimumigi surprizon.
+
+`ĥaĵ` estis elektita ĉar ĝi restas leksike parenca al `ĥaŭ` kaj same havas 0 trafojn en Tekstaro; tiel kolizio-risko kun ordinara Esperanto restas minimuma.
+
+#### `ĥaĵ`: sintakso
+
+Du formoj ekzistas:
+
+- **rekta mallonga formo**: `ĥaĵ<komando>` aŭ `ĥaĵ<komando><fiks-larĝa-parametro>`
+  - ekz: `ĥaĵn` (novlinio), `ĥaĵx7B` (`{`)
+- **plena limigita formo**: `ĥaĵe-<subkomando>-...-`
+  - ekz: `ĥaĵe-n-`, `ĥaĵe-novlinie-`, `ĥaĵe-x-7B-`, `ĥaĵe-u-263A-`
+
+En la plena formo la fina `-` de la eskapo estas konsumita; la sekva signo jam apartenas al ordinara ĉena enhavo.
+
+Atentu: `cit` ankoraŭ forigas unu apartigilan signon tuj antaŭ `malcit`/`ĉit`. Do se eskapo produktas apartigilan signon (ekz. `{`), necesas aldoni apartan separatoron antaŭ la fermilo por ke la produktita signo restu en la rezulto (ekz. `... ĥaĵe-x-7B- ĉit`).
+
+#### Subkomandoj de `ĥaĵ`
+
+- Sen parametro:
+  - `a`, `b`, `f`, `n`, `r`, `t`, `v`
+  - `novlinie` (sinonimo de `n`)
+  - `z`, `spacglute` (englutas sekvan blankspacon/novliniojn en la fonto)
+  - `\`, `"`, `'` (nur en plena formo: `e-\-`, `e-"-`, `e-'-`)
+  - `retrostreko`, `citilo`, `apostrofo` (legeblaj sinonimoj)
+- Kun parametro:
+  - `x` / `deksesume`: du deksesumaj ciferoj (0x00..0xFF), ekz. `ĥaĵe-x-7B-`
+  - `u` / `unikodpunkte`: unikoda kodpunkto en deksesuma formo (ĝis `10FFFF`), ekz. `ĥaĵe-u-263A-`
+  - `dekume`: 1..3 dekumaj ciferoj (0..255), ekz. `ĥaĵe-dekume-123-`
+
+`ĥaĵe-111-...` estas intence **nevalida**: pura cifera subkomando ne estas akceptata.
+
+Neekzistantaj aŭ misformitaj `ĥaĵ`-komandoj liveras eraron `invalid escape sequence`, kongrue kun Lua-stila fiasko por nevalidaj eskapoj.
 
 ### Kiam `cit` efektive malfermas ĉenon
 

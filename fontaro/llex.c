@@ -553,66 +553,56 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
                                    luaZ_bufflen(ls->buff) - 2);
 }
 
-/* Helper to decode UTF-8 sequence to codepoint */
-static utf8proc_int32_t utf8tocodepoint(const unsigned char *str, size_t len) {
+static size_t utf8seqlen (unsigned char c1) {
+  if (c1 < 0x80) return 1;
+  if ((c1 & 0xE0) == 0xC0) return 2;
+  if ((c1 & 0xF0) == 0xE0) return 3;
+  if ((c1 & 0xF8) == 0xF0) return 4;
+  return 1;  /* invalid lead byte; handled by decoder */
+}
+
+/* Decode one UTF-8 codepoint from up to 4 already-peeked bytes. */
+static utf8proc_int32_t utf8tocodepoint (unsigned char c1, unsigned char c2,
+                                         unsigned char c3, unsigned char c4) {
+  unsigned char bytes[4];
   utf8proc_int32_t codepoint;
   utf8proc_ssize_t nread;
-  if (len == 0) return -1;
-  nread = utf8proc_iterate(str, len, &codepoint);
+  size_t len = utf8seqlen(c1);
+  bytes[0] = c1;
+  bytes[1] = c2;
+  bytes[2] = c3;
+  bytes[3] = c4;
+  nread = utf8proc_iterate(bytes, (utf8proc_ssize_t)len, &codepoint);
   if (nread < 0)
     return -1;
   return codepoint;
 }
 
-/* Check if a Unicode codepoint is a word character (letter, digit, connector) */
-static int utf8iswordchar(utf8proc_int32_t codepoint) {
-  utf8proc_category_t cat = utf8proc_category(codepoint);
-  /* Letters (L*): LU, LL, LT, LM, LO */
-  if (cat >= 1 && cat <= 5) return 1;
-  /* Digits (ND) */
-  if (cat == 9) return 1;
-  /* Connector punctuation (Pc, which includes underscore-like chars) */
-  if (cat == 12) return 1;
-  /* Mark characters (combining marks are part of base character) */
-  if (cat >= 6 && cat <= 8) return 1;
+/* Single source of truth for Unicode identifier continuation policy. */
+static int iswordcodepoint (utf8proc_int32_t codepoint) {
+  utf8proc_category_t cat;
+  if (codepoint == 0x00B7)  /* U+00B7 MIDDLE DOT kept for existing identifiers */
+    return 1;
+  if (codepoint == 0x02C7)  /* U+02C7 CARON used as separator in cit framing */
+    return 0;
+  cat = utf8proc_category(codepoint);
+  if (cat >= UTF8PROC_CATEGORY_LU && cat <= UTF8PROC_CATEGORY_LO) return 1;  /* letters */
+  if (cat >= UTF8PROC_CATEGORY_MN && cat <= UTF8PROC_CATEGORY_ME) return 1;  /* combining marks */
+  if (cat == UTF8PROC_CATEGORY_ND) return 1;                                  /* decimal digits */
+  if (cat == UTF8PROC_CATEGORY_PC) return 1;                                  /* connector punct */
   return 0;
 }
 
-/* Enhanced word delimiter check using utf8proc for Unicode support */
-static int isworddelimiterutf8 (unsigned char c1, unsigned char c2, unsigned char c3) {
-  if (c1 < 0x80) {
-    /* ASCII case */
+/* Unicode word delimiter = not an identifier continuation char. */
+static int isworddelimiterutf8 (unsigned char c1, unsigned char c2,
+                                unsigned char c3, unsigned char c4) {
+  utf8proc_int32_t codepoint;
+  if (c1 < 0x80)
     return (lisspace(c1) || (!lislalnum(c1) && c1 != '_'));
-  }
-
-  if (c1 == 0xC2 && c2 == 0xB7)  /* U+00B7 middle dot, kept for identifiers */
-    return 0;
-
-  /* Multi-byte UTF-8 sequence */
-  unsigned char bytes[4] = {c1, c2, c3, 0};
-  utf8proc_int32_t codepoint = utf8tocodepoint(bytes, 3);
-
+  codepoint = utf8tocodepoint(c1, c2, c3, c4);
   if (codepoint < 0)
-    return 1;  /* Invalid UTF-8 treated as separator */
-  if (codepoint == 0x02C7)  /* U+02C7 CARON: spacing accent, separator in cit framing */
-    return 1;
-
-  /* Check Unicode category: separators (Zs, Zl, Zp) or non-word chars */
-  utf8proc_category_t cat = utf8proc_category(codepoint);
-
-  /* Separators: Zs (23), Zl (24), Zp (25) */
-  if (cat == 23 || cat == 24 || cat == 25)
-    return 1;
-
-  /* Punctuation and symbols: Pd (13), Ps (14), Pe (15), Pi (16), Pf (17), Po (11), Sm (19), Sc (20), Sk (21), So (22) */
-  if ((cat >= 13 && cat <= 17) || cat == 11 || (cat >= 19 && cat <= 22))
-    return 1;
-
-  /* Word characters: letters, digits, marks, Pc */
-  if (utf8iswordchar(codepoint))
-    return 0;
-
-  return 1;  /* Everything else is a separator */
+    return 1;  /* invalid UTF-8 treated as separator */
+  return !iswordcodepoint(codepoint);
 }
 
 static void skiponeutf8char (LexState *ls) {
@@ -630,22 +620,18 @@ static void skiponeutf8char (LexState *ls) {
   }
 }
 
-static int isutf8separator (unsigned char c1, unsigned char c2, unsigned char c3) {
-  return isworddelimiterutf8(c1, c2, c3);
-}
-
 static int currentisseparator (LexState *ls) {
-  unsigned char c1, c2 = 0, c3 = 0;
+  unsigned char c1, c2 = 0, c3 = 0, c4 = 0;
   if (ls->current == EOZ)
     return 0;
   c1 = cast_uchar(ls->current);
-  if (c1 < 0x80)
-    return isutf8separator(c1, 0, 0);
   if (ls->z->n > 0)
     c2 = cast_uchar(ls->z->p[0]);
   if (ls->z->n > 1)
     c3 = cast_uchar(ls->z->p[1]);
-  return isutf8separator(c1, c2, c3);
+  if (ls->z->n > 2)
+    c4 = cast_uchar(ls->z->p[2]);
+  return isworddelimiterutf8(c1, c2, c3, c4);
 }
 
 /* Find the start of a UTF-8 character at or before a buffer position */
@@ -657,18 +643,21 @@ static size_t find_utf8_start(const unsigned char *buffer, size_t pos) {
 
 /* Check if byte at buffer position (possibly mid-UTF-8) is a word delimiter */
 static int bufferposisworddelim(const unsigned char *buffer, size_t buflen, size_t pos) {
+  unsigned char c4 = 0;
   if (pos >= buflen)
     return 1;
   size_t start = find_utf8_start(buffer, pos);
   unsigned char c1 = buffer[start];
   unsigned char c2 = (start + 1 < buflen) ? buffer[start + 1] : 0;
   unsigned char c3 = (start + 2 < buflen) ? buffer[start + 2] : 0;
-  return isworddelimiterutf8(c1, c2, c3);
+  if (start + 3 < buflen)
+    c4 = buffer[start + 3];
+  return isworddelimiterutf8(c1, c2, c3, c4);
 }
 
 /* Check if current input position is a word delimiter */
 static int currentposisworddelim(LexState *ls) {
-  unsigned char c1, c2 = 0, c3 = 0;
+  unsigned char c1, c2 = 0, c3 = 0, c4 = 0;
   if (ls->current == EOZ)
     return 1;
   c1 = (unsigned char)ls->current;
@@ -676,13 +665,15 @@ static int currentposisworddelim(LexState *ls) {
     c2 = (unsigned char)ls->z->p[0];
   if (ls->z->n > 1)
     c3 = (unsigned char)ls->z->p[1];
-  return isworddelimiterutf8(c1, c2, c3);
+  if (ls->z->n > 2)
+    c4 = (unsigned char)ls->z->p[2];
+  return isworddelimiterutf8(c1, c2, c3, c4);
 }
 
 static size_t trailingseparatorsize (Mbuffer *b) {
   size_t n = luaZ_bufflen(b);
   size_t start;
-  unsigned char c1, c2 = 0, c3 = 0;
+  unsigned char c1, c2 = 0, c3 = 0, c4 = 0;
   if (n == 0)
     return 0;
   start = n - 1;
@@ -693,9 +684,11 @@ static size_t trailingseparatorsize (Mbuffer *b) {
     c2 = cast_uchar(luaZ_buffer(b)[start + 1]);
   if (start + 2 < n)
     c3 = cast_uchar(luaZ_buffer(b)[start + 2]);
+  if (start + 3 < n)
+    c4 = cast_uchar(luaZ_buffer(b)[start + 3]);
   if (c1 == '\n' || c1 == '\r')
     return 0;
-  if (isutf8separator(c1, c2, c3))
+  if (isworddelimiterutf8(c1, c2, c3, c4))
     return n - start;
   return 0;
 }
@@ -1006,9 +999,8 @@ static void read_cit_string (LexState *ls, SemInfo *seminfo) {
 */
 static int isidentifiercont(LexState *ls) {
   unsigned char c1;
-  unsigned char c2 = 0, c3 = 0;
+  unsigned char c2 = 0, c3 = 0, c4 = 0;
   utf8proc_int32_t codepoint;
-  unsigned char bytes[4];
   /* ponytail: EOZ is -1; casting to unsigned makes it 255 and would
      incorrectly look like UTF-8 data at end-of-file. */
   if (ls->current == EOZ)
@@ -1025,18 +1017,12 @@ static int isidentifiercont(LexState *ls) {
     c2 = (unsigned char)ls->z->p[0];
   if (ls->z->n > 1)
     c3 = (unsigned char)ls->z->p[1];
-  if (c1 == 0xC2 && c2 == 0xB7)  /* U+00B7 */
-    return 1;
-  bytes[0] = c1;
-  bytes[1] = c2;
-  bytes[2] = c3;
-  bytes[3] = 0;
-  codepoint = utf8tocodepoint(bytes, 3);
+  if (ls->z->n > 2)
+    c4 = (unsigned char)ls->z->p[2];
+  codepoint = utf8tocodepoint(c1, c2, c3, c4);
   if (codepoint < 0)
     return 0;
-  if (codepoint == 0x02C7)  /* U+02C7 CARON is not an identifier continuation */
-    return 0;
-  return utf8iswordchar(codepoint);
+  return iswordcodepoint(codepoint);
 }
 
 static void saveutf8seq(LexState *ls) {

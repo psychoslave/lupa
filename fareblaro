@@ -78,23 +78,40 @@ plentesti:	vaki
 		exit 1; \
 	fi; \
 	malsukcesoj=0; \
+	sukcesoj=0; \
+	entute=0; \
+	if [ -t 1 ]; then \
+		kolorbone=`printf '\033[32m'`; \
+		kolormise=`printf '\033[31m'`; \
+		kolorinformo=`printf '\033[36m'`; \
+		kolornulo=`printf '\033[0m'`; \
+	else \
+		kolorbone=''; kolormise=''; kolorinformo=''; kolornulo=''; \
+	fi; \
+	tmpeligo=`mktemp -t lupa-test.XXXXXX`; \
+	trap 'rm -f "$$tmpeligo"' EXIT INT TERM; \
 	for dosiero in $(TESTODOSIEROJ); do \
-		echo "-> $$dosiero"; \
+		entute=`expr $$entute + 1`; \
 		case "$$dosiero" in \
 			*.sh) rulkmd="sh \"$$dosiero\"" ;; \
 			*)    rulkmd="./fontaro/lupe \"$$dosiero\"" ;; \
 		esac; \
-		if eval $$rulkmd; then \
-			:; \
+		if eval $$rulkmd >"$$tmpeligo" 2>&1; then \
+			sukcesoj=`expr $$sukcesoj + 1`; \
+			linioj=`wc -l < "$$tmpeligo" | tr -d '[:space:]'`; \
+			printf '%s[BONE]%s %s (eligo: %s linio(j))\n' "$$kolorbone" "$$kolornulo" "$$dosiero" "$$linioj"; \
 		else \
+			linioj=`wc -l < "$$tmpeligo" | tr -d '[:space:]'`; \
+			printf '%s[MISE]%s %s (eligo: %s linio(j))\n' "$$kolormise" "$$kolornulo" "$$dosiero" "$$linioj"; \
+			cat "$$tmpeligo"; \
 			malsukcesoj=`expr $$malsukcesoj + 1`; \
 		fi; \
 	done; \
+	printf '%sResumo:%s %s/%s sukcesis, %s malsukcesis.\n' "$$kolorinformo" "$$kolornulo" "$$sukcesoj" "$$entute" "$$malsukcesoj"; \
 	if [ $$malsukcesoj -gt 0 ]; then \
-		echo "Malsukcesis $$malsukcesoj testo(j)."; \
 		exit 1; \
 	fi; \
-	echo "Ĉiuj testoj sukcesis."
+	printf '%s🎉 Ĉiuj testoj sukcesis.%s\n' "$$kolorbone" "$$kolornulo"
 
 instali: vaki
 	cd fontaro && $(DOSIERKREU) $(INSTALODUUMDOSIERUJO) $(INSTALOINKLUZIVARO) $(INSTALOTEKARO) $(INSTALOMANLIBRARO) $(INSTALOLMOD) $(INSTALOCMOD)

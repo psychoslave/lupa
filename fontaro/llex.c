@@ -694,13 +694,13 @@ static void readcitescapefield (LexState *ls, char *out, size_t outsz) {
 static void applycitescape (LexState *ls, const char *cmd, const char *p1) {
   unsigned long val = 0;
   size_t p1len = (p1 != NULL) ? strlen(p1) : 0;
-  if (strcmp(cmd, "a") == 0) { save(ls, '\a'); return; }
-  if (strcmp(cmd, "b") == 0) { save(ls, '\b'); return; }
-  if (strcmp(cmd, "f") == 0) { save(ls, '\f'); return; }
+  if (strcmp(cmd, "a") == 0 || strcmp(cmd, "alarme") == 0) { save(ls, '\a'); return; }
+  if (strcmp(cmd, "b") == 0 || strcmp(cmd, "retropaŝe") == 0) { save(ls, '\b'); return; }
+  if (strcmp(cmd, "f") == 0 || strcmp(cmd, "paĝosalte") == 0) { save(ls, '\f'); return; }
   if (strcmp(cmd, "n") == 0 || strcmp(cmd, "novlinie") == 0) { save(ls, '\n'); return; }
-  if (strcmp(cmd, "r") == 0) { save(ls, '\r'); return; }
-  if (strcmp(cmd, "t") == 0) { save(ls, '\t'); return; }
-  if (strcmp(cmd, "v") == 0) { save(ls, '\v'); return; }
+  if (strcmp(cmd, "r") == 0 || strcmp(cmd, "ĉaretrevene") == 0) { save(ls, '\r'); return; }
+  if (strcmp(cmd, "t") == 0 || strcmp(cmd, "tabe") == 0) { save(ls, '\t'); return; }
+  if (strcmp(cmd, "v") == 0 || strcmp(cmd, "vertikalatabe") == 0) { save(ls, '\v'); return; }
   if (strcmp(cmd, "\\") == 0 || strcmp(cmd, "retrostreko") == 0) { save(ls, '\\'); return; }
   if (strcmp(cmd, "\"") == 0 || strcmp(cmd, "citilo") == 0) { save(ls, '"'); return; }
   if (strcmp(cmd, "'") == 0 || strcmp(cmd, "apostrofo") == 0) { save(ls, '\''); return; }
@@ -728,46 +728,68 @@ static void applycitescape (LexState *ls, const char *cmd, const char *p1) {
   citescapeerror(ls);
 }
 
-static void readcitescape_direct (LexState *ls) {
-  int c = ls->current;
-  unsigned long val;
-  char tmp[3];
-  if (c == EOZ)
+static int citescapehasparam (const char *cmd) {
+  return (strcmp(cmd, "x") == 0 || strcmp(cmd, "deksesume") == 0 ||
+          strcmp(cmd, "u") == 0 || strcmp(cmd, "unikodpunkte") == 0 ||
+          strcmp(cmd, "dekume") == 0);
+}
+
+static void readcitescapedirectparam (LexState *ls, const char *cmd, char *out, size_t outsz) {
+  size_t i = 0;
+  if (strcmp(cmd, "x") == 0 || strcmp(cmd, "deksesume") == 0) {
+    while (lisxdigit(ls->current) && i < 2) {
+      out[i++] = cast(char, ls->current);
+      next(ls);
+    }
+    if (i != 2)
+      citescapeerror(ls);
+  }
+  else if (strcmp(cmd, "u") == 0 || strcmp(cmd, "unikodpunkte") == 0) {
+    while (lisxdigit(ls->current)) {
+      if (i + 1 >= outsz)
+        citescapeerror(ls);
+      out[i++] = cast(char, ls->current);
+      next(ls);
+    }
+    if (i == 0)
+      citescapeerror(ls);
+  }
+  else if (strcmp(cmd, "dekume") == 0) {
+    while (lisdigit(ls->current) && i < 3) {
+      out[i++] = cast(char, ls->current);
+      next(ls);
+    }
+    if (i == 0)
+      citescapeerror(ls);
+  }
+  else
     citescapeerror(ls);
-  if (c == 'x') {
-    next(ls);  /* skip x */
-    if (!lisxdigit(ls->current))
+  out[i] = '\0';
+}
+
+static void readcitescape_directlong (LexState *ls) {
+  char cmd[64];
+  char p1[64];
+  size_t i = 0;
+  while (lislalpha(ls->current)) {
+    if (i + 1 >= sizeof(cmd))
       citescapeerror(ls);
-    tmp[0] = cast(char, ls->current);
+    cmd[i++] = cast(char, ls->current);
     next(ls);
-    if (!lisxdigit(ls->current))
+  }
+  cmd[i] = '\0';
+  if (i <= 1)  /* monoletter direct commands are intentionally invalid */
+    citescapeerror(ls);
+
+  if (citescapehasparam(cmd)) {
+    if (ls->current != '-')
       citescapeerror(ls);
-    tmp[1] = cast(char, ls->current);
-    tmp[2] = '\0';
-    next(ls);
-    if (!parsehexvalue(tmp, 2, &val))
-      citescapeerror(ls);
-    save(ls, cast(char, val));
+    next(ls);  /* skip '-' */
+    readcitescapedirectparam(ls, cmd, p1, sizeof(p1));
+    applycitescape(ls, cmd, p1);
     return;
   }
-  switch (c) {
-    case 'a': save(ls, '\a'); next(ls); return;
-    case 'b': save(ls, '\b'); next(ls); return;
-    case 'f': save(ls, '\f'); next(ls); return;
-    case 'n': save(ls, '\n'); next(ls); return;
-    case 'r': save(ls, '\r'); next(ls); return;
-    case 't': save(ls, '\t'); next(ls); return;
-    case 'v': save(ls, '\v'); next(ls); return;
-    case '\\': save(ls, '\\'); next(ls); return;
-    case '"': save(ls, '"'); next(ls); return;
-    case '\'': save(ls, '\''); next(ls); return;
-    case 'z':
-      next(ls);
-      citskipspaces(ls);
-      return;
-    default:
-      citescapeerror(ls);
-  }
+  applycitescape(ls, cmd, NULL);
 }
 
 static void readcitescape_extended (LexState *ls) {
@@ -778,9 +800,7 @@ static void readcitescape_extended (LexState *ls) {
     citescapeerror(ls);
   next(ls);  /* skip '-' */
   readcitescapefield(ls, cmd, sizeof(cmd));  /* includes trailing '-' swallow */
-  if (strcmp(cmd, "x") == 0 || strcmp(cmd, "deksesume") == 0 ||
-      strcmp(cmd, "u") == 0 || strcmp(cmd, "unikodpunkte") == 0 ||
-      strcmp(cmd, "dekume") == 0) {
+  if (citescapehasparam(cmd)) {
     readcitescapefield(ls, p1, sizeof(p1));
     applycitescape(ls, cmd, p1);
     return;
@@ -789,10 +809,10 @@ static void readcitescape_extended (LexState *ls) {
 }
 
 static void readcitescape (LexState *ls) {
-  if (ls->current == 'e')
+  if (ls->current == 'e' && ls->z->n > 0 && ls->z->p[0] == '-')
     readcitescape_extended(ls);
   else
-    readcitescape_direct(ls);
+    readcitescape_directlong(ls);
 }
 
 static void read_cit_string (LexState *ls, SemInfo *seminfo) {

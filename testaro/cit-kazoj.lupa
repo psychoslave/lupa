@@ -89,20 +89,32 @@ f = asertu(ŝargu("reŝalte cit \\n ĉit"))
 postuli(f() == "\\n", "cit ne interpretu backslash-eskapojn")
 
 -- ĥaĵ-eskapo: speciala interpreto de sekvaj signoj.
-f = asertu(ŝargu("reŝalte cit ĥaĵnĉit"))
-postuli(f() == "\n", "ĥaĵn")
-
 f = asertu(ŝargu("reŝalte cit ĥaĵe-n-ĉit"))
 postuli(f() == "\n", "ĥaĵe-n-")
 
 f = asertu(ŝargu("reŝalte cit ĥaĵe-novlinie-ĉit"))
 postuli(f() == "\n", "ĥaĵe-novlinie-")
 
+f = asertu(ŝargu("reŝalte cit ĥaĵe-alarme-X ĉit"))
+postuli(f() == "\aX", "ĥaĵe-alarme-")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵe-retropaŝe-X ĉit"))
+postuli(f() == "\bX", "ĥaĵe-retropaŝe-")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵe-paĝosalte-X ĉit"))
+postuli(f() == "\fX", "ĥaĵe-paĝosalte-")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵe-ĉaretrevene-ĉit"))
+postuli(f() == "\r", "ĥaĵe-ĉaretrevene-")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵe-tabe-X ĉit"))
+postuli(f() == "\tX", "ĥaĵe-tabe-")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵe-vertikalatabe-X ĉit"))
+postuli(f() == "\vX", "ĥaĵe-vertikalatabe-")
+
 f = asertu(ŝargu("reŝalte cit ĥaĵe-x-7B- ĉit"))
 postuli(f() == "{", "ĥaĵe-x-7B-")
-
-f = asertu(ŝargu("reŝalte cit ĥaĵx7B ĉit"))
-postuli(f() == "{", "ĥaĵx7B")
 
 f = asertu(ŝargu("reŝalte cit ĥaĵe-deksesume-7B- ĉit"))
 postuli(f() == "{", "ĥaĵe-deksesume-7B-")
@@ -116,11 +128,23 @@ postuli(f() == "☺", "ĥaĵe-u-263A-")
 f = asertu(ŝargu("reŝalte cit ĥaĵe-unikodpunkte-263A- ĉit"))
 postuli(f() == "☺", "ĥaĵe-unikodpunkte-263A-")
 
+f = asertu(ŝargu("reŝalte cit ĥaĵunikodpunkte-263A ĉit"))
+postuli(f() == "☺", "ĥaĵunikodpunkte-263A")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵdeksesume-7B ĉit"))
+postuli(f() == "{", "ĥaĵdeksesume-7B")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵdekume-123 ĉit"))
+postuli(f() == "{", "ĥaĵdekume-123")
+
 f = asertu(ŝargu("reŝalte cit finoĥaĵe-spacglute-\n \tage ĉit"))
 postuli(f() == "finoage", "ĥaĵe-spacglute-")
 
-f = asertu(ŝargu("reŝalte cit finiĥaĵz\n \te ĉit"))
-postuli(f() == "finie", "ĥaĵz")
+f = asertu(ŝargu("reŝalte cit finiĥaĵe-z-\n \te ĉit"))
+postuli(f() == "finie", "ĥaĵe-z-")
+
+f = asertu(ŝargu("reŝalte cit finiĥaĵspacglute\n \te ĉit"))
+postuli(f() == "finie", "ĥaĵspacglute")
 
 -- Nevalidaj ĥaĵ-komandoj devas fiaski.
 loke nevalida, eraro4 = ŝargu("reŝalte cit ĥaĵe-nekonata-ĉit")
@@ -134,6 +158,59 @@ postuli(nevalida2 == nil kaj enhavas(eraro5 aŭ "", "invalid escape sequence"),
 loke nevalida3, eraro6 = ŝargu("reŝalte cit ĥaĵe-x-7-ĉit")
 postuli(nevalida3 == nil kaj enhavas(eraro6 aŭ "", "invalid escape sequence"),
         "nekompleta deksesuma parametro")
+
+loke nevalida4, eraro7 = ŝargu("reŝalte cit ĥaĵnĉit")
+postuli(nevalida4 == nil kaj enhavas(eraro7 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (n)")
+
+loke nevalida5, eraro8 = ŝargu("reŝalte cit ĥaĵx7B ĉit")
+postuli(nevalida5 == nil kaj enhavas(eraro8 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (x)")
+
+loke nevalida6, eraro9 = ŝargu("reŝalte cit ĥaĵz\n \te ĉit")
+postuli(nevalida6 == nil kaj enhavas(eraro9 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (z)")
+
+loke nevalida7, eraro10 = ŝargu("reŝalte cit ĥaĵu-263A ĉit")
+postuli(nevalida7 == nil kaj enhavas(eraro10 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (u)")
+
+loke nevalida8, eraro11 = ŝargu("reŝalte cit ĥaĵaĉit")
+postuli(nevalida8 == nil kaj enhavas(eraro11 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (a)")
+
+loke nevalida9, eraro12 = ŝargu("reŝalte cit ĥaĵbĉit")
+postuli(nevalida9 == nil kaj enhavas(eraro12 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (b)")
+
+loke nevalida10, eraro13 = ŝargu("reŝalte cit ĥaĵfĉit")
+postuli(nevalida10 == nil kaj enhavas(eraro13 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (f)")
+
+loke nevalida11, eraro14 = ŝargu("reŝalte cit ĥaĵrĉit")
+postuli(nevalida11 == nil kaj enhavas(eraro14 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (r)")
+
+loke nevalida12, eraro15 = ŝargu("reŝalte cit ĥaĵtĉit")
+postuli(nevalida12 == nil kaj enhavas(eraro15 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (t)")
+
+loke nevalida13, eraro16 = ŝargu("reŝalte cit ĥaĵvĉit")
+postuli(nevalida13 == nil kaj enhavas(eraro16 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (v)")
+
+-- Ĥaŭ permesas laŭvorte reprezenti ankaŭ nevalidajn ĥaĵ-formojn.
+f = asertu(ŝargu("reŝalte cit ĥaŭĥaĵn ĉit"))
+postuli(f() == "ĥaĵn", "ĥaŭ + ĥaĵn laŭvorte")
+
+f = asertu(ŝargu("reŝalte cit ĥaŭĥaĵu-263A ĉit"))
+postuli(f() == "ĥaĵu-263A", "ĥaŭ + ĥaĵu-263A laŭvorte")
+
+f = asertu(ŝargu("reŝalte cit ĥaŭĥaĵx7B ĉit"))
+postuli(f() == "ĥaĵx7B", "ĥaŭ + ĥaĵx7B laŭvorte")
+
+f = asertu(ŝargu("reŝalte cit ĥaŭĥaĵe-u-263A- ĉit"))
+postuli(f() == "ĥaĵe-u-263A-", "ĥaŭ + ĥaĵe-u-263A- laŭvorte")
 
 se misoj > 0 tiam
   printe("MISE " .. misoj .. " testo(j) en cit-kazoj.lupa")

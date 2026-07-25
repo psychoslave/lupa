@@ -4,7 +4,7 @@
 
 # Lupa
 
-**Lupa estas Lua 5.3-kongrua lingvaĵo por verki Lua-programojn per Esperanta vortprovizo.**
+**Lupa celas retrokongruecon kun Lua 5.3, sed liveras superaron de ebloj: pli vasta Unikoda subteno kaj nova ĉen-konstruaĵo per la unika `citĉit-ilo`.**
 
 Lupa estas disbranĉiĝo de Lua 5.3.3 kun Esperantaj sinonimoj por ŝlosilvortoj, operatoroj kaj parto de la normaj bibliotekoj.
 

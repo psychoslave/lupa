@@ -15,6 +15,7 @@
 
 #include "lua.h"
 
+#include "utf8proc/utf8proc.h"
 #include "lctype.h"
 #include "ldebug.h"
 #include "ldo.h"
@@ -552,18 +553,476 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
                                    luaZ_bufflen(ls->buff) - 2);
 }
 
+static size_t utf8seqlen (unsigned char c1) {
+  if (c1 < 0x80) return 1;
+  if ((c1 & 0xE0) == 0xC0) return 2;
+  if ((c1 & 0xF0) == 0xE0) return 3;
+  if ((c1 & 0xF8) == 0xF0) return 4;
+  return 1;  /* invalid lead byte; handled by decoder */
+}
+
+/* Decode one UTF-8 codepoint from up to 4 already-peeked bytes. */
+static utf8proc_int32_t utf8tocodepoint (unsigned char c1, unsigned char c2,
+                                         unsigned char c3, unsigned char c4) {
+  unsigned char bytes[4];
+  utf8proc_int32_t codepoint;
+  utf8proc_ssize_t nread;
+  size_t len = utf8seqlen(c1);
+  bytes[0] = c1;
+  bytes[1] = c2;
+  bytes[2] = c3;
+  bytes[3] = c4;
+  nread = utf8proc_iterate(bytes, (utf8proc_ssize_t)len, &codepoint);
+  if (nread < 0)
+    return -1;
+  return codepoint;
+}
+
+/* Single source of truth for Unicode identifier continuation policy. */
+static int iswordcodepoint (utf8proc_int32_t codepoint) {
+  utf8proc_category_t cat;
+  if (codepoint == 0x00B7)  /* U+00B7 MIDDLE DOT kept for existing identifiers */
+    return 1;
+  if (codepoint == 0x02C7)  /* U+02C7 CARON used as separator in cit framing */
+    return 0;
+  cat = utf8proc_category(codepoint);
+  if (cat >= UTF8PROC_CATEGORY_LU && cat <= UTF8PROC_CATEGORY_LO) return 1;  /* letters */
+  if (cat >= UTF8PROC_CATEGORY_MN && cat <= UTF8PROC_CATEGORY_ME) return 1;  /* combining marks */
+  if (cat == UTF8PROC_CATEGORY_ND) return 1;                                  /* decimal digits */
+  if (cat == UTF8PROC_CATEGORY_PC) return 1;                                  /* connector punct */
+  return 0;
+}
+
+/* Unicode word delimiter = not an identifier continuation char. */
+static int isworddelimiterutf8 (unsigned char c1, unsigned char c2,
+                                unsigned char c3, unsigned char c4) {
+  utf8proc_int32_t codepoint;
+  if (c1 < 0x80)
+    return (lisspace(c1) || (!lislalnum(c1) && c1 != '_'));
+  codepoint = utf8tocodepoint(c1, c2, c3, c4);
+  if (codepoint < 0)
+    return 1;  /* invalid UTF-8 treated as separator */
+  return !iswordcodepoint(codepoint);
+}
+
+static void skiponeutf8char (LexState *ls) {
+  unsigned char c1 = cast_uchar(ls->current);
+  next(ls);
+  if (c1 >= 0xE0) {
+    if (luai_isutf8cont(cast_uchar(ls->current)))
+      next(ls);
+    if (luai_isutf8cont(cast_uchar(ls->current)))
+      next(ls);
+  }
+  else if (c1 >= 0xC0) {
+    if (luai_isutf8cont(cast_uchar(ls->current)))
+      next(ls);
+  }
+}
+
+static int currentisseparator (LexState *ls) {
+  unsigned char c1, c2 = 0, c3 = 0, c4 = 0;
+  if (ls->current == EOZ)
+    return 0;
+  c1 = cast_uchar(ls->current);
+  if (ls->z->n > 0)
+    c2 = cast_uchar(ls->z->p[0]);
+  if (ls->z->n > 1)
+    c3 = cast_uchar(ls->z->p[1]);
+  if (ls->z->n > 2)
+    c4 = cast_uchar(ls->z->p[2]);
+  return isworddelimiterutf8(c1, c2, c3, c4);
+}
+
+/* Find the start of a UTF-8 character at or before a buffer position */
+static size_t find_utf8_start(const unsigned char *buffer, size_t pos) {
+  while (pos > 0 && luai_isutf8cont(buffer[pos]))
+    pos--;
+  return pos;
+}
+
+/* Check if byte at buffer position (possibly mid-UTF-8) is a word delimiter */
+static int bufferposisworddelim(const unsigned char *buffer, size_t buflen, size_t pos) {
+  unsigned char c4 = 0;
+  if (pos >= buflen)
+    return 1;
+  size_t start = find_utf8_start(buffer, pos);
+  unsigned char c1 = buffer[start];
+  unsigned char c2 = (start + 1 < buflen) ? buffer[start + 1] : 0;
+  unsigned char c3 = (start + 2 < buflen) ? buffer[start + 2] : 0;
+  if (start + 3 < buflen)
+    c4 = buffer[start + 3];
+  return isworddelimiterutf8(c1, c2, c3, c4);
+}
+
+/* Check if current input position is a word delimiter */
+static int currentposisworddelim(LexState *ls) {
+  unsigned char c1, c2 = 0, c3 = 0, c4 = 0;
+  if (ls->current == EOZ)
+    return 1;
+  c1 = (unsigned char)ls->current;
+  if (ls->z->n > 0)
+    c2 = (unsigned char)ls->z->p[0];
+  if (ls->z->n > 1)
+    c3 = (unsigned char)ls->z->p[1];
+  if (ls->z->n > 2)
+    c4 = (unsigned char)ls->z->p[2];
+  return isworddelimiterutf8(c1, c2, c3, c4);
+}
+
+static size_t trailingseparatorsize (Mbuffer *b) {
+  size_t n = luaZ_bufflen(b);
+  size_t start;
+  unsigned char c1, c2 = 0, c3 = 0, c4 = 0;
+  if (n == 0)
+    return 0;
+  start = n - 1;
+  while (start > 0 && luai_isutf8cont(cast_uchar(luaZ_buffer(b)[start])))
+    start--;
+  c1 = cast_uchar(luaZ_buffer(b)[start]);
+  if (start + 1 < n)
+    c2 = cast_uchar(luaZ_buffer(b)[start + 1]);
+  if (start + 2 < n)
+    c3 = cast_uchar(luaZ_buffer(b)[start + 2]);
+  if (start + 3 < n)
+    c4 = cast_uchar(luaZ_buffer(b)[start + 3]);
+  if (c1 == '\n' || c1 == '\r')
+    return 0;
+  if (isworddelimiterutf8(c1, c2, c3, c4))
+    return n - start;
+  return 0;
+}
+
+static size_t updatematch (size_t current, int c, const unsigned char *word) {
+  if ((unsigned char)c == word[current]) return current + 1;
+  if ((unsigned char)c == word[0]) return 1;
+  return 0;
+}
+
+static void citescapeerror (LexState *ls) {
+  const char *msg = luaO_pushfstring(ls->L,
+                   "invalid escape sequence near 'ĥap'");
+  lexerror(ls, msg, TK_STRING);
+}
+
+static void citskipspaces (LexState *ls) {
+  while (lisspace(ls->current)) {
+    if (currIsNewline(ls))
+      inclinenumber(ls);
+    else
+      next(ls);
+  }
+}
+
+static void saveutf8codepoint (LexState *ls, unsigned long cp) {
+  char buff[UTF8BUFFSZ];
+  int n = luaO_utf8esc(buff, cp);
+  for (; n > 0; n--)
+    save(ls, buff[UTF8BUFFSZ - n]);
+}
+
+static int parsehexvalue (const char *s, size_t len, unsigned long *out) {
+  size_t i;
+  unsigned long v = 0;
+  if (len == 0)
+    return 0;
+  for (i = 0; i < len; i++) {
+    int c = cast_uchar(s[i]);
+    if (!lisxdigit(c))
+      return 0;
+    v = (v << 4) + luaO_hexavalue(c);
+  }
+  *out = v;
+  return 1;
+}
+
+static int parsedecvalue (const char *s, size_t len, unsigned long *out) {
+  size_t i;
+  unsigned long v = 0;
+  if (len == 0 || len > 3)
+    return 0;
+  for (i = 0; i < len; i++) {
+    int c = cast_uchar(s[i]);
+    if (!lisdigit(c))
+      return 0;
+    v = v * 10 + (unsigned long)(c - '0');
+  }
+  if (v > UCHAR_MAX)
+    return 0;
+  *out = v;
+  return 1;
+}
+
+static void readcitescapefield (LexState *ls, char *out, size_t outsz) {
+  size_t i = 0;
+  while (ls->current != '-') {
+    if (ls->current == EOZ || currIsNewline(ls))
+      citescapeerror(ls);
+    if (i + 1 >= outsz)
+      citescapeerror(ls);
+    out[i++] = cast(char, ls->current);
+    next(ls);
+  }
+  out[i] = '\0';
+  next(ls);  /* swallow '-' */
+}
+
+static void applycitescape (LexState *ls, const char *cmd, const char *p1) {
+  unsigned long val = 0;
+  size_t p1len = (p1 != NULL) ? strlen(p1) : 0;
+  if (strcmp(cmd, "a") == 0 || strcmp(cmd, "alarme") == 0) { save(ls, '\a'); return; }
+  if (strcmp(cmd, "b") == 0 || strcmp(cmd, "retropaŝe") == 0) { save(ls, '\b'); return; }
+  if (strcmp(cmd, "f") == 0 || strcmp(cmd, "paĝosalte") == 0) { save(ls, '\f'); return; }
+  if (strcmp(cmd, "n") == 0 || strcmp(cmd, "novlinie") == 0) { save(ls, '\n'); return; }
+  if (strcmp(cmd, "r") == 0 || strcmp(cmd, "ĉaretrevene") == 0) { save(ls, '\r'); return; }
+  if (strcmp(cmd, "t") == 0 || strcmp(cmd, "tabe") == 0) { save(ls, '\t'); return; }
+  if (strcmp(cmd, "v") == 0 || strcmp(cmd, "vertikalatabe") == 0) { save(ls, '\v'); return; }
+  if (strcmp(cmd, "\\") == 0 || strcmp(cmd, "retrostreko") == 0) { save(ls, '\\'); return; }
+  if (strcmp(cmd, "\"") == 0 || strcmp(cmd, "citilo") == 0) { save(ls, '"'); return; }
+  if (strcmp(cmd, "'") == 0 || strcmp(cmd, "apostrofo") == 0) { save(ls, '\''); return; }
+  if (strcmp(cmd, "z") == 0 || strcmp(cmd, "spacglute") == 0) { citskipspaces(ls); return; }
+  if (strcmp(cmd, "x") == 0 || strcmp(cmd, "deksesume") == 0) {
+    if (p1 == NULL || p1len != 2 || !parsehexvalue(p1, p1len, &val))
+      citescapeerror(ls);
+    save(ls, cast(char, val));
+    return;
+  }
+  if (strcmp(cmd, "u") == 0 || strcmp(cmd, "unikodpunkte") == 0) {
+    if (p1 == NULL || !parsehexvalue(p1, p1len, &val))
+      citescapeerror(ls);
+    if (val > 0x10FFFF)
+      citescapeerror(ls);
+    saveutf8codepoint(ls, val);
+    return;
+  }
+  if (strcmp(cmd, "dekume") == 0) {
+    if (p1 == NULL || !parsedecvalue(p1, p1len, &val))
+      citescapeerror(ls);
+    save(ls, cast(char, val));
+    return;
+  }
+  citescapeerror(ls);
+}
+
+static int citescapehasparam (const char *cmd) {
+  return (strcmp(cmd, "x") == 0 || strcmp(cmd, "deksesume") == 0 ||
+          strcmp(cmd, "u") == 0 || strcmp(cmd, "unikodpunkte") == 0 ||
+          strcmp(cmd, "dekume") == 0);
+}
+
+static void readcitescapedirectparam (LexState *ls, const char *cmd, char *out, size_t outsz) {
+  size_t i = 0;
+  if (strcmp(cmd, "x") == 0 || strcmp(cmd, "deksesume") == 0) {
+    while (lisxdigit(ls->current) && i < 2) {
+      out[i++] = cast(char, ls->current);
+      next(ls);
+    }
+    if (i != 2)
+      citescapeerror(ls);
+  }
+  else if (strcmp(cmd, "u") == 0 || strcmp(cmd, "unikodpunkte") == 0) {
+    while (lisxdigit(ls->current)) {
+      if (i + 1 >= outsz)
+        citescapeerror(ls);
+      out[i++] = cast(char, ls->current);
+      next(ls);
+    }
+    if (i == 0)
+      citescapeerror(ls);
+  }
+  else if (strcmp(cmd, "dekume") == 0) {
+    while (lisdigit(ls->current) && i < 3) {
+      out[i++] = cast(char, ls->current);
+      next(ls);
+    }
+    if (i == 0)
+      citescapeerror(ls);
+  }
+  else
+    citescapeerror(ls);
+  out[i] = '\0';
+}
+
+static void readcitescape_directlong (LexState *ls) {
+  char cmd[64];
+  char p1[64];
+  size_t i = 0;
+  while (lislalpha(ls->current)) {
+    if (i + 1 >= sizeof(cmd))
+      citescapeerror(ls);
+    cmd[i++] = cast(char, ls->current);
+    next(ls);
+  }
+  cmd[i] = '\0';
+  if (i <= 1)  /* monoletter direct commands are intentionally invalid */
+    citescapeerror(ls);
+
+  if (citescapehasparam(cmd)) {
+    if (ls->current != '-')
+      citescapeerror(ls);
+    next(ls);  /* skip '-' */
+    readcitescapedirectparam(ls, cmd, p1, sizeof(p1));
+    applycitescape(ls, cmd, p1);
+    return;
+  }
+  applycitescape(ls, cmd, NULL);
+}
+
+static void readcitescape_extended (LexState *ls) {
+  char cmd[64];
+  char p1[64];
+  next(ls);  /* skip 'e' */
+  if (ls->current != '-')
+    citescapeerror(ls);
+  next(ls);  /* skip '-' */
+  readcitescapefield(ls, cmd, sizeof(cmd));  /* includes trailing '-' swallow */
+  if (citescapehasparam(cmd)) {
+    readcitescapefield(ls, p1, sizeof(p1));
+    applycitescape(ls, cmd, p1);
+    return;
+  }
+  applycitescape(ls, cmd, NULL);
+}
+
+static void readcitescape (LexState *ls) {
+  if (ls->current == 'e' && ls->z->n > 0 && ls->z->p[0] == '-')
+    readcitescape_extended(ls);
+  else
+    readcitescape_directlong(ls);
+}
+
+static void read_cit_string (LexState *ls, SemInfo *seminfo) {
+  int line = ls->linenumber;  /* initial line (for error message) */
+  static const unsigned char close_malcit[] = "malcit";
+  static const unsigned char close_cxit[] = {0xC4, 0x89, 'i', 't'};
+  static const unsigned char esc_hxaux[] = {0xC4, 0xA5, 'a', 0xC5, 0xAD};  /* ĥaŭ */
+  static const unsigned char esc_hxap[] = {0xC4, 0xA5, 'a', 'p'};   /* ĥap */
+  size_t m_malcit = 0;
+  size_t m_cxit = 0;
+  size_t m_esc_literal = 0;
+  size_t m_esc_special = 0;
+  int escaped_next = 0;
+  int protect_trailing_sep = 0;
+
+  /* Post 'cit', ignore one initial separator character if present. */
+  if (currentisseparator(ls)) {
+    if (currIsNewline(ls))
+      inclinenumber(ls);
+    else if (cast_uchar(ls->current) >= 0x80)
+      skiponeutf8char(ls);
+    else
+      next(ls);
+  }
+
+  luaZ_resetbuffer(ls->buff);
+  for (;;) {
+    if (ls->current == EOZ) {
+      const char *msg = luaO_pushfstring(ls->L,
+                   "unfinished cit string (starting at line %d) near <eof>", line);
+      lexerror(ls, msg, 0);
+    }
+
+    if (currIsNewline(ls)) {
+      save(ls, '\n');
+      inclinenumber(ls);
+    }
+    else
+      save_and_next(ls);
+    protect_trailing_sep = 0;
+
+    {
+      int c = (unsigned char)luaZ_buffer(ls->buff)[luaZ_bufflen(ls->buff) - 1];
+      if (escaped_next) {
+        escaped_next = 0;
+        protect_trailing_sep = 1;
+        m_esc_literal = 0;
+        m_esc_special = 0;
+        m_malcit = 0;
+        m_cxit = 0;
+        continue;
+      }
+
+      m_esc_literal = updatematch(m_esc_literal, c, esc_hxaux);
+      if (m_esc_literal == sizeof(esc_hxaux)) {
+        luaZ_buffremove(ls->buff, sizeof(esc_hxaux));
+        escaped_next = 1;
+        m_esc_literal = 0;
+        m_esc_special = 0;
+        m_malcit = 0;
+        m_cxit = 0;
+        continue;
+      }
+
+      m_esc_special = updatematch(m_esc_special, c, esc_hxap);
+      if (m_esc_special == sizeof(esc_hxap)) {
+        luaZ_buffremove(ls->buff, sizeof(esc_hxap));
+        readcitescape(ls);
+        protect_trailing_sep = 1;
+        m_esc_literal = 0;
+        m_esc_special = 0;
+        m_malcit = 0;
+        m_cxit = 0;
+        continue;
+      }
+
+      m_malcit = updatematch(m_malcit, c, close_malcit);
+      m_cxit = updatematch(m_cxit, c, close_cxit);
+    }
+
+    if (m_malcit == sizeof(close_malcit) - 1 || m_cxit == sizeof(close_cxit)) {
+      size_t close_len = (m_malcit == sizeof(close_malcit) - 1)
+                       ? (sizeof(close_malcit) - 1)
+                       : sizeof(close_cxit);
+      size_t start = luaZ_bufflen(ls->buff) - close_len;
+      int before_is_delim = (start == 0) ? 1 : bufferposisworddelim(
+          cast(unsigned char *, luaZ_buffer(ls->buff)), luaZ_bufflen(ls->buff), start - 1);
+      int current_is_delim = currentposisworddelim(ls);
+
+      if (before_is_delim && current_is_delim) {
+        size_t sepbytes;
+        luaZ_buffremove(ls->buff, close_len);
+        if (!protect_trailing_sep) {
+          sepbytes = trailingseparatorsize(ls->buff);
+          if (sepbytes > 0)
+            luaZ_buffremove(ls->buff, sepbytes);
+        }
+        seminfo->ts = luaX_newstring(ls, luaZ_buffer(ls->buff), luaZ_bufflen(ls->buff));
+        return;
+      }
+    }
+  }
+}
+
 /*
 ** Check if current position starts a valid identifier continuation in UTF-8
 ** Handles multi-byte sequences transparently
 */
 static int isidentifiercont(LexState *ls) {
+  unsigned char c1;
+  unsigned char c2 = 0, c3 = 0, c4 = 0;
+  utf8proc_int32_t codepoint;
   /* ponytail: EOZ is -1; casting to unsigned makes it 255 and would
-     incorrectly look like a UTF-8 continuation byte at end-of-file. */
+     incorrectly look like UTF-8 data at end-of-file. */
   if (ls->current == EOZ)
     return 0;
-  unsigned char c1 = (unsigned char)ls->current;
-  /* ASCII identifier continuation or any non-ASCII UTF-8 byte. */
-  return lislalnum(c1) || c1 >= 0x80;
+  c1 = (unsigned char)ls->current;
+  /* ASCII identifier continuation. */
+  if (lislalnum(c1))
+    return 1;
+  /* Non-ASCII: accept UTF-8 letters and U+00B7 (middle dot), used in
+     existing test names. This lets punctuation like '¡' be separators. */
+  if (c1 < 0xC0)
+    return 0;
+  if (ls->z->n > 0)
+    c2 = (unsigned char)ls->z->p[0];
+  if (ls->z->n > 1)
+    c3 = (unsigned char)ls->z->p[1];
+  if (ls->z->n > 2)
+    c4 = (unsigned char)ls->z->p[2];
+  codepoint = utf8tocodepoint(c1, c2, c3, c4);
+  if (codepoint < 0)
+    return 0;
+  return iswordcodepoint(codepoint);
 }
 
 static void saveutf8seq(LexState *ls) {
@@ -626,6 +1085,12 @@ static int isselfalias (TString *ts) {
   size_t longo = tsslen(ts);
   const char *nomo = getstr(ts);
   return (longo == 3 && memcmp(nomo, "sia", 3) == 0);
+}
+
+static int iscitopenalias (TString *ts) {
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  return (longo == 3 && memcmp(nomo, "cit", 3) == 0);
 }
 
 static int nametotoken (TString *ts) {
@@ -755,6 +1220,10 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           }
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
+          if (iscitopenalias(ts)) {
+            read_cit_string(ls, seminfo);
+            return TK_STRING;
+          }
           if (isselfalias(ts))
             ts = luaS_newliteral(ls->L, "self");
           seminfo->ts = ts;
@@ -809,6 +1278,10 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
+          if (iscitopenalias(ts)) {
+            read_cit_string(ls, seminfo);
+            return TK_STRING;
+          }
           if (isselfalias(ts))
             ts = luaS_newliteral(ls->L, "self");
           seminfo->ts = ts;

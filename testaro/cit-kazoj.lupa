@@ -1,0 +1,296 @@
+#!/usr/bin/env lupe
+-- Regresaj testoj por cit/malcit/ĉit kaj ĥaŭ-eskapo en llex.
+
+loke misoj = 0
+
+loke funkcie postuli(kondiĉo, mesaĝo)
+  se ne kondiĉo tiam
+    printe('[MISE] ' .. mesaĝo)
+    misoj = misoj + 1
+  hop
+hop
+
+loke funkcie enhavas(teksto, parto)
+  reŝalte teksto:find(parto, 1, vera) ~= nil
+hop
+
+-- 1) Unua blanksigno post cit: neniu/tabo/novlinio.
+loke fakto iĝe asertu(ŝargu("reŝalte cit,saluton malcit"))
+postuli(fakto() == "saluton", "cit sen blanko")
+
+fakto iĝe asertu(ŝargu("reŝalte cit¡saluton!ĉit"))
+postuli(fakto() == "saluton", "cit kun ne-ASCII interpunkcio")
+
+fakto iĝe asertu(ŝargu("reŝalte cit¡¡saluton!!ĉit"))
+postuli(fakto() == "¡saluton!", "cit kun duobla ne-ASCII interpunkcio")
+
+fakto iĝe asertu(ŝargu("reŝalte cit\tsaluton malcit"))
+postuli(fakto() == "saluton", "cit kun tabo")
+
+fakto iĝe asertu(ŝargu("reŝalte cit\nsaluton\nĉit"))
+postuli(fakto() == "saluton\n", "cit kun novlinio")
+
+-- 2) Delimita konduto kaj Unicode-randoj.
+fakto iĝe asertu(ŝargu("reŝalte cit xmalcityz malcit"))
+postuli(fakto() == "xmalcityz", "malcit interne de pli longa vorto ne fermu")
+
+fakto iĝe asertu(ŝargu("reŝalte cit abc malcit, 7"))
+loke v1, v2 = fakto()
+postuli(v1 == "abc" kaj v2 == 7, "interpunkcia signo post fermilo")
+
+fakto iĝe asertu(ŝargu("reŝalte cit aĉitb ĉit"))
+postuli(fakto() == "aĉitb", "ĉit interne de vorto ne fermu")
+
+loke funkcie postuli_malplenan_per_separilo(separilo, nomo)
+  loke g, e = ŝargu("reŝalte cit" .. separilo .. "ĉit")
+  postuli(g ~= nil, "ne povis ŝargi por separilo " .. nomo .. ": " .. (e aŭ ""))
+  se g tiam
+    postuli(g() == "", "separilo " .. nomo .. " estu valida por malplena cit")
+  hop
+hop
+
+-- 2b) Specifaj unikodaj simboloj devas validi kiel separiloj.
+postuli_malplenan_per_separilo("∅", "U+2205 EMPTY SET")
+postuli_malplenan_per_separilo("⦚", "U+299A VERTICAL ZIGZAG LINE")
+postuli_malplenan_per_separilo("∎", "U+220E END OF PROOF")
+postuli_malplenan_per_separilo("⟂", "U+27C2 PERPENDICULAR")
+postuli_malplenan_per_separilo("ˇ", "U+02C7 CARON")
+postuli_malplenan_per_separilo("∇", "U+2207 NABLA")
+postuli_malplenan_per_separilo("☮", "U+262E PEACE SYMBOL")
+postuli_malplenan_per_separilo("–", "U+2013 EN DASH")
+postuli_malplenan_per_separilo("￤", "U+FFE4 FULLWIDTH BROKEN BAR")
+
+-- 2c) Unicode-kategori-randoj (konataj limkazoj).
+postuli_malplenan_per_separilo(" ", "U+00A0 NO-BREAK SPACE (Zs)")
+postuli_malplenan_per_separilo(" ", "U+202F NARROW NO-BREAK SPACE (Zs)")
+postuli_malplenan_per_separilo("　", "U+3000 IDEOGRAPHIC SPACE (Zs)")
+postuli_malplenan_per_separilo("—", "U+2014 EM DASH (Pd)")
+postuli_malplenan_per_separilo("$", "U+0024 DOLLAR SIGN (Sc)")
+
+-- 2d) Ne-separiloj: identigilaj signoj ne rajtas fermi.
+fakto iĝe asertu(ŝargu("reŝalte cit a·ĉitb ĉit"))
+postuli(fakto() == "a·ĉitb", "U+00B7 middle dot restu ne-separilo")
+
+fakto iĝe asertu(ŝargu("reŝalte cit a‿ĉitb ĉit"))
+postuli(fakto() == "a‿ĉitb", "U+203F undertie (Pc) restu ne-separilo")
+
+fakto iĝe asertu(ŝargu("reŝalte cit áĉitb ĉit"))
+postuli(fakto() == "áĉitb", "U+0301 combining acute (Mn) restu ne-separilo")
+
+-- 2e) Astralaj (4-bajtaj) unikodaj kazoj.
+postuli_malplenan_per_separilo("😀", "U+1F600 GRINNING FACE (So, 4-bajta)")
+
+fakto iĝe asertu(ŝargu("reŝalte cit 𐐀ĉitb ĉit"))
+postuli(fakto() == "𐐀ĉitb", "U+10400 DESERET LETTER (Lu, 4-bajta) restu ne-separilo")
+
+-- 2f) Formataj regsignoj (Cf) kiel separiloj.
+postuli_malplenan_per_separilo("‍", "U+200D ZERO WIDTH JOINER (Cf)")
+postuli_malplenan_per_separilo("﻿", "U+FEFF ZERO WIDTH NO-BREAK SPACE/BOM (Cf)")
+
+-- 2g) Normaligaj variantoj (NFC/NFD) ĉe vortlimoj.
+fakto iĝe asertu(ŝargu("reŝalte cit áĉitb ĉit"))
+postuli(fakto() == "áĉitb", "NFC: antaŭkunmetita litero restu ne-separilo")
+
+fakto iĝe asertu(ŝargu("reŝalte cit á ĉit"))
+postuli(fakto() == "á", "NFC: fermilo post apartigilo funkciu")
+
+fakto iĝe asertu(ŝargu("reŝalte cit á ĉit"))
+postuli(fakto() == "á", "NFD: kombina marko kun baza litero restu en rezulto")
+
+-- 2h) Malvalidaj UTF-8 sekvencoj: ne kraŝi dum ŝargo/traktado.
+loke funkcie provi_malvalidan_utf8(malsxargxo, nomo)
+  loke peco = string.char(table.unpack(malsxargxo))
+  loke kodo = "reŝalte cit" .. peco .. "ĉit"
+  loke g, e = ŝargu(kodo)
+  se g tiam
+    loke bone, val = pcall(g)
+    postuli(bone, "malvalida UTF-8 (" .. nomo .. ") ne kreu rulan eraron")
+    se bone tiam
+      postuli(type(val) == "string", "malvalida UTF-8 (" .. nomo .. ") revenu ĉenan rezulton")
+    hop
+  alie
+    postuli(enhavas(e aŭ "", "syntax error"), "malvalida UTF-8 (" .. nomo .. ") donu sintaksan eraron se ne ŝargebla")
+  hop
+hop
+
+provi_malvalidan_utf8({0x80}, "orfa daŭrig-bajto")
+provi_malvalidan_utf8({0xC0, 0x80}, "tro-longa NUL")
+provi_malvalidan_utf8({0xF0, 0x28, 0x8C, 0x28}, "nevalida 4-bajta sekvenco")
+
+-- 3) Nefinita literalo kaj lini-indiko.
+loke nefinita, eraro = ŝargu("reŝalte cit abc")
+postuli(nefinita == nil kaj enhavas(eraro aŭ "", "unfinished cit string"), "EOF antaŭ fermilo")
+postuli(enhavas(eraro aŭ "", "line 1"), "lini-indiko por nefinita cit")
+
+loke nefinita2, eraro2 = ŝargu("\nreŝalte cit abc")
+postuli(nefinita2 == nil kaj enhavas(eraro2 aŭ "", "line 2"), "lini-indiko sur dua linio")
+
+-- 4) Malplena literalo.
+fakto iĝe asertu(ŝargu("reŝalte cit malcit"))
+postuli(fakto() == "", "malplena cit ... malcit")
+
+fakto iĝe asertu(ŝargu("reŝalte cit\nĉit"))
+postuli(fakto() == "", "malplena cit ... ĉit")
+
+-- 5) Miksitaj fermiloj.
+fakto iĝe asertu(ŝargu("reŝalte cit unu malcit"))
+postuli(fakto() == "unu", "fermilo malcit")
+
+fakto iĝe asertu(ŝargu("reŝalte cit du ĉit"))
+postuli(fakto() == "du", "fermilo ĉit")
+
+fakto iĝe asertu(ŝargu("reŝalte cit\nlinio1\nlinio2\nmalcit"))
+postuli(fakto() == "linio1\nlinio2\n", "plurlinia fermo per malcit")
+
+-- 6) Negativa ne-interfero: 'cit' ne plu uzeblas kiel ordinara identigilo.
+loke identigilo, eraro3 = ŝargu("loka cit = 0")
+postuli(identigilo == nil kaj enhavas(eraro3 aŭ "", "unfinished cit string"),
+        "cit kiel identigilo devas fiaski")
+
+-- Ĥaŭ-eskapo: la sekva signo estas laŭvorta.
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭmalcit malcit"))
+postuli(fakto() == "malcit", "ĥaŭmalcit")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭĉit ĉit"))
+postuli(fakto() == "ĉit", "ĥaŭĉit")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭb ĉit"))
+postuli(fakto() == "b", "ĥaŭb")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭĥaŭ ĉit"))
+postuli(fakto() == "ĥaŭ", "ĥaŭĥaŭ")
+
+-- En cit, '\' ne havas specialan signifon.
+fakto iĝe asertu(ŝargu("reŝalte cit \\n ĉit"))
+postuli(fakto() == "\\n", "cit ne interpretu backslash-eskapojn")
+
+-- ĥap-eskapo: speciala interpreto de sekvaj signoj.
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-n-ĉit"))
+postuli(fakto() == "\n", "ĥape-n-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-novlinie-ĉit"))
+postuli(fakto() == "\n", "ĥape-novlinie-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-alarme-X ĉit"))
+postuli(fakto() == "\aX", "ĥape-alarme-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-retropaŝe-X ĉit"))
+postuli(fakto() == "\bX", "ĥape-retropaŝe-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-paĝosalte-X ĉit"))
+postuli(fakto() == "\fX", "ĥape-paĝosalte-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-ĉaretrevene-ĉit"))
+postuli(fakto() == "\r", "ĥape-ĉaretrevene-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-tabe-X ĉit"))
+postuli(fakto() == "\tX", "ĥape-tabe-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-vertikalatabe-X ĉit"))
+postuli(fakto() == "\vX", "ĥape-vertikalatabe-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-x-7B- ĉit"))
+postuli(fakto() == "{", "ĥape-x-7B-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-deksesume-7B- ĉit"))
+postuli(fakto() == "{", "ĥape-deksesume-7B-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-dekume-123- ĉit"))
+postuli(fakto() == "{", "ĥape-dekume-123-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-u-263A- ĉit"))
+postuli(fakto() == "☺", "ĥape-u-263A-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-unikodpunkte-263A- ĉit"))
+postuli(fakto() == "☺", "ĥape-unikodpunkte-263A-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥapunikodpunkte-263A ĉit"))
+postuli(fakto() == "☺", "ĥapunikodpunkte-263A")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥapdeksesume-7B ĉit"))
+postuli(fakto() == "{", "ĥapdeksesume-7B")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥapdekume-123 ĉit"))
+postuli(fakto() == "{", "ĥapdekume-123")
+
+fakto iĝe asertu(ŝargu("reŝalte cit finoĥape-spacglute-\n \tage ĉit"))
+postuli(fakto() == "finoage", "ĥape-spacglute-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit finiĥape-z-\n \te ĉit"))
+postuli(fakto() == "finie", "ĥape-z-")
+
+fakto iĝe asertu(ŝargu("reŝalte cit finiĥapspacglute\n \te ĉit"))
+postuli(fakto() == "finie", "ĥapspacglute")
+
+-- Nevalidaj ĥap-komandoj devas fiaski.
+loke nevalida, eraro4 = ŝargu("reŝalte cit ĥape-nekonata-ĉit")
+postuli(nevalida == nil kaj enhavas(eraro4 aŭ "", "invalid escape sequence"),
+        "nevalida ĥap-subkomando")
+
+loke nevalida2, eraro5 = ŝargu("reŝalte cit ĥape-111-ĉit")
+postuli(nevalida2 == nil kaj enhavas(eraro5 aŭ "", "invalid escape sequence"),
+        "cifera subkomando ne permesata")
+
+loke nevalida3, eraro6 = ŝargu("reŝalte cit ĥape-x-7-ĉit")
+postuli(nevalida3 == nil kaj enhavas(eraro6 aŭ "", "invalid escape sequence"),
+        "nekompleta deksesuma parametro")
+
+loke nevalida4, eraro7 = ŝargu("reŝalte cit ĥapnĉit")
+postuli(nevalida4 == nil kaj enhavas(eraro7 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (n)")
+
+loke nevalida5, eraro8 = ŝargu("reŝalte cit ĥapx7B ĉit")
+postuli(nevalida5 == nil kaj enhavas(eraro8 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (x)")
+
+loke nevalida6, eraro9 = ŝargu("reŝalte cit ĥapz\n \te ĉit")
+postuli(nevalida6 == nil kaj enhavas(eraro9 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (z)")
+
+loke nevalida7, eraro10 = ŝargu("reŝalte cit ĥapu-263A ĉit")
+postuli(nevalida7 == nil kaj enhavas(eraro10 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (u)")
+
+loke nevalida8, eraro11 = ŝargu("reŝalte cit ĥapaĉit")
+postuli(nevalida8 == nil kaj enhavas(eraro11 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (a)")
+
+loke nevalida9, eraro12 = ŝargu("reŝalte cit ĥapbĉit")
+postuli(nevalida9 == nil kaj enhavas(eraro12 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (b)")
+
+loke nevalida10, eraro13 = ŝargu("reŝalte cit ĥapfĉit")
+postuli(nevalida10 == nil kaj enhavas(eraro13 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (f)")
+
+loke nevalida11, eraro14 = ŝargu("reŝalte cit ĥaprĉit")
+postuli(nevalida11 == nil kaj enhavas(eraro14 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (r)")
+
+loke nevalida12, eraro15 = ŝargu("reŝalte cit ĥaptĉit")
+postuli(nevalida12 == nil kaj enhavas(eraro15 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (t)")
+
+loke nevalida13, eraro16 = ŝargu("reŝalte cit ĥapvĉit")
+postuli(nevalida13 == nil kaj enhavas(eraro16 aŭ "", "invalid escape sequence"),
+        "rekta mallonga formo malpermesata (v)")
+
+-- Ĥaŭ permesas laŭvorte reprezenti ankaŭ nevalidajn ĥap-formojn.
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭĥapn ĉit"))
+postuli(fakto() == "ĥapn", "ĥaŭ + ĥapn laŭvorte")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭĥapu-263A ĉit"))
+postuli(fakto() == "ĥapu-263A", "ĥaŭ + ĥapu-263A laŭvorte")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭĥapx7B ĉit"))
+postuli(fakto() == "ĥapx7B", "ĥaŭ + ĥapx7B laŭvorte")
+
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭĥape-u-263A- ĉit"))
+postuli(fakto() == "ĥape-u-263A-", "ĥaŭ + ĥape-u-263A- laŭvorte")
+
+se misoj > 0 tiam
+  printe("MISE " .. misoj .. " testo(j) en cit-kazoj.lupa")
+  os.exit(1)
+alie
+  printe("[BONE] cit-kazoj.lupa")
+hop

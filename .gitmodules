@@ -1,0 +1,3 @@
+[submodule "fontaro/utf8proc"]
+	path = fontaro/utf8proc
+	url = https://github.com/JuliaStrings/utf8proc.git

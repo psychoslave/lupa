@@ -78,10 +78,76 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `=` -> `iĝu`, `igxu`, `iĝe`, `igxe`
 - `;` -> `nu`
 - `,` -> `tuj`, `plie`
+- longĉeno-komenco (`[[`-simile) -> `cit`
+- longĉeno-fino (`]]`-simile) -> `malcit`, `ĉit`
+- en `cit`-ĉeno, laŭvortigi la sekvan signon -> `ĥaŭ`
+- en `cit`-ĉeno, speciale interpreti eskapan komandon -> `ĥap`
 
 La sintaksanalizilo jam distingas la kuntekstojn de `,` (ekz. disigo de esprimoj, nomlistoj, argumentoj); `tuj` kaj `plie` mapigas al la sama komo-signo.
 
 Por `::`, la sinonimo `ho` baziĝas sur la vokativa interjekcio en Esperanto: ĝi semantike markas alvokon/alparolon al etikedo-celo (`ho etikedo ho`).
+
+Por `cit`, la unua sekva **apartigila signo** (blanksigno aŭ ne-litera interpunkcio) estas ignorata, kaj same unu apartigila signo tuj antaŭ `malcit`/`ĉit` ne eniras la rezultan ĉenon. La ĉeno povas transiri plurajn liniojn ĝis `malcit` aŭ `ĉit`, por konduto pli proksima al `[[ ... ]]`.
+
+Praktika mnemoniko por malplena ĉeno: `cit∅ĉit` (kaj ankaŭ `cit{}ĉit`) redonas `""`. Tio kongruas kun la simbola ideo de malplena aro (`∅` aŭ `{}`), samtempe montrante ke la mekanismo povas engluti unu aŭ du apartigilojn ĉe la limoj.
+
+`ĥaŭ` en `cit`-ĉeno malaktivigas la sekvan signon por fermila detekto (ekz. `ĥaŭmalcit`, `ĥaŭĉit`, `ĥaŭĥaŭ`). La formo estis elektita ankaŭ ĉar ĝi ne aperas en Tekstaro (0 trafoj), do kolizio-risko estas minimuma.
+
+`cit` **ne** interpretas `\`-sekvencojn (ekz. `cit \n ĉit` redonas laŭvorte `\n`). Tio estas intenca: laŭvortigo (`ĥaŭ`) kaj speciala interpreto (`ĥap`) estas apartaj mekanismoj por minimumigi surprizon.
+
+`ĥap` estis elektita ĉar ĝi restas leksike parenca al `ĥaŭ` kaj same havas 0 trafojn en Tekstaro; tiel kolizio-risko kun ordinara Esperanto restas minimuma.
+
+#### `ĥap`: sintakso
+
+Du formoj estas validaj:
+
+- **limigita formo**: `ĥape-<subkomando>-...-`
+  - ekz: `ĥape-n-`, `ĥape-novlinie-`, `ĥape-x-7B-`, `ĥape-u-263A-`
+- **rekta longa formo** (sen `e-`): `ĥap<plurlitera-subkomando>` aŭ `ĥap<plurlitera-subkomando>-<parametro>`
+  - ekz: `ĥapspacglute`, `ĥapunikodpunkte-263A`, `ĥapdeksesume-7B`
+
+En la limigita formo la fina `-` de la eskapo estas konsumita; la sekva signo jam apartenas al ordinara ĉena enhavo.
+
+Intence, **rekta monoletara** formo estas nevalida: `ĥapn`, `ĥapx7B`, `ĥapz`, `ĥapu-263A`, ktp. Tio evitas konfuzon (ekz. kun `hxapx`) kaj devigas pli klarajn formojn.
+
+Atentu: `cit` ankoraŭ forigas unu apartigilan signon tuj antaŭ `malcit`/`ĉit`. Do se eskapo produktas apartigilan signon (ekz. `{`), necesas aldoni apartan separatoron antaŭ la fermilo por ke la produktita signo restu en la rezulto (ekz. `... ĥape-x-7B- ĉit`).
+
+#### Subkomandoj de `ĥap`
+
+- Sen parametro:
+  - `a` / `alarme`
+  - `b` / `retropaŝe`
+  - `f` / `paĝosalte`
+  - `n` / `novlinie`
+  - `r` / `ĉaretrevene`
+  - `t` / `tabe`
+  - `v` / `vertikalatabe`
+  - `z`, `spacglute` (englutas sekvan blankspacon/novliniojn en la fonto)
+  - `\`, `"`, `'` (nur en plena formo: `e-\-`, `e-"-`, `e-'-`)
+  - `retrostreko`, `citilo`, `apostrofo` (legeblaj sinonimoj)
+- Kun parametro:
+  - `x` / `deksesume`: du deksesumaj ciferoj (0x00..0xFF), ekz. `ĥape-x-7B-` aŭ `ĥapdeksesume-7B`
+  - `u` / `unikodpunkte`: unikoda kodpunkto en deksesuma formo (ĝis `10FFFF`), ekz. `ĥape-u-263A-` aŭ `ĥapunikodpunkte-263A`
+  - `dekume`: 1..3 dekumaj ciferoj (0..255), ekz. `ĥape-dekume-123-` aŭ `ĥapdekume-123`
+
+`ĥape-111-...` estas intence **nevalida**: pura cifera subkomando ne estas akceptata.
+
+Neekzistantaj aŭ misformitaj `ĥap`-komandoj liveras eraron `invalid escape sequence`, kongrue kun Lua-stila fiasko por nevalidaj eskapoj.
+
+### Kiam `cit` efektive malfermas ĉenon
+
+`cit` ŝaltas ĉen-legadon nur kiam ĝi estas legata kiel aparta nomo (`TK_NAME`) kun valoro `cit`.
+
+Praktike tio signifas:
+
+- **Malfermas** kiam la sekva signo ne apartenas al identigilo:
+  - blanksigno (`cit saluton malcit`, `cit\tsaluton malcit`, `cit\n...ĉit`)
+  - interpunkcio/operatoro (`cit,saluton malcit`, `cit^¡saluton!ĉit`, `cit¡saluton!ĉit`, ktp)
+- **Ne malfermas** kiam la sekva signo etendas la saman identigilon:
+  - ASCII litero/cifero/substreko (`citalfa`, `cit1`, `cit_`)
+  - UTF-8 liter-komenco (ekz. `citŝnuro`, `citĉeno`), ĉar tio restas unu identigilo.
+
+Krome, `malcit`/`ĉit` fermas nur ĉe vortlimoj (do internvorta kiel `sinmalciti` aŭ `aĉiti` ne fermas).
 
 ### Klarigoj pri la realigitaj formoj
 
@@ -173,6 +239,8 @@ La rilataj testoj troviĝas en:
 
 - `testaro/sinonimoj-leksilo.lupa`
 - `testaro/sinonimoj-bibliotekoj.lupa`
-- `testaro/lua53-kongruo.lua`
+- `testaro/cit-kazoj.lupa`
+- `testaro/lua53-kongruo.lupa`
+- `testaro/lotpocio-kongruo.sh`
 
 La tria testdosiero provas kondutan kongruon inter Lua 5.3 kaj Lupa por kanona Lua-kodo (sen Lupa-specifaj sinonimoj).

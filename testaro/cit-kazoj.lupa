@@ -15,31 +15,31 @@ loke funkcie enhavas(teksto, parto)
 hop
 
 -- 1) Unua blanksigno post cit: neniu/tabo/novlinio.
-loke f = asertu(ŝargu("reŝalte cit,saluton malcit"))
-postuli(f() == "saluton", "cit sen blanko")
+loke fakto iĝe asertu(ŝargu("reŝalte cit,saluton malcit"))
+postuli(fakto() == "saluton", "cit sen blanko")
 
-f = asertu(ŝargu("reŝalte cit¡saluton!ĉit"))
-postuli(f() == "saluton", "cit kun ne-ASCII interpunkcio")
+fakto iĝe asertu(ŝargu("reŝalte cit¡saluton!ĉit"))
+postuli(fakto() == "saluton", "cit kun ne-ASCII interpunkcio")
 
-f = asertu(ŝargu("reŝalte cit¡¡saluton!!ĉit"))
-postuli(f() == "¡saluton!", "cit kun duobla ne-ASCII interpunkcio")
+fakto iĝe asertu(ŝargu("reŝalte cit¡¡saluton!!ĉit"))
+postuli(fakto() == "¡saluton!", "cit kun duobla ne-ASCII interpunkcio")
 
-f = asertu(ŝargu("reŝalte cit\tsaluton malcit"))
-postuli(f() == "saluton", "cit kun tabo")
+fakto iĝe asertu(ŝargu("reŝalte cit\tsaluton malcit"))
+postuli(fakto() == "saluton", "cit kun tabo")
 
-f = asertu(ŝargu("reŝalte cit\nsaluton\nĉit"))
-postuli(f() == "saluton\n", "cit kun novlinio")
+fakto iĝe asertu(ŝargu("reŝalte cit\nsaluton\nĉit"))
+postuli(fakto() == "saluton\n", "cit kun novlinio")
 
 -- 2) Delimita konduto kaj Unicode-randoj.
-f = asertu(ŝargu("reŝalte cit xmalcityz malcit"))
-postuli(f() == "xmalcityz", "malcit interne de pli longa vorto ne fermu")
+fakto iĝe asertu(ŝargu("reŝalte cit xmalcityz malcit"))
+postuli(fakto() == "xmalcityz", "malcit interne de pli longa vorto ne fermu")
 
-f = asertu(ŝargu("reŝalte cit abc malcit, 7"))
-loke v1, v2 = f()
+fakto iĝe asertu(ŝargu("reŝalte cit abc malcit, 7"))
+loke v1, v2 = fakto()
 postuli(v1 == "abc" kaj v2 == 7, "interpunkcia signo post fermilo")
 
-f = asertu(ŝargu("reŝalte cit aĉitb ĉit"))
-postuli(f() == "aĉitb", "ĉit interne de vorto ne fermu")
+fakto iĝe asertu(ŝargu("reŝalte cit aĉitb ĉit"))
+postuli(fakto() == "aĉitb", "ĉit interne de vorto ne fermu")
 
 loke funkcie postuli_malplenan_per_separilo(separilo, nomo)
   loke g, e = ŝargu("reŝalte cit" .. separilo .. "ĉit")
@@ -68,14 +68,14 @@ postuli_malplenan_per_separilo("—", "U+2014 EM DASH (Pd)")
 postuli_malplenan_per_separilo("$", "U+0024 DOLLAR SIGN (Sc)")
 
 -- 2d) Ne-separiloj: identigilaj signoj ne rajtas fermi.
-f = asertu(ŝargu("reŝalte cit a·ĉitb ĉit"))
-postuli(f() == "a·ĉitb", "U+00B7 middle dot restu ne-separilo")
+fakto iĝe asertu(ŝargu("reŝalte cit a·ĉitb ĉit"))
+postuli(fakto() == "a·ĉitb", "U+00B7 middle dot restu ne-separilo")
 
-f = asertu(ŝargu("reŝalte cit a‿ĉitb ĉit"))
-postuli(f() == "a‿ĉitb", "U+203F undertie (Pc) restu ne-separilo")
+fakto iĝe asertu(ŝargu("reŝalte cit a‿ĉitb ĉit"))
+postuli(fakto() == "a‿ĉitb", "U+203F undertie (Pc) restu ne-separilo")
 
-f = asertu(ŝargu("reŝalte cit áĉitb ĉit"))
-postuli(f() == "áĉitb", "U+0301 combining acute (Mn) restu ne-separilo")
+fakto iĝe asertu(ŝargu("reŝalte cit áĉitb ĉit"))
+postuli(fakto() == "áĉitb", "U+0301 combining acute (Mn) restu ne-separilo")
 
 -- 3) Nefinita literalo kaj lini-indiko.
 loke nefinita, eraro = ŝargu("reŝalte cit abc")
@@ -86,21 +86,21 @@ loke nefinita2, eraro2 = ŝargu("\nreŝalte cit abc")
 postuli(nefinita2 == nil kaj enhavas(eraro2 aŭ "", "line 2"), "lini-indiko sur dua linio")
 
 -- 4) Malplena literalo.
-f = asertu(ŝargu("reŝalte cit malcit"))
-postuli(f() == "", "malplena cit ... malcit")
+fakto iĝe asertu(ŝargu("reŝalte cit malcit"))
+postuli(fakto() == "", "malplena cit ... malcit")
 
-f = asertu(ŝargu("reŝalte cit\nĉit"))
-postuli(f() == "", "malplena cit ... ĉit")
+fakto iĝe asertu(ŝargu("reŝalte cit\nĉit"))
+postuli(fakto() == "", "malplena cit ... ĉit")
 
 -- 5) Miksitaj fermiloj.
-f = asertu(ŝargu("reŝalte cit unu malcit"))
-postuli(f() == "unu", "fermilo malcit")
+fakto iĝe asertu(ŝargu("reŝalte cit unu malcit"))
+postuli(fakto() == "unu", "fermilo malcit")
 
-f = asertu(ŝargu("reŝalte cit du ĉit"))
-postuli(f() == "du", "fermilo ĉit")
+fakto iĝe asertu(ŝargu("reŝalte cit du ĉit"))
+postuli(fakto() == "du", "fermilo ĉit")
 
-f = asertu(ŝargu("reŝalte cit\nlinio1\nlinio2\nmalcit"))
-postuli(f() == "linio1\nlinio2\n", "plurlinia fermo per malcit")
+fakto iĝe asertu(ŝargu("reŝalte cit\nlinio1\nlinio2\nmalcit"))
+postuli(fakto() == "linio1\nlinio2\n", "plurlinia fermo per malcit")
 
 -- 6) Negativa ne-interfero: 'cit' ne plu uzeblas kiel ordinara identigilo.
 loke identigilo, eraro3 = ŝargu("loka cit = 0")
@@ -108,79 +108,79 @@ postuli(identigilo == nil kaj enhavas(eraro3 aŭ "", "unfinished cit string"),
         "cit kiel identigilo devas fiaski")
 
 -- Ĥaŭ-eskapo: la sekva signo estas laŭvorta.
-f = asertu(ŝargu("reŝalte cit ĥaŭmalcit malcit"))
-postuli(f() == "malcit", "ĥaŭmalcit")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭmalcit malcit"))
+postuli(fakto() == "malcit", "ĥaŭmalcit")
 
-f = asertu(ŝargu("reŝalte cit ĥaŭĉit ĉit"))
-postuli(f() == "ĉit", "ĥaŭĉit")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭĉit ĉit"))
+postuli(fakto() == "ĉit", "ĥaŭĉit")
 
-f = asertu(ŝargu("reŝalte cit ĥaŭb ĉit"))
-postuli(f() == "b", "ĥaŭb")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭb ĉit"))
+postuli(fakto() == "b", "ĥaŭb")
 
-f = asertu(ŝargu("reŝalte cit ĥaŭĥaŭ ĉit"))
-postuli(f() == "ĥaŭ", "ĥaŭĥaŭ")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭĥaŭ ĉit"))
+postuli(fakto() == "ĥaŭ", "ĥaŭĥaŭ")
 
 -- En cit, '\' ne havas specialan signifon.
-f = asertu(ŝargu("reŝalte cit \\n ĉit"))
-postuli(f() == "\\n", "cit ne interpretu backslash-eskapojn")
+fakto iĝe asertu(ŝargu("reŝalte cit \\n ĉit"))
+postuli(fakto() == "\\n", "cit ne interpretu backslash-eskapojn")
 
 -- ĥap-eskapo: speciala interpreto de sekvaj signoj.
-f = asertu(ŝargu("reŝalte cit ĥape-n-ĉit"))
-postuli(f() == "\n", "ĥape-n-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-n-ĉit"))
+postuli(fakto() == "\n", "ĥape-n-")
 
-f = asertu(ŝargu("reŝalte cit ĥape-novlinie-ĉit"))
-postuli(f() == "\n", "ĥape-novlinie-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-novlinie-ĉit"))
+postuli(fakto() == "\n", "ĥape-novlinie-")
 
-f = asertu(ŝargu("reŝalte cit ĥape-alarme-X ĉit"))
-postuli(f() == "\aX", "ĥape-alarme-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-alarme-X ĉit"))
+postuli(fakto() == "\aX", "ĥape-alarme-")
 
-f = asertu(ŝargu("reŝalte cit ĥape-retropaŝe-X ĉit"))
-postuli(f() == "\bX", "ĥape-retropaŝe-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-retropaŝe-X ĉit"))
+postuli(fakto() == "\bX", "ĥape-retropaŝe-")
 
-f = asertu(ŝargu("reŝalte cit ĥape-paĝosalte-X ĉit"))
-postuli(f() == "\fX", "ĥape-paĝosalte-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-paĝosalte-X ĉit"))
+postuli(fakto() == "\fX", "ĥape-paĝosalte-")
 
-f = asertu(ŝargu("reŝalte cit ĥape-ĉaretrevene-ĉit"))
-postuli(f() == "\r", "ĥape-ĉaretrevene-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-ĉaretrevene-ĉit"))
+postuli(fakto() == "\r", "ĥape-ĉaretrevene-")
 
-f = asertu(ŝargu("reŝalte cit ĥape-tabe-X ĉit"))
-postuli(f() == "\tX", "ĥape-tabe-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-tabe-X ĉit"))
+postuli(fakto() == "\tX", "ĥape-tabe-")
 
-f = asertu(ŝargu("reŝalte cit ĥape-vertikalatabe-X ĉit"))
-postuli(f() == "\vX", "ĥape-vertikalatabe-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-vertikalatabe-X ĉit"))
+postuli(fakto() == "\vX", "ĥape-vertikalatabe-")
 
-f = asertu(ŝargu("reŝalte cit ĥape-x-7B- ĉit"))
-postuli(f() == "{", "ĥape-x-7B-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-x-7B- ĉit"))
+postuli(fakto() == "{", "ĥape-x-7B-")
 
-f = asertu(ŝargu("reŝalte cit ĥape-deksesume-7B- ĉit"))
-postuli(f() == "{", "ĥape-deksesume-7B-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-deksesume-7B- ĉit"))
+postuli(fakto() == "{", "ĥape-deksesume-7B-")
 
-f = asertu(ŝargu("reŝalte cit ĥape-dekume-123- ĉit"))
-postuli(f() == "{", "ĥape-dekume-123-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-dekume-123- ĉit"))
+postuli(fakto() == "{", "ĥape-dekume-123-")
 
-f = asertu(ŝargu("reŝalte cit ĥape-u-263A- ĉit"))
-postuli(f() == "☺", "ĥape-u-263A-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-u-263A- ĉit"))
+postuli(fakto() == "☺", "ĥape-u-263A-")
 
-f = asertu(ŝargu("reŝalte cit ĥape-unikodpunkte-263A- ĉit"))
-postuli(f() == "☺", "ĥape-unikodpunkte-263A-")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥape-unikodpunkte-263A- ĉit"))
+postuli(fakto() == "☺", "ĥape-unikodpunkte-263A-")
 
-f = asertu(ŝargu("reŝalte cit ĥapunikodpunkte-263A ĉit"))
-postuli(f() == "☺", "ĥapunikodpunkte-263A")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥapunikodpunkte-263A ĉit"))
+postuli(fakto() == "☺", "ĥapunikodpunkte-263A")
 
-f = asertu(ŝargu("reŝalte cit ĥapdeksesume-7B ĉit"))
-postuli(f() == "{", "ĥapdeksesume-7B")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥapdeksesume-7B ĉit"))
+postuli(fakto() == "{", "ĥapdeksesume-7B")
 
-f = asertu(ŝargu("reŝalte cit ĥapdekume-123 ĉit"))
-postuli(f() == "{", "ĥapdekume-123")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥapdekume-123 ĉit"))
+postuli(fakto() == "{", "ĥapdekume-123")
 
-f = asertu(ŝargu("reŝalte cit finoĥape-spacglute-\n \tage ĉit"))
-postuli(f() == "finoage", "ĥape-spacglute-")
+fakto iĝe asertu(ŝargu("reŝalte cit finoĥape-spacglute-\n \tage ĉit"))
+postuli(fakto() == "finoage", "ĥape-spacglute-")
 
-f = asertu(ŝargu("reŝalte cit finiĥape-z-\n \te ĉit"))
-postuli(f() == "finie", "ĥape-z-")
+fakto iĝe asertu(ŝargu("reŝalte cit finiĥape-z-\n \te ĉit"))
+postuli(fakto() == "finie", "ĥape-z-")
 
-f = asertu(ŝargu("reŝalte cit finiĥapspacglute\n \te ĉit"))
-postuli(f() == "finie", "ĥapspacglute")
+fakto iĝe asertu(ŝargu("reŝalte cit finiĥapspacglute\n \te ĉit"))
+postuli(fakto() == "finie", "ĥapspacglute")
 
 -- Nevalidaj ĥap-komandoj devas fiaski.
 loke nevalida, eraro4 = ŝargu("reŝalte cit ĥape-nekonata-ĉit")
@@ -236,17 +236,17 @@ postuli(nevalida13 == nil kaj enhavas(eraro16 aŭ "", "invalid escape sequence")
         "rekta mallonga formo malpermesata (v)")
 
 -- Ĥaŭ permesas laŭvorte reprezenti ankaŭ nevalidajn ĥap-formojn.
-f = asertu(ŝargu("reŝalte cit ĥaŭĥapn ĉit"))
-postuli(f() == "ĥapn", "ĥaŭ + ĥapn laŭvorte")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭĥapn ĉit"))
+postuli(fakto() == "ĥapn", "ĥaŭ + ĥapn laŭvorte")
 
-f = asertu(ŝargu("reŝalte cit ĥaŭĥapu-263A ĉit"))
-postuli(f() == "ĥapu-263A", "ĥaŭ + ĥapu-263A laŭvorte")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭĥapu-263A ĉit"))
+postuli(fakto() == "ĥapu-263A", "ĥaŭ + ĥapu-263A laŭvorte")
 
-f = asertu(ŝargu("reŝalte cit ĥaŭĥapx7B ĉit"))
-postuli(f() == "ĥapx7B", "ĥaŭ + ĥapx7B laŭvorte")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭĥapx7B ĉit"))
+postuli(fakto() == "ĥapx7B", "ĥaŭ + ĥapx7B laŭvorte")
 
-f = asertu(ŝargu("reŝalte cit ĥaŭĥape-u-263A- ĉit"))
-postuli(f() == "ĥape-u-263A-", "ĥaŭ + ĥape-u-263A- laŭvorte")
+fakto iĝe asertu(ŝargu("reŝalte cit ĥaŭĥape-u-263A- ĉit"))
+postuli(fakto() == "ĥape-u-263A-", "ĥaŭ + ĥape-u-263A- laŭvorte")
 
 se misoj > 0 tiam
   printe("MISE " .. misoj .. " testo(j) en cit-kazoj.lupa")

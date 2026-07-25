@@ -15,6 +15,7 @@
 
 #include "lua.h"
 
+#include "utf8proc/utf8proc.h"
 #include "lctype.h"
 #include "ldebug.h"
 #include "ldo.h"
@@ -552,19 +553,65 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
                                    luaZ_bufflen(ls->buff) - 2);
 }
 
+/* Helper to decode UTF-8 sequence to codepoint */
+static utf8proc_int32_t utf8_to_codepoint(const unsigned char *str, size_t len) {
+  utf8proc_int32_t codepoint;
+  if (len == 0) return -1;
+  utf8proc_iterate(str, len, &codepoint);
+  return codepoint;
+}
+
+/* Check if a Unicode codepoint is a word character (letter, digit, connector) */
+static int utf8_is_word_char(utf8proc_int32_t codepoint) {
+  utf8proc_category_t cat = utf8proc_category(codepoint);
+  /* Letters (L*): LU, LL, LT, LM, LO */
+  if (cat >= 1 && cat <= 5) return 1;
+  /* Digits (ND) */
+  if (cat == 9) return 1;
+  /* Connector punctuation (Pc, which includes underscore-like chars) */
+  if (cat == 12) return 1;
+  /* Mark characters (combining marks are part of base character) */
+  if (cat >= 6 && cat <= 8) return 1;
+  return 0;
+}
+
+/* Enhanced word delimiter check using utf8proc for Unicode support */
+static int isworddelimiter_utf8 (unsigned char c1, unsigned char c2, unsigned char c3) {
+  if (c1 < 0x80) {
+    /* ASCII case */
+    return (lisspace(c1) || (!lislalnum(c1) && c1 != '_'));
+  }
+  
+  /* Multi-byte UTF-8 sequence */
+  unsigned char bytes[4] = {c1, c2, c3, 0};
+  utf8proc_int32_t codepoint = utf8_to_codepoint(bytes, 3);
+  
+  if (codepoint < 0)
+    return 1;  /* Invalid UTF-8 treated as separator */
+  
+  /* Check Unicode category: separators (Zs, Zl, Zp) or non-word chars */
+  utf8proc_category_t cat = utf8proc_category(codepoint);
+  
+  /* Separators: Zs (23), Zl (24), Zp (25) */
+  if (cat == 23 || cat == 24 || cat == 25)
+    return 1;
+  
+  /* Punctuation except Pc: Pd, Ps, Pe, Pi, Pf, Po */
+  if ((cat >= 13 && cat <= 17) || cat == 11)  /* Pd, Ps, Pe, Pi, Pf, Po */
+    return 1;
+  
+  /* Word characters: letters, digits, marks, Pc */
+  if (utf8_is_word_char(codepoint))
+    return 0;
+  
+  return 1;  /* Everything else is a separator */
+}
+
 static int isworddelimiter (int c) {
   if (c == EOZ) return 1;
   if (lisspace(c)) return 1;
   if ((unsigned char)c >= 0x80) return 0;
   return !lislalnum(c) && c != '_';
-}
-
-static int isutf8separator (unsigned char c1, unsigned char c2, unsigned char c3) {
-  if (c1 < 0x80)
-    return (lisspace(c1) || (!lislalnum(c1) && c1 != '_'));
-  if (c1 == 0xC2 && c2 == 0xB7)  /* U+00B7 middle dot, kept for identifiers */
-    return 0;
-  return !luai_isutf8alpha(c1, c2, c3);
 }
 
 static void skiponeutf8char (LexState *ls) {
@@ -582,6 +629,14 @@ static void skiponeutf8char (LexState *ls) {
   }
 }
 
+static int isutf8separator (unsigned char c1, unsigned char c2, unsigned char c3) {
+  if (c1 < 0x80)
+    return (lisspace(c1) || (!lislalnum(c1) && c1 != '_'));
+  if (c1 == 0xC2 && c2 == 0xB7)  /* U+00B7 middle dot, kept for identifiers */
+    return 0;
+  return !luai_isutf8alpha(c1, c2, c3);
+}
+
 static int currentisseparator (LexState *ls) {
   unsigned char c1, c2 = 0, c3 = 0;
   if (ls->current == EOZ)
@@ -594,6 +649,47 @@ static int currentisseparator (LexState *ls) {
   if (ls->z->n > 1)
     c3 = cast_uchar(ls->z->p[1]);
   return isutf8separator(c1, c2, c3);
+}
+
+/* Check if byte at position pos in buffer is a word delimiter */
+static int isworddelimiter_at_buffer_pos(const unsigned char *buffer, size_t buflen, size_t pos) {
+  if (pos >= buflen)
+    return 1;
+  unsigned char c1 = buffer[pos];
+  unsigned char c2 = (pos + 1 < buflen) ? buffer[pos + 1] : 0;
+  unsigned char c3 = (pos + 2 < buflen) ? buffer[pos + 2] : 0;
+  return isworddelimiter_utf8(c1, c2, c3);
+}
+
+/* Find the start of a UTF-8 character at or before a buffer position */
+static size_t find_utf8_start(const unsigned char *buffer, size_t pos) {
+  while (pos > 0 && luai_isutf8cont(buffer[pos]))
+    pos--;
+  return pos;
+}
+
+/* Check if byte at buffer position (possibly mid-UTF-8) is a word delimiter */
+static int bufferpos_is_word_delim(const unsigned char *buffer, size_t buflen, size_t pos) {
+  if (pos >= buflen)
+    return 1;
+  size_t start = find_utf8_start(buffer, pos);
+  unsigned char c1 = buffer[start];
+  unsigned char c2 = (start + 1 < buflen) ? buffer[start + 1] : 0;
+  unsigned char c3 = (start + 2 < buflen) ? buffer[start + 2] : 0;
+  return isworddelimiter_utf8(c1, c2, c3);
+}
+
+/* Check if current input position is a word delimiter */
+static int currentpos_is_word_delim(LexState *ls) {
+  unsigned char c1, c2 = 0, c3 = 0;
+  if (ls->current == EOZ)
+    return 1;
+  c1 = (unsigned char)ls->current;
+  if (ls->z->n > 0)
+    c2 = (unsigned char)ls->z->p[0];
+  if (ls->z->n > 1)
+    c3 = (unsigned char)ls->z->p[1];
+  return isworddelimiter_utf8(c1, c2, c3);
 }
 
 static size_t trailingseparatorsize (Mbuffer *b) {
@@ -898,10 +994,11 @@ static void read_cit_string (LexState *ls, SemInfo *seminfo) {
                        ? (sizeof(close_malcit) - 1)
                        : sizeof(close_cxit);
       size_t start = luaZ_bufflen(ls->buff) - close_len;
-      int has_before = (start > 0);
-      int before = has_before ? (unsigned char)luaZ_buffer(ls->buff)[start - 1] : ' ';
+      int before_is_delim = (start == 0) ? 1 : bufferpos_is_word_delim(
+          cast(unsigned char *, luaZ_buffer(ls->buff)), luaZ_bufflen(ls->buff), start - 1);
+      int current_is_delim = currentpos_is_word_delim(ls);
 
-      if (isworddelimiter(before) && isworddelimiter(ls->current)) {
+      if (before_is_delim && current_is_delim) {
         size_t sepbytes;
         luaZ_buffremove(ls->buff, close_len);
         if (!protect_trailing_sep) {

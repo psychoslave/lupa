@@ -623,15 +623,190 @@ static size_t updatematch (size_t current, int c, const unsigned char *word) {
   return 0;
 }
 
+static void citescapeerror (LexState *ls) {
+  const char *msg = luaO_pushfstring(ls->L,
+                   "invalid escape sequence near 'ĥaĵ'");
+  lexerror(ls, msg, TK_STRING);
+}
+
+static void citskipspaces (LexState *ls) {
+  while (lisspace(ls->current)) {
+    if (currIsNewline(ls))
+      inclinenumber(ls);
+    else
+      next(ls);
+  }
+}
+
+static void saveutf8codepoint (LexState *ls, unsigned long cp) {
+  char buff[UTF8BUFFSZ];
+  int n = luaO_utf8esc(buff, cp);
+  for (; n > 0; n--)
+    save(ls, buff[UTF8BUFFSZ - n]);
+}
+
+static int parsehexvalue (const char *s, size_t len, unsigned long *out) {
+  size_t i;
+  unsigned long v = 0;
+  if (len == 0)
+    return 0;
+  for (i = 0; i < len; i++) {
+    int c = cast_uchar(s[i]);
+    if (!lisxdigit(c))
+      return 0;
+    v = (v << 4) + luaO_hexavalue(c);
+  }
+  *out = v;
+  return 1;
+}
+
+static int parsedecvalue (const char *s, size_t len, unsigned long *out) {
+  size_t i;
+  unsigned long v = 0;
+  if (len == 0 || len > 3)
+    return 0;
+  for (i = 0; i < len; i++) {
+    int c = cast_uchar(s[i]);
+    if (!lisdigit(c))
+      return 0;
+    v = v * 10 + (unsigned long)(c - '0');
+  }
+  if (v > UCHAR_MAX)
+    return 0;
+  *out = v;
+  return 1;
+}
+
+static void readcitescapefield (LexState *ls, char *out, size_t outsz) {
+  size_t i = 0;
+  while (ls->current != '-') {
+    if (ls->current == EOZ || currIsNewline(ls))
+      citescapeerror(ls);
+    if (i + 1 >= outsz)
+      citescapeerror(ls);
+    out[i++] = cast(char, ls->current);
+    next(ls);
+  }
+  out[i] = '\0';
+  next(ls);  /* swallow '-' */
+}
+
+static void applycitescape (LexState *ls, const char *cmd, const char *p1) {
+  unsigned long val = 0;
+  size_t p1len = (p1 != NULL) ? strlen(p1) : 0;
+  if (strcmp(cmd, "a") == 0) { save(ls, '\a'); return; }
+  if (strcmp(cmd, "b") == 0) { save(ls, '\b'); return; }
+  if (strcmp(cmd, "f") == 0) { save(ls, '\f'); return; }
+  if (strcmp(cmd, "n") == 0 || strcmp(cmd, "novlinie") == 0) { save(ls, '\n'); return; }
+  if (strcmp(cmd, "r") == 0) { save(ls, '\r'); return; }
+  if (strcmp(cmd, "t") == 0) { save(ls, '\t'); return; }
+  if (strcmp(cmd, "v") == 0) { save(ls, '\v'); return; }
+  if (strcmp(cmd, "\\") == 0 || strcmp(cmd, "retrostreko") == 0) { save(ls, '\\'); return; }
+  if (strcmp(cmd, "\"") == 0 || strcmp(cmd, "citilo") == 0) { save(ls, '"'); return; }
+  if (strcmp(cmd, "'") == 0 || strcmp(cmd, "apostrofo") == 0) { save(ls, '\''); return; }
+  if (strcmp(cmd, "z") == 0 || strcmp(cmd, "spacglute") == 0) { citskipspaces(ls); return; }
+  if (strcmp(cmd, "x") == 0 || strcmp(cmd, "deksesume") == 0) {
+    if (p1 == NULL || p1len != 2 || !parsehexvalue(p1, p1len, &val))
+      citescapeerror(ls);
+    save(ls, cast(char, val));
+    return;
+  }
+  if (strcmp(cmd, "u") == 0 || strcmp(cmd, "unikodpunkte") == 0) {
+    if (p1 == NULL || !parsehexvalue(p1, p1len, &val))
+      citescapeerror(ls);
+    if (val > 0x10FFFF)
+      citescapeerror(ls);
+    saveutf8codepoint(ls, val);
+    return;
+  }
+  if (strcmp(cmd, "dekume") == 0) {
+    if (p1 == NULL || !parsedecvalue(p1, p1len, &val))
+      citescapeerror(ls);
+    save(ls, cast(char, val));
+    return;
+  }
+  citescapeerror(ls);
+}
+
+static void readcitescape_direct (LexState *ls) {
+  int c = ls->current;
+  unsigned long val;
+  char tmp[3];
+  if (c == EOZ)
+    citescapeerror(ls);
+  if (c == 'x') {
+    next(ls);  /* skip x */
+    if (!lisxdigit(ls->current))
+      citescapeerror(ls);
+    tmp[0] = cast(char, ls->current);
+    next(ls);
+    if (!lisxdigit(ls->current))
+      citescapeerror(ls);
+    tmp[1] = cast(char, ls->current);
+    tmp[2] = '\0';
+    next(ls);
+    if (!parsehexvalue(tmp, 2, &val))
+      citescapeerror(ls);
+    save(ls, cast(char, val));
+    return;
+  }
+  switch (c) {
+    case 'a': save(ls, '\a'); next(ls); return;
+    case 'b': save(ls, '\b'); next(ls); return;
+    case 'f': save(ls, '\f'); next(ls); return;
+    case 'n': save(ls, '\n'); next(ls); return;
+    case 'r': save(ls, '\r'); next(ls); return;
+    case 't': save(ls, '\t'); next(ls); return;
+    case 'v': save(ls, '\v'); next(ls); return;
+    case '\\': save(ls, '\\'); next(ls); return;
+    case '"': save(ls, '"'); next(ls); return;
+    case '\'': save(ls, '\''); next(ls); return;
+    case 'z':
+      next(ls);
+      citskipspaces(ls);
+      return;
+    default:
+      citescapeerror(ls);
+  }
+}
+
+static void readcitescape_extended (LexState *ls) {
+  char cmd[64];
+  char p1[64];
+  next(ls);  /* skip 'e' */
+  if (ls->current != '-')
+    citescapeerror(ls);
+  next(ls);  /* skip '-' */
+  readcitescapefield(ls, cmd, sizeof(cmd));  /* includes trailing '-' swallow */
+  if (strcmp(cmd, "x") == 0 || strcmp(cmd, "deksesume") == 0 ||
+      strcmp(cmd, "u") == 0 || strcmp(cmd, "unikodpunkte") == 0 ||
+      strcmp(cmd, "dekume") == 0) {
+    readcitescapefield(ls, p1, sizeof(p1));
+    applycitescape(ls, cmd, p1);
+    return;
+  }
+  applycitescape(ls, cmd, NULL);
+}
+
+static void readcitescape (LexState *ls) {
+  if (ls->current == 'e')
+    readcitescape_extended(ls);
+  else
+    readcitescape_direct(ls);
+}
+
 static void read_cit_string (LexState *ls, SemInfo *seminfo) {
   int line = ls->linenumber;  /* initial line (for error message) */
   static const unsigned char close_malcit[] = "malcit";
   static const unsigned char close_cxit[] = {0xC4, 0x89, 'i', 't'};
   static const unsigned char esc_hxaux[] = {0xC4, 0xA5, 'a', 0xC5, 0xAD};  /* ĥaŭ */
+  static const unsigned char esc_hxaj[] = {0xC4, 0xA5, 'a', 0xC4, 0xB5};   /* ĥaĵ */
   size_t m_malcit = 0;
   size_t m_cxit = 0;
-  size_t m_esc = 0;
+  size_t m_esc_literal = 0;
+  size_t m_esc_special = 0;
   int escaped_next = 0;
+  int protect_trailing_sep = 0;
 
   /* Post 'cit', ignore one initial separator character if present. */
   if (currentisseparator(ls)) {
@@ -657,22 +832,38 @@ static void read_cit_string (LexState *ls, SemInfo *seminfo) {
     }
     else
       save_and_next(ls);
+    protect_trailing_sep = 0;
 
     {
       int c = (unsigned char)luaZ_buffer(ls->buff)[luaZ_bufflen(ls->buff) - 1];
       if (escaped_next) {
         escaped_next = 0;
-        m_esc = 0;
+        protect_trailing_sep = 1;
+        m_esc_literal = 0;
+        m_esc_special = 0;
         m_malcit = 0;
         m_cxit = 0;
         continue;
       }
 
-      m_esc = updatematch(m_esc, c, esc_hxaux);
-      if (m_esc == sizeof(esc_hxaux)) {
+      m_esc_literal = updatematch(m_esc_literal, c, esc_hxaux);
+      if (m_esc_literal == sizeof(esc_hxaux)) {
         luaZ_buffremove(ls->buff, sizeof(esc_hxaux));
         escaped_next = 1;
-        m_esc = 0;
+        m_esc_literal = 0;
+        m_esc_special = 0;
+        m_malcit = 0;
+        m_cxit = 0;
+        continue;
+      }
+
+      m_esc_special = updatematch(m_esc_special, c, esc_hxaj);
+      if (m_esc_special == sizeof(esc_hxaj)) {
+        luaZ_buffremove(ls->buff, sizeof(esc_hxaj));
+        readcitescape(ls);
+        protect_trailing_sep = 1;
+        m_esc_literal = 0;
+        m_esc_special = 0;
         m_malcit = 0;
         m_cxit = 0;
         continue;
@@ -693,9 +884,11 @@ static void read_cit_string (LexState *ls, SemInfo *seminfo) {
       if (isworddelimiter(before) && isworddelimiter(ls->current)) {
         size_t sepbytes;
         luaZ_buffremove(ls->buff, close_len);
-        sepbytes = trailingseparatorsize(ls->buff);
-        if (sepbytes > 0)
-          luaZ_buffremove(ls->buff, sepbytes);
+        if (!protect_trailing_sep) {
+          sepbytes = trailingseparatorsize(ls->buff);
+          if (sepbytes > 0)
+            luaZ_buffremove(ls->buff, sepbytes);
+        }
         seminfo->ts = luaX_newstring(ls, luaZ_buffer(ls->buff), luaZ_bufflen(ls->buff));
         return;
       }

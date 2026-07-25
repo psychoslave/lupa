@@ -84,6 +84,57 @@ postuli(f() == "b", "ĥaŭb")
 f = asertu(ŝargu("reŝalte cit ĥaŭĥaŭ ĉit"))
 postuli(f() == "ĥaŭ", "ĥaŭĥaŭ")
 
+-- En cit, '\' ne havas specialan signifon.
+f = asertu(ŝargu("reŝalte cit \\n ĉit"))
+postuli(f() == "\\n", "cit ne interpretu backslash-eskapojn")
+
+-- ĥaĵ-eskapo: speciala interpreto de sekvaj signoj.
+f = asertu(ŝargu("reŝalte cit ĥaĵnĉit"))
+postuli(f() == "\n", "ĥaĵn")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵe-n-ĉit"))
+postuli(f() == "\n", "ĥaĵe-n-")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵe-novlinie-ĉit"))
+postuli(f() == "\n", "ĥaĵe-novlinie-")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵe-x-7B- ĉit"))
+postuli(f() == "{", "ĥaĵe-x-7B-")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵx7B ĉit"))
+postuli(f() == "{", "ĥaĵx7B")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵe-deksesume-7B- ĉit"))
+postuli(f() == "{", "ĥaĵe-deksesume-7B-")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵe-dekume-123- ĉit"))
+postuli(f() == "{", "ĥaĵe-dekume-123-")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵe-u-263A- ĉit"))
+postuli(f() == "☺", "ĥaĵe-u-263A-")
+
+f = asertu(ŝargu("reŝalte cit ĥaĵe-unikodpunkte-263A- ĉit"))
+postuli(f() == "☺", "ĥaĵe-unikodpunkte-263A-")
+
+f = asertu(ŝargu("reŝalte cit finoĥaĵe-spacglute-\n \tage ĉit"))
+postuli(f() == "finoage", "ĥaĵe-spacglute-")
+
+f = asertu(ŝargu("reŝalte cit finiĥaĵz\n \te ĉit"))
+postuli(f() == "finie", "ĥaĵz")
+
+-- Nevalidaj ĥaĵ-komandoj devas fiaski.
+loke nevalida, eraro4 = ŝargu("reŝalte cit ĥaĵe-nekonata-ĉit")
+postuli(nevalida == nil kaj enhavas(eraro4 aŭ "", "invalid escape sequence"),
+        "nevalida ĥaĵ-subkomando")
+
+loke nevalida2, eraro5 = ŝargu("reŝalte cit ĥaĵe-111-ĉit")
+postuli(nevalida2 == nil kaj enhavas(eraro5 aŭ "", "invalid escape sequence"),
+        "cifera subkomando ne permesata")
+
+loke nevalida3, eraro6 = ŝargu("reŝalte cit ĥaĵe-x-7-ĉit")
+postuli(nevalida3 == nil kaj enhavas(eraro6 aŭ "", "invalid escape sequence"),
+        "nekompleta deksesuma parametro")
+
 se misoj > 0 tiam
   printe("MISE " .. misoj .. " testo(j) en cit-kazoj.lupa")
   os.exit(1)

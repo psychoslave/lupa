@@ -89,6 +89,8 @@ Por `::`, la sinonimo `ho` baziĝas sur la vokativa interjekcio en Esperanto: ĝ
 
 Por `cit`, la unua sekva **apartigila signo** (blanksigno aŭ ne-litera interpunkcio) estas ignorata, kaj same unu apartigila signo tuj antaŭ `malcit`/`ĉit` ne eniras la rezultan ĉenon. La ĉeno povas transiri plurajn liniojn ĝis `malcit` aŭ `ĉit`, por konduto pli proksima al `[[ ... ]]`.
 
+Praktika mnemoniko por malplena ĉeno: `cit∅ĉit` (kaj ankaŭ `cit{}ĉit`) redonas `""`. Tio kongruas kun la simbola ideo de malplena aro (`∅` aŭ `{}`), samtempe montrante ke la mekanismo povas engluti unu aŭ du apartigilojn ĉe la limoj.
+
 `ĥaŭ` en `cit`-ĉeno malaktivigas la sekvan signon por fermila detekto (ekz. `ĥaŭmalcit`, `ĥaŭĉit`, `ĥaŭĥaŭ`). La formo estis elektita ankaŭ ĉar ĝi ne aperas en Tekstaro (0 trafoj), do kolizio-risko estas minimuma.
 
 `cit` **ne** interpretas `\`-sekvencojn (ekz. `cit \n ĉit` redonas laŭvorte `\n`). Tio estas intenca: laŭvortigo (`ĥaŭ`) kaj speciala interpreto (`ĥap`) estas apartaj mekanismoj por minimumigi surprizon.

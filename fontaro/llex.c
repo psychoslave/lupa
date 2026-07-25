@@ -554,7 +554,7 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
 }
 
 /* Helper to decode UTF-8 sequence to codepoint */
-static utf8proc_int32_t utf8_to_codepoint(const unsigned char *str, size_t len) {
+static utf8proc_int32_t utf8tocodepoint(const unsigned char *str, size_t len) {
   utf8proc_int32_t codepoint;
   utf8proc_ssize_t nread;
   if (len == 0) return -1;
@@ -565,7 +565,7 @@ static utf8proc_int32_t utf8_to_codepoint(const unsigned char *str, size_t len) 
 }
 
 /* Check if a Unicode codepoint is a word character (letter, digit, connector) */
-static int utf8_is_word_char(utf8proc_int32_t codepoint) {
+static int utf8iswordchar(utf8proc_int32_t codepoint) {
   utf8proc_category_t cat = utf8proc_category(codepoint);
   /* Letters (L*): LU, LL, LT, LM, LO */
   if (cat >= 1 && cat <= 5) return 1;
@@ -579,7 +579,7 @@ static int utf8_is_word_char(utf8proc_int32_t codepoint) {
 }
 
 /* Enhanced word delimiter check using utf8proc for Unicode support */
-static int isworddelimiter_utf8 (unsigned char c1, unsigned char c2, unsigned char c3) {
+static int isworddelimiterutf8 (unsigned char c1, unsigned char c2, unsigned char c3) {
   if (c1 < 0x80) {
     /* ASCII case */
     return (lisspace(c1) || (!lislalnum(c1) && c1 != '_'));
@@ -590,7 +590,7 @@ static int isworddelimiter_utf8 (unsigned char c1, unsigned char c2, unsigned ch
 
   /* Multi-byte UTF-8 sequence */
   unsigned char bytes[4] = {c1, c2, c3, 0};
-  utf8proc_int32_t codepoint = utf8_to_codepoint(bytes, 3);
+  utf8proc_int32_t codepoint = utf8tocodepoint(bytes, 3);
 
   if (codepoint < 0)
     return 1;  /* Invalid UTF-8 treated as separator */
@@ -609,7 +609,7 @@ static int isworddelimiter_utf8 (unsigned char c1, unsigned char c2, unsigned ch
     return 1;
 
   /* Word characters: letters, digits, marks, Pc */
-  if (utf8_is_word_char(codepoint))
+  if (utf8iswordchar(codepoint))
     return 0;
 
   return 1;  /* Everything else is a separator */
@@ -631,7 +631,7 @@ static void skiponeutf8char (LexState *ls) {
 }
 
 static int isutf8separator (unsigned char c1, unsigned char c2, unsigned char c3) {
-  return isworddelimiter_utf8(c1, c2, c3);
+  return isworddelimiterutf8(c1, c2, c3);
 }
 
 static int currentisseparator (LexState *ls) {
@@ -656,18 +656,18 @@ static size_t find_utf8_start(const unsigned char *buffer, size_t pos) {
 }
 
 /* Check if byte at buffer position (possibly mid-UTF-8) is a word delimiter */
-static int bufferpos_is_word_delim(const unsigned char *buffer, size_t buflen, size_t pos) {
+static int bufferposisworddelim(const unsigned char *buffer, size_t buflen, size_t pos) {
   if (pos >= buflen)
     return 1;
   size_t start = find_utf8_start(buffer, pos);
   unsigned char c1 = buffer[start];
   unsigned char c2 = (start + 1 < buflen) ? buffer[start + 1] : 0;
   unsigned char c3 = (start + 2 < buflen) ? buffer[start + 2] : 0;
-  return isworddelimiter_utf8(c1, c2, c3);
+  return isworddelimiterutf8(c1, c2, c3);
 }
 
 /* Check if current input position is a word delimiter */
-static int currentpos_is_word_delim(LexState *ls) {
+static int currentposisworddelim(LexState *ls) {
   unsigned char c1, c2 = 0, c3 = 0;
   if (ls->current == EOZ)
     return 1;
@@ -676,7 +676,7 @@ static int currentpos_is_word_delim(LexState *ls) {
     c2 = (unsigned char)ls->z->p[0];
   if (ls->z->n > 1)
     c3 = (unsigned char)ls->z->p[1];
-  return isworddelimiter_utf8(c1, c2, c3);
+  return isworddelimiterutf8(c1, c2, c3);
 }
 
 static size_t trailingseparatorsize (Mbuffer *b) {
@@ -981,9 +981,9 @@ static void read_cit_string (LexState *ls, SemInfo *seminfo) {
                        ? (sizeof(close_malcit) - 1)
                        : sizeof(close_cxit);
       size_t start = luaZ_bufflen(ls->buff) - close_len;
-      int before_is_delim = (start == 0) ? 1 : bufferpos_is_word_delim(
+      int before_is_delim = (start == 0) ? 1 : bufferposisworddelim(
           cast(unsigned char *, luaZ_buffer(ls->buff)), luaZ_bufflen(ls->buff), start - 1);
-      int current_is_delim = currentpos_is_word_delim(ls);
+      int current_is_delim = currentposisworddelim(ls);
 
       if (before_is_delim && current_is_delim) {
         size_t sepbytes;
@@ -1031,12 +1031,12 @@ static int isidentifiercont(LexState *ls) {
   bytes[1] = c2;
   bytes[2] = c3;
   bytes[3] = 0;
-  codepoint = utf8_to_codepoint(bytes, 3);
+  codepoint = utf8tocodepoint(bytes, 3);
   if (codepoint < 0)
     return 0;
   if (codepoint == 0x02C7)  /* U+02C7 CARON is not an identifier continuation */
     return 0;
-  return utf8_is_word_char(codepoint);
+  return utf8iswordchar(codepoint);
 }
 
 static void saveutf8seq(LexState *ls) {

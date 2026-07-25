@@ -556,8 +556,11 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
 /* Helper to decode UTF-8 sequence to codepoint */
 static utf8proc_int32_t utf8_to_codepoint(const unsigned char *str, size_t len) {
   utf8proc_int32_t codepoint;
+  utf8proc_ssize_t nread;
   if (len == 0) return -1;
-  utf8proc_iterate(str, len, &codepoint);
+  nread = utf8proc_iterate(str, len, &codepoint);
+  if (nread < 0)
+    return -1;
   return codepoint;
 }
 
@@ -581,29 +584,34 @@ static int isworddelimiter_utf8 (unsigned char c1, unsigned char c2, unsigned ch
     /* ASCII case */
     return (lisspace(c1) || (!lislalnum(c1) && c1 != '_'));
   }
-  
+
+  if (c1 == 0xC2 && c2 == 0xB7)  /* U+00B7 middle dot, kept for identifiers */
+    return 0;
+
   /* Multi-byte UTF-8 sequence */
   unsigned char bytes[4] = {c1, c2, c3, 0};
   utf8proc_int32_t codepoint = utf8_to_codepoint(bytes, 3);
-  
+
   if (codepoint < 0)
     return 1;  /* Invalid UTF-8 treated as separator */
-  
+  if (codepoint == 0x02C7)  /* U+02C7 CARON: spacing accent, separator in cit framing */
+    return 1;
+
   /* Check Unicode category: separators (Zs, Zl, Zp) or non-word chars */
   utf8proc_category_t cat = utf8proc_category(codepoint);
-  
+
   /* Separators: Zs (23), Zl (24), Zp (25) */
   if (cat == 23 || cat == 24 || cat == 25)
     return 1;
-  
+
   /* Punctuation and symbols: Pd (13), Ps (14), Pe (15), Pi (16), Pf (17), Po (11), Sm (19), Sc (20), Sk (21), So (22) */
   if ((cat >= 13 && cat <= 17) || cat == 11 || (cat >= 19 && cat <= 22))
     return 1;
-  
+
   /* Word characters: letters, digits, marks, Pc */
   if (utf8_is_word_char(codepoint))
     return 0;
-  
+
   return 1;  /* Everything else is a separator */
 }
 
@@ -623,11 +631,7 @@ static void skiponeutf8char (LexState *ls) {
 }
 
 static int isutf8separator (unsigned char c1, unsigned char c2, unsigned char c3) {
-  if (c1 < 0x80)
-    return (lisspace(c1) || (!lislalnum(c1) && c1 != '_'));
-  if (c1 == 0xC2 && c2 == 0xB7)  /* U+00B7 middle dot, kept for identifiers */
-    return 0;
-  return !luai_isutf8alpha(c1, c2, c3);
+  return isworddelimiter_utf8(c1, c2, c3);
 }
 
 static int currentisseparator (LexState *ls) {
@@ -1003,6 +1007,8 @@ static void read_cit_string (LexState *ls, SemInfo *seminfo) {
 static int isidentifiercont(LexState *ls) {
   unsigned char c1;
   unsigned char c2 = 0, c3 = 0;
+  utf8proc_int32_t codepoint;
+  unsigned char bytes[4];
   /* ponytail: EOZ is -1; casting to unsigned makes it 255 and would
      incorrectly look like UTF-8 data at end-of-file. */
   if (ls->current == EOZ)
@@ -1021,7 +1027,16 @@ static int isidentifiercont(LexState *ls) {
     c3 = (unsigned char)ls->z->p[1];
   if (c1 == 0xC2 && c2 == 0xB7)  /* U+00B7 */
     return 1;
-  return luai_isutf8alpha(c1, c2, c3);
+  bytes[0] = c1;
+  bytes[1] = c2;
+  bytes[2] = c3;
+  bytes[3] = 0;
+  codepoint = utf8_to_codepoint(bytes, 3);
+  if (codepoint < 0)
+    return 0;
+  if (codepoint == 0x02C7)  /* U+02C7 CARON is not an identifier continuation */
+    return 0;
+  return utf8_is_word_char(codepoint);
 }
 
 static void saveutf8seq(LexState *ls) {

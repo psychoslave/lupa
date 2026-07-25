@@ -41,6 +41,42 @@ postuli(v1 == "abc" kaj v2 == 7, "interpunkcia signo post fermilo")
 f = asertu(ŝargu("reŝalte cit aĉitb ĉit"))
 postuli(f() == "aĉitb", "ĉit interne de vorto ne fermu")
 
+loke funkcie postuli_malplenan_per_separilo(separilo, nomo)
+  loke g, e = ŝargu("reŝalte cit" .. separilo .. "ĉit")
+  postuli(g ~= nil, "ne povis ŝargi por separilo " .. nomo .. ": " .. (e aŭ ""))
+  se g tiam
+    postuli(g() == "", "separilo " .. nomo .. " estu valida por malplena cit")
+  hop
+hop
+
+-- 2b) Specifaj unikodaj simboloj devas validi kiel separiloj.
+postuli_malplenan_per_separilo("∅", "U+2205 EMPTY SET")
+postuli_malplenan_per_separilo("⦚", "U+299A VERTICAL ZIGZAG LINE")
+postuli_malplenan_per_separilo("∎", "U+220E END OF PROOF")
+postuli_malplenan_per_separilo("⟂", "U+27C2 PERPENDICULAR")
+postuli_malplenan_per_separilo("ˇ", "U+02C7 CARON")
+postuli_malplenan_per_separilo("∇", "U+2207 NABLA")
+postuli_malplenan_per_separilo("☮", "U+262E PEACE SYMBOL")
+postuli_malplenan_per_separilo("–", "U+2013 EN DASH")
+postuli_malplenan_per_separilo("￤", "U+FFE4 FULLWIDTH BROKEN BAR")
+
+-- 2c) Unicode-kategori-randoj (konataj limkazoj).
+postuli_malplenan_per_separilo(" ", "U+00A0 NO-BREAK SPACE (Zs)")
+postuli_malplenan_per_separilo(" ", "U+202F NARROW NO-BREAK SPACE (Zs)")
+postuli_malplenan_per_separilo("　", "U+3000 IDEOGRAPHIC SPACE (Zs)")
+postuli_malplenan_per_separilo("—", "U+2014 EM DASH (Pd)")
+postuli_malplenan_per_separilo("$", "U+0024 DOLLAR SIGN (Sc)")
+
+-- 2d) Ne-separiloj: identigilaj signoj ne rajtas fermi.
+f = asertu(ŝargu("reŝalte cit a·ĉitb ĉit"))
+postuli(f() == "a·ĉitb", "U+00B7 middle dot restu ne-separilo")
+
+f = asertu(ŝargu("reŝalte cit a‿ĉitb ĉit"))
+postuli(f() == "a‿ĉitb", "U+203F undertie (Pc) restu ne-separilo")
+
+f = asertu(ŝargu("reŝalte cit áĉitb ĉit"))
+postuli(f() == "áĉitb", "U+0301 combining acute (Mn) restu ne-separilo")
+
 -- 3) Nefinita literalo kaj lini-indiko.
 loke nefinita, eraro = ŝargu("reŝalte cit abc")
 postuli(nefinita == nil kaj enhavas(eraro aŭ "", "unfinished cit string"), "EOF antaŭ fermilo")

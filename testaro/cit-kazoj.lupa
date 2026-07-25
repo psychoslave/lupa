@@ -77,6 +77,46 @@ postuli(fakto() == "a‿ĉitb", "U+203F undertie (Pc) restu ne-separilo")
 fakto iĝe asertu(ŝargu("reŝalte cit áĉitb ĉit"))
 postuli(fakto() == "áĉitb", "U+0301 combining acute (Mn) restu ne-separilo")
 
+-- 2e) Astralaj (4-bajtaj) unikodaj kazoj.
+postuli_malplenan_per_separilo("😀", "U+1F600 GRINNING FACE (So, 4-bajta)")
+
+fakto iĝe asertu(ŝargu("reŝalte cit 𐐀ĉitb ĉit"))
+postuli(fakto() == "𐐀ĉitb", "U+10400 DESERET LETTER (Lu, 4-bajta) restu ne-separilo")
+
+-- 2f) Formataj regsignoj (Cf) kiel separiloj.
+postuli_malplenan_per_separilo("‍", "U+200D ZERO WIDTH JOINER (Cf)")
+postuli_malplenan_per_separilo("﻿", "U+FEFF ZERO WIDTH NO-BREAK SPACE/BOM (Cf)")
+
+-- 2g) Normaligaj variantoj (NFC/NFD) ĉe vortlimoj.
+fakto iĝe asertu(ŝargu("reŝalte cit áĉitb ĉit"))
+postuli(fakto() == "áĉitb", "NFC: antaŭkunmetita litero restu ne-separilo")
+
+fakto iĝe asertu(ŝargu("reŝalte cit á ĉit"))
+postuli(fakto() == "á", "NFC: fermilo post apartigilo funkciu")
+
+fakto iĝe asertu(ŝargu("reŝalte cit á ĉit"))
+postuli(fakto() == "á", "NFD: kombina marko kun baza litero restu en rezulto")
+
+-- 2h) Malvalidaj UTF-8 sekvencoj: ne kraŝi dum ŝargo/traktado.
+loke funkcie provi_malvalidan_utf8(malsxargxo, nomo)
+  loke peco = string.char(table.unpack(malsxargxo))
+  loke kodo = "reŝalte cit" .. peco .. "ĉit"
+  loke g, e = ŝargu(kodo)
+  se g tiam
+    loke bone, val = pcall(g)
+    postuli(bone, "malvalida UTF-8 (" .. nomo .. ") ne kreu rulan eraron")
+    se bone tiam
+      postuli(type(val) == "string", "malvalida UTF-8 (" .. nomo .. ") revenu ĉenan rezulton")
+    hop
+  alie
+    postuli(enhavas(e aŭ "", "syntax error"), "malvalida UTF-8 (" .. nomo .. ") donu sintaksan eraron se ne ŝargebla")
+  hop
+hop
+
+provi_malvalidan_utf8({0x80}, "orfa daŭrig-bajto")
+provi_malvalidan_utf8({0xC0, 0x80}, "tro-longa NUL")
+provi_malvalidan_utf8({0xF0, 0x28, 0x8C, 0x28}, "nevalida 4-bajta sekvenco")
+
 -- 3) Nefinita literalo kaj lini-indiko.
 loke nefinita, eraro = ŝargu("reŝalte cit abc")
 postuli(nefinita == nil kaj enhavas(eraro aŭ "", "unfinished cit string"), "EOF antaŭ fermilo")

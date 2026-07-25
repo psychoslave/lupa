@@ -625,7 +625,7 @@ static size_t updatematch (size_t current, int c, const unsigned char *word) {
 
 static void citescapeerror (LexState *ls) {
   const char *msg = luaO_pushfstring(ls->L,
-                   "invalid escape sequence near 'ĥaĵ'");
+                   "invalid escape sequence near 'ĥap'");
   lexerror(ls, msg, TK_STRING);
 }
 
@@ -820,7 +820,7 @@ static void read_cit_string (LexState *ls, SemInfo *seminfo) {
   static const unsigned char close_malcit[] = "malcit";
   static const unsigned char close_cxit[] = {0xC4, 0x89, 'i', 't'};
   static const unsigned char esc_hxaux[] = {0xC4, 0xA5, 'a', 0xC5, 0xAD};  /* ĥaŭ */
-  static const unsigned char esc_hxaj[] = {0xC4, 0xA5, 'a', 0xC4, 0xB5};   /* ĥaĵ */
+  static const unsigned char esc_hxap[] = {0xC4, 0xA5, 'a', 'p'};   /* ĥap */
   size_t m_malcit = 0;
   size_t m_cxit = 0;
   size_t m_esc_literal = 0;
@@ -877,9 +877,9 @@ static void read_cit_string (LexState *ls, SemInfo *seminfo) {
         continue;
       }
 
-      m_esc_special = updatematch(m_esc_special, c, esc_hxaj);
-      if (m_esc_special == sizeof(esc_hxaj)) {
-        luaZ_buffremove(ls->buff, sizeof(esc_hxaj));
+      m_esc_special = updatematch(m_esc_special, c, esc_hxap);
+      if (m_esc_special == sizeof(esc_hxap)) {
+        luaZ_buffremove(ls->buff, sizeof(esc_hxap));
         readcitescape(ls);
         protect_trailing_sep = 1;
         m_esc_literal = 0;

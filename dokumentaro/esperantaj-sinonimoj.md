@@ -81,7 +81,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - longĉeno-komenco (`[[`-simile) -> `cit`
 - longĉeno-fino (`]]`-simile) -> `malcit`, `ĉit`
 - en `cit`-ĉeno, laŭvortigi la sekvan signon -> `ĥaŭ`
-- en `cit`-ĉeno, speciale interpreti eskapan komandon -> `ĥaĵ`
+- en `cit`-ĉeno, speciale interpreti eskapan komandon -> `ĥap`
 
 La sintaksanalizilo jam distingas la kuntekstojn de `,` (ekz. disigo de esprimoj, nomlistoj, argumentoj); `tuj` kaj `plie` mapigas al la sama komo-signo.
 
@@ -91,26 +91,26 @@ Por `cit`, la unua sekva **apartigila signo** (blanksigno aŭ ne-litera interpun
 
 `ĥaŭ` en `cit`-ĉeno malaktivigas la sekvan signon por fermila detekto (ekz. `ĥaŭmalcit`, `ĥaŭĉit`, `ĥaŭĥaŭ`). La formo estis elektita ankaŭ ĉar ĝi ne aperas en Tekstaro (0 trafoj), do kolizio-risko estas minimuma.
 
-`cit` **ne** interpretas `\`-sekvencojn (ekz. `cit \n ĉit` redonas laŭvorte `\n`). Tio estas intenca: laŭvortigo (`ĥaŭ`) kaj speciala interpreto (`ĥaĵ`) estas apartaj mekanismoj por minimumigi surprizon.
+`cit` **ne** interpretas `\`-sekvencojn (ekz. `cit \n ĉit` redonas laŭvorte `\n`). Tio estas intenca: laŭvortigo (`ĥaŭ`) kaj speciala interpreto (`ĥap`) estas apartaj mekanismoj por minimumigi surprizon.
 
-`ĥaĵ` estis elektita ĉar ĝi restas leksike parenca al `ĥaŭ` kaj same havas 0 trafojn en Tekstaro; tiel kolizio-risko kun ordinara Esperanto restas minimuma.
+`ĥap` estis elektita ĉar ĝi restas leksike parenca al `ĥaŭ` kaj same havas 0 trafojn en Tekstaro; tiel kolizio-risko kun ordinara Esperanto restas minimuma.
 
-#### `ĥaĵ`: sintakso
+#### `ĥap`: sintakso
 
 Du formoj estas validaj:
 
-- **limigita formo**: `ĥaĵe-<subkomando>-...-`
-  - ekz: `ĥaĵe-n-`, `ĥaĵe-novlinie-`, `ĥaĵe-x-7B-`, `ĥaĵe-u-263A-`
-- **rekta longa formo** (sen `e-`): `ĥaĵ<plurlitera-subkomando>` aŭ `ĥaĵ<plurlitera-subkomando>-<parametro>`
-  - ekz: `ĥaĵspacglute`, `ĥaĵunikodpunkte-263A`, `ĥaĵdeksesume-7B`
+- **limigita formo**: `ĥape-<subkomando>-...-`
+  - ekz: `ĥape-n-`, `ĥape-novlinie-`, `ĥape-x-7B-`, `ĥape-u-263A-`
+- **rekta longa formo** (sen `e-`): `ĥap<plurlitera-subkomando>` aŭ `ĥap<plurlitera-subkomando>-<parametro>`
+  - ekz: `ĥapspacglute`, `ĥapunikodpunkte-263A`, `ĥapdeksesume-7B`
 
 En la limigita formo la fina `-` de la eskapo estas konsumita; la sekva signo jam apartenas al ordinara ĉena enhavo.
 
-Intence, **rekta monoletara** formo estas nevalida: `ĥaĵn`, `ĥaĵx7B`, `ĥaĵz`, `ĥaĵu-263A`, ktp. Tio evitas konfuzon (ekz. kun `hxajx`) kaj devigas pli klarajn formojn.
+Intence, **rekta monoletara** formo estas nevalida: `ĥapn`, `ĥapx7B`, `ĥapz`, `ĥapu-263A`, ktp. Tio evitas konfuzon (ekz. kun `hxapx`) kaj devigas pli klarajn formojn.
 
-Atentu: `cit` ankoraŭ forigas unu apartigilan signon tuj antaŭ `malcit`/`ĉit`. Do se eskapo produktas apartigilan signon (ekz. `{`), necesas aldoni apartan separatoron antaŭ la fermilo por ke la produktita signo restu en la rezulto (ekz. `... ĥaĵe-x-7B- ĉit`).
+Atentu: `cit` ankoraŭ forigas unu apartigilan signon tuj antaŭ `malcit`/`ĉit`. Do se eskapo produktas apartigilan signon (ekz. `{`), necesas aldoni apartan separatoron antaŭ la fermilo por ke la produktita signo restu en la rezulto (ekz. `... ĥape-x-7B- ĉit`).
 
-#### Subkomandoj de `ĥaĵ`
+#### Subkomandoj de `ĥap`
 
 - Sen parametro:
   - `a` / `alarme`
@@ -124,13 +124,13 @@ Atentu: `cit` ankoraŭ forigas unu apartigilan signon tuj antaŭ `malcit`/`ĉit`
   - `\`, `"`, `'` (nur en plena formo: `e-\-`, `e-"-`, `e-'-`)
   - `retrostreko`, `citilo`, `apostrofo` (legeblaj sinonimoj)
 - Kun parametro:
-  - `x` / `deksesume`: du deksesumaj ciferoj (0x00..0xFF), ekz. `ĥaĵe-x-7B-` aŭ `ĥaĵdeksesume-7B`
-  - `u` / `unikodpunkte`: unikoda kodpunkto en deksesuma formo (ĝis `10FFFF`), ekz. `ĥaĵe-u-263A-` aŭ `ĥaĵunikodpunkte-263A`
-  - `dekume`: 1..3 dekumaj ciferoj (0..255), ekz. `ĥaĵe-dekume-123-` aŭ `ĥaĵdekume-123`
+  - `x` / `deksesume`: du deksesumaj ciferoj (0x00..0xFF), ekz. `ĥape-x-7B-` aŭ `ĥapdeksesume-7B`
+  - `u` / `unikodpunkte`: unikoda kodpunkto en deksesuma formo (ĝis `10FFFF`), ekz. `ĥape-u-263A-` aŭ `ĥapunikodpunkte-263A`
+  - `dekume`: 1..3 dekumaj ciferoj (0..255), ekz. `ĥape-dekume-123-` aŭ `ĥapdekume-123`
 
-`ĥaĵe-111-...` estas intence **nevalida**: pura cifera subkomando ne estas akceptata.
+`ĥape-111-...` estas intence **nevalida**: pura cifera subkomando ne estas akceptata.
 
-Neekzistantaj aŭ misformitaj `ĥaĵ`-komandoj liveras eraron `invalid escape sequence`, kongrue kun Lua-stila fiasko por nevalidaj eskapoj.
+Neekzistantaj aŭ misformitaj `ĥap`-komandoj liveras eraron `invalid escape sequence`, kongrue kun Lua-stila fiasko por nevalidaj eskapoj.
 
 ### Kiam `cit` efektive malfermas ĉenon
 

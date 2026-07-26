@@ -86,6 +86,7 @@ typedef struct LexState {
   TString *pending_alias_ts;  /* source word for pending agglutinated aliases */
   size_t pending_alias_pos;  /* byte position inside pending_alias_ts */
   int pending_extra_token;  /* second token emitted by aliases like 'lo' */
+  int bracket_alias_depth;  /* nesting depth opened by bracket word aliases */
 } LexState;
 
 

@@ -10,10 +10,10 @@
 
 ### Novaĵoj
 
-- Aldonitaj krampaj sinonimoj: `je`/`ek` por `(`/`)`, `ĉe`/`ĉi` por `[`/`]`, `ĉo`/`ĉa` por `{`/`}`.
+- Aldonitaj krampaj sinonimoj: `je`/`ek` por `(`/`)`, `ĉe`/`ĉi` por `[`/`]`, `ĉa`/`ĉo` por `{`/`}`.
 - Aldonita `lo` kiel mallongigo de malplena alvoko `()`.
 - Aldonitaj pli prozaj ferm-/malferm-variantoj: `ere`, `pri`, `are`.
-- Aglutinado de memstaraj krampvortoj nun funkcias (ekz. `jeje`, `ekek`, `jeĉeĉo ... ĉaĉiek`).
+- Aglutinado de memstaraj krampvortoj nun funkcias (ekz. `jeje`, `ekek`, `jeĉeĉa ... ĉoĉiek`).
 
 ## 0.1.0 — 2026-07-23
 

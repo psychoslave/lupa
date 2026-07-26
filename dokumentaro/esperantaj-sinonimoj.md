@@ -83,8 +83,8 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `()` (malplena alvoko) -> `lo`
 - `[` -> `ĉe`, `cxe`
 - `]` -> `ĉi`, `cxi`, `ere`
-- `{` -> `ĉo`, `cxo`, `pri`
-- `}` -> `ĉa`, `cxa`, `are`
+- `{` -> `ĉa`, `cxa`, `pri`
+- `}` -> `ĉo`, `cxo`, `are`
 - longĉeno-komenco (`[[`-simile) -> `cit`
 - longĉeno-fino (`]]`-simile) -> `malcit`, `ĉit`
 - en `cit`-ĉeno, laŭvortigi la sekvan signon -> `ĥaŭ`
@@ -98,7 +98,7 @@ Por `()` ni aldonis la mallongigon `lo` kiel unu-vortan alvokan ŝparvojon (ekz.
 
 `ĉi` estis retenita por `]` (kaj ne plu por `local`) por konservi fortan leksikan paron kun `ĉe` por `[`; tio samtempe tenas klaran, simetrian legadon en proza kodo.
 
-Pri la `{`/`}` paro, la formoj `ĉo`/`ĉa` resonas kun pli malnovaj reform-ideoj kiel mallongigoj de **ĉio/ĉia**; tio liveras "praneologisman" senton en la koda fluo. Referencoj: <https://www.tekstaro.com/?s=6a65e9e1bcb2d> kaj <https://www.scribd.com/document/953949064/La-Strukturo-de-Esperanto-Kiel-Faktoro-p#content=query:uzi%20la%20formojn,pageNum:131,indexOnPage:0,bestMatch:false>.
+Pri la `{`/`}` paro, la formoj `ĉa`/`ĉo` resonas kun pli malnovaj reform-ideoj kiel mallongigoj de **ĉia/ĉio**; tio liveras "praneologisman" senton en la koda fluo. Referencoj: <https://www.tekstaro.com/?s=6a65e9e1bcb2d> kaj <https://www.scribd.com/document/953949064/La-Strukturo-de-Esperanto-Kiel-Faktoro-p#content=query:uzi%20la%20formojn,pageNum:131,indexOnPage:0,bestMatch:false>.
 
 Noto pri limoj: Lua-a `[[...]]` longa ĉeno ne konflikcias kun ĉi tiu krampa sinonimaro; en Lupa la ĉenkonstruado jam havas apartan, Esperanto-amikan `cit`/`ĉit` mekanismon, do ne estas interkovro aŭ interfero inter la du subsistemoj.
 
@@ -185,7 +185,7 @@ Krome, `malcit`/`ĉit` fermas nur ĉe vortlimoj (do internvorta kiel `sinmalciti
 - `,` (`tuj`, `plie`) apartigas esprimojn, nomlistojn kaj argumentojn; la sintaksanalizilo elektas la ĝustan rolon laŭ kunteksto.
 - `(` (`je`) kaj `)` (`ek`) donas la plej mallongajn prozajn krampojn; `lo` kunpremas la oftan malplenan alvokon `()`.
 - `[`/`]` (`ĉe`/`ĉi`) kreas semantike klaran indekso-paron; `ere` restas pli longa ferma varianto.
-- `{`/`}` (`ĉo`/`ĉa`) estas la plej mallonga tabela/ara paro; `pri`/`are` estas pli prozaj variantoj por "pri ... are" fluo.
+- `{`/`}` (`ĉa`/`ĉo`) estas la plej mallonga tabela/ara paro; `pri`/`are` estas pli prozaj variantoj por "pri ... are" fluo.
 - `;` (`nu`) estas la propozicia disigilo.
 
 `>>`/`<<` uzas `sob`/`sor` kiel la plej mallongajn ŝovajn formojn; la pli longaj `sobŝove`/`sobsxove` kaj `sorŝove`/`sorsxove` restas pliaj stilaj variantoj.

@@ -297,8 +297,9 @@ void luaX_setinput (lua_State *L, LexState *ls, ZIO *z, TString *source,
   ls->lastline = 1;
   ls->source = source;
   ls->envn = luaS_newliteral(L, LUA_ENV);  /* get env name */
-  ls->pending_count = 0;
-  ls->pending_pos = 0;
+  ls->pending_alias_ts = NULL;
+  ls->pending_alias_pos = 0;
+  ls->pending_extra_token = 0;
   luaZ_resizebuffer(ls->L, ls->buff, LUA_MINBUFFER);  /* initialize buffer */
 }
 
@@ -1093,12 +1094,13 @@ static int iscitopenalias (TString *ts) {
   return (longo == 3 && memcmp(nomo, "cit", 3) == 0);
 }
 
-static int isbracketaliasagglutination (LexState *ls, TString *ts, int *firsttoken) {
+static int readbracketaliasunit (const char *name, size_t namelen, size_t pos,
+                                 size_t *nextpos, int *token, int *nexttoken) {
   static const struct {
-    const char *nomo;
-    size_t longo;
+    const char *name;
+    size_t len;
     int token;
-    int sekvotoken;
+    int nexttoken;
   } unuoj[] = {
     { "cxe", 3, '[', 0 },
     { "cxi", 3, ']', 0 },
@@ -1115,45 +1117,53 @@ static int isbracketaliasagglutination (LexState *ls, TString *ts, int *firsttok
     { "ĉo", 3, '{', 0 },
     { "ĉa", 3, '}', 0 },
   };
-  int tokenoj[16];
-  int nombro = 0;
-  size_t i = 0;
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  while (i < longo) {
-    size_t u;
-    int trovita = 0;
-    for (u = 0; u < sizeof(unuoj) / sizeof(unuoj[0]); u++) {
-      size_t ulongo = unuoj[u].longo;
-      if (i + ulongo > longo)
-        continue;
-      if (memcmp(nomo + i, unuoj[u].nomo, ulongo) != 0)
-        continue;
-      if (nombro >= cast_int(sizeof(tokenoj) / sizeof(tokenoj[0])))
-        return 0;
-      tokenoj[nombro++] = unuoj[u].token;
-      if (unuoj[u].sekvotoken != 0) {
-        if (nombro >= cast_int(sizeof(tokenoj) / sizeof(tokenoj[0])))
-          return 0;
-        tokenoj[nombro++] = unuoj[u].sekvotoken;
-      }
-      i += ulongo;
-      trovita = 1;
-      break;
-    }
-    if (!trovita)
-      return 0;
+  size_t u;
+  for (u = 0; u < sizeof(unuoj) / sizeof(unuoj[0]); u++) {
+    size_t unitlen = unuoj[u].len;
+    if (pos + unitlen > namelen)
+      continue;
+    if (memcmp(name + pos, unuoj[u].name, unitlen) != 0)
+      continue;
+    *nextpos = pos + unitlen;
+    *token = unuoj[u].token;
+    *nexttoken = unuoj[u].nexttoken;
+    return 1;
   }
-  if (nombro == 0)
+  return 0;
+}
+
+static int isbracketaliasagglutination (LexState *ls, TString *ts, int *firsttoken) {
+  size_t namelen = tsslen(ts);
+  const char *name = getstr(ts);
+  size_t firstnextpos = 0;
+  size_t pos = 0;
+  size_t nextpos = 0;
+  int token = 0;
+  int nexttoken = 0;
+
+  if (!readbracketaliasunit(name, namelen, pos, &firstnextpos, &token, &nexttoken))
     return 0;
-  ls->pending_pos = 0;
-  ls->pending_count = 0;
-  if (nombro > 1) {
-    int j;
-    for (j = 1; j < nombro; j++)
-      ls->pending_tokens[ls->pending_count++] = tokenoj[j];
+
+  pos = firstnextpos;
+  while (pos < namelen) {
+    int ignored_token;
+    int ignored_nexttoken;
+    if (!readbracketaliasunit(name, namelen, pos, &nextpos,
+                              &ignored_token, &ignored_nexttoken))
+      return 0;
+    pos = nextpos;
   }
-  *firsttoken = tokenoj[0];
+
+  ls->pending_alias_ts = NULL;
+  ls->pending_alias_pos = 0;
+  ls->pending_extra_token = 0;
+  if (nexttoken != 0)
+    ls->pending_extra_token = nexttoken;
+  if (firstnextpos < namelen) {
+    ls->pending_alias_ts = ts;
+    ls->pending_alias_pos = firstnextpos;
+  }
+  *firsttoken = token;
   return 1;
 }
 
@@ -1179,10 +1189,33 @@ static int nametotoken (LexState *ls, TString *ts) {
 }
 
 static int llex (LexState *ls, SemInfo *seminfo) {
-  if (ls->pending_pos < ls->pending_count)
-    return ls->pending_tokens[ls->pending_pos++];
-  ls->pending_pos = 0;
-  ls->pending_count = 0;
+  if (ls->pending_extra_token != 0) {
+    int token = ls->pending_extra_token;
+    ls->pending_extra_token = 0;
+    return token;
+  }
+  if (ls->pending_alias_ts != NULL) {
+    size_t namelen = tsslen(ls->pending_alias_ts);
+    const char *name = getstr(ls->pending_alias_ts);
+    size_t nextpos = 0;
+    int token = 0;
+    int nexttoken = 0;
+    if (!readbracketaliasunit(name, namelen, ls->pending_alias_pos,
+                              &nextpos, &token, &nexttoken)) {
+      ls->pending_alias_ts = NULL;
+      ls->pending_alias_pos = 0;
+      ls->pending_extra_token = 0;
+      return TK_NAME;
+    }
+    ls->pending_alias_pos = nextpos;
+    if (ls->pending_alias_pos >= namelen) {
+      ls->pending_alias_ts = NULL;
+      ls->pending_alias_pos = 0;
+    }
+    if (nexttoken != 0)
+      ls->pending_extra_token = nexttoken;
+    return token;
+  }
   luaZ_resetbuffer(ls->buff);
   for (;;) {
     switch (ls->current) {

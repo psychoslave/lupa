@@ -301,6 +301,7 @@ void luaX_setinput (lua_State *L, LexState *ls, ZIO *z, TString *source,
   ls->pending_alias_ts = NULL;
   ls->pending_alias_pos = 0;
   ls->pending_extra_token = 0;
+  ls->bracket_alias_depth = 0;
   luaZ_resizebuffer(ls->L, ls->buff, LUA_MINBUFFER);  /* initialize buffer */
 }
 
@@ -1133,6 +1134,67 @@ static int readbracketaliasunit (const char *name, size_t namelen, size_t pos,
   return 0;
 }
 
+static void skiponeseparator (LexState *ls) {
+  if (!currentisseparator(ls))
+    return;
+  if (currIsNewline(ls))
+    inclinenumber(ls);
+  else if (cast_uchar(ls->current) >= 0x80)
+    skiponeutf8char(ls);
+  else
+    next(ls);
+}
+
+static int shouldskipseparatorbeforeclosealias (LexState *ls) {
+  const unsigned char *look;
+  size_t lookn;
+  size_t seqlen;
+  size_t nextpos = 0;
+  size_t checkpos;
+  int token = 0;
+  int nexttoken = 0;
+  if (ls->current == EOZ || ls->bracket_alias_depth <= 0 || !currentisseparator(ls))
+    return 0;
+  if (ls->current == '\'' || ls->current == '"')
+    return 0;
+  seqlen = utf8seqlen(cast_uchar(ls->current));
+  if (seqlen == 1) {
+    look = cast(const unsigned char *, ls->z->p);
+    lookn = ls->z->n;
+  }
+  else {
+    size_t skip = seqlen - 1;
+    if (ls->z->n <= skip)
+      return 0;
+    look = cast(const unsigned char *, ls->z->p + skip);
+    lookn = ls->z->n - skip;
+  }
+  if (!readbracketaliasunit(cast(const char *, look), lookn, 0, &nextpos, &token, &nexttoken))
+    return 0;
+  if (!(token == ')' || token == ']' || token == '}'))
+    return 0;
+  checkpos = nextpos;
+  if (checkpos >= lookn)
+    return 1;
+  if (readbracketaliasunit(cast(const char *, look), lookn, checkpos, &nextpos, &token, &nexttoken))
+    return 1;
+  {
+    unsigned char c1 = look[checkpos];
+    unsigned char c2 = (checkpos + 1 < lookn) ? look[checkpos + 1] : 0;
+    unsigned char c3 = (checkpos + 2 < lookn) ? look[checkpos + 2] : 0;
+    unsigned char c4 = (checkpos + 3 < lookn) ? look[checkpos + 3] : 0;
+    return isworddelimiterutf8(c1, c2, c3, c4);
+  }
+}
+
+static void updatebracketaliasdepth (LexState *ls, int token) {
+  if (token == '(' || token == '[' || token == '{')
+    ls->bracket_alias_depth++;
+  else if ((token == ')' || token == ']' || token == '}') &&
+           ls->bracket_alias_depth > 0)
+    ls->bracket_alias_depth--;
+}
+
 static int isbracketaliasagglutination (LexState *ls, TString *ts, int *firsttoken) {
   size_t namelen = tsslen(ts);
   const char *name = getstr(ts);
@@ -1170,6 +1232,8 @@ static int isbracketaliasagglutination (LexState *ls, TString *ts, int *firsttok
 
 static int nametotoken (LexState *ls, TString *ts) {
   int token;
+  if (!currentposisworddelim(ls))
+    return TK_NAME;
   if (isbracketaliasagglutination(ls, ts, &token))
     return token;
   if (isreserved(ts)) {
@@ -1189,10 +1253,32 @@ static int nametotoken (LexState *ls, TString *ts) {
   return TK_NAME;
 }
 
+static int finishnametoken (LexState *ls, TString *ts, SemInfo *seminfo) {
+  int token;
+  if (!currentposisworddelim(ls)) {
+    seminfo->ts = ts;
+    return TK_NAME;
+  }
+  if (iscitopenalias(ts)) {
+    read_cit_string(ls, seminfo);
+    return TK_STRING;
+  }
+  if (isselfalias(ts))
+    ts = luaS_newliteral(ls->L, "self");
+  seminfo->ts = ts;
+  token = nametotoken(ls, ts);
+  updatebracketaliasdepth(ls, token);
+  if ((token == '(' || token == '[' || token == '{') &&
+      ls->pending_alias_ts == NULL && ls->pending_extra_token == 0)
+    skiponeseparator(ls);
+  return token;
+}
+
 static int llex (LexState *ls, SemInfo *seminfo) {
   if (ls->pending_extra_token != 0) {
     int token = ls->pending_extra_token;
     ls->pending_extra_token = 0;
+    updatebracketaliasdepth(ls, token);
     return token;
   }
   if (ls->pending_alias_ts != NULL) {
@@ -1215,10 +1301,15 @@ static int llex (LexState *ls, SemInfo *seminfo) {
     }
     if (nexttoken != 0)
       ls->pending_extra_token = nexttoken;
+    updatebracketaliasdepth(ls, token);
     return token;
   }
   luaZ_resetbuffer(ls->buff);
   for (;;) {
+    if (shouldskipseparatorbeforeclosealias(ls)) {
+      skiponeseparator(ls);
+      continue;
+    }
     switch (ls->current) {
       case '\n': case '\r': {  /* line breaks */
         inclinenumber(ls);
@@ -1325,14 +1416,7 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           }
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
-          if (iscitopenalias(ts)) {
-            read_cit_string(ls, seminfo);
-            return TK_STRING;
-          }
-          if (isselfalias(ts))
-            ts = luaS_newliteral(ls->L, "self");
-          seminfo->ts = ts;
-          return nametotoken(ls, ts);
+          return finishnametoken(ls, ts, seminfo);
         }
         /* UTF-8 identifier start (non-ASCII) */
         else if ((unsigned char)ls->current >= 0xC0) {
@@ -1383,14 +1467,7 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
-          if (iscitopenalias(ts)) {
-            read_cit_string(ls, seminfo);
-            return TK_STRING;
-          }
-          if (isselfalias(ts))
-            ts = luaS_newliteral(ls->L, "self");
-          seminfo->ts = ts;
-          return nametotoken(ls, ts);
+          return finishnametoken(ls, ts, seminfo);
         }
         else {  /* single-char tokens (+ - / ...) */
           int c = ls->current;

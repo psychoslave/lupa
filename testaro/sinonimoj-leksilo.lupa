@@ -149,6 +149,17 @@ linio-du
 hop
 
 loke funkcie operatoroj·testi()
+  loka tie devas·kompili(fonto, etikedo)
+    loka peco, eraro = load(fonto)
+    asertu(peco ~= nil, etikedo .. ' MISE (kompilo): ' .. tostring(eraro))
+    reŝalte peco
+  hop
+
+  loka tie devas·malsukcesi(fonto, etikedo)
+    loka peco, eraro = load(fonto)
+    asertu(peco == nil kaj tipdonu(eraro) == 'string', etikedo .. ' devus esti sintakse nevalida')
+  hop
+
   asertu((7 onige 3) == 2, 'onige MISE')
   asertu((7 parte 3) == 2, 'parte MISE')
   asertu((7 pece 3) == 2, 'pece MISE')
@@ -266,7 +277,36 @@ loke funkcie operatoroj·testi()
   asertu((listo2 ĉe 1 ĉi plus listo2 ĉe 2 ĉi) baŭ 42, 'pri/are MISE')
 
   loka envolvita iĝu jeĉa ĉa 99 ĉo ĉoek
-    asertu((envolvita ĉe 1 ĉi ĉe 1 ĉi) baŭ 99, 'aglutina krampado MISE')
+  asertu((envolvita ĉe 1 ĉi ĉe 1 ĉi) baŭ 99, 'aglutina krampado MISE')
+
+  -- Limtestoj por la sama vortlima strategio kiel cit/ĉit:
+  -- ASCII-limoj aktivigas la aliasojn, vortinterno ne.
+  asertu(devas·kompili('return je 40 plus 2 ek', 'ASCII-limo je/ek')() baŭ 42,
+    'ASCII-limo je/ek MISE')
+  asertu(devas·kompili('local jefooek = 7; return jefooek', 'ASCII-vortinterno je/ek')() baŭ 7,
+    'ASCII-vortinterno je/ek MISE')
+  asertu(devas·kompili('local jeŝek = 8; return jeŝek', 'Unikoda-litera vortinterno je/ek')() baŭ 8,
+    'Unikoda-litera vortinterno je/ek MISE')
+  asertu(devas·kompili('local je·ek = 9; return je·ek', 'U+00B7 vortinterno je/ek')() baŭ 9,
+    'U+00B7 vortinterno je/ek MISE')
+  asertu(devas·kompili('local t = ĉa 5 ĉo; return t ĉe 1 ĉi', 'ASCII-limo ĉe/ĉi')() baŭ 5,
+    'ASCII-limo ĉe/ĉi MISE')
+  asertu(devas·kompili('return je¡42!ek', 'Unikoda + ASCII glutitaj limoj je/ek')() baŭ 42,
+    'Unikoda + ASCII glutitaj limoj je/ek MISE')
+  asertu(devas·kompili('local t = ĉa[5]ĉo; return t[1]', 'ASCII glutitaj limoj ĉa/ĉo')() baŭ 5,
+    'ASCII glutitaj limoj ĉa/ĉo MISE')
+
+  -- Pliaj miksitaj krampoj: validaj kaj nevalidaj kazoj.
+  asertu(devas·kompili(
+    'local t = ĉa je 1 plus 2 ek plie ĉe \"a\" ĉi = je 3 plus 4 ek ĉo; return t ĉe 1 ĉi + t ĉe \"a\" ĉi',
+    'Miksitaj validaj krampoj')() baŭ 10,
+    'Miksitaj validaj krampoj MISE')
+
+  -- Nevalidaj miksitaj kazoj, en kongruo kun Lua-signa konduto.
+  devas·malsukcesi('return ( {1] )', 'Lua-signa nevalida miksaĵo ({])')
+  devas·malsukcesi('return je ĉa 1 ĉi ek', 'Lupa-signa nevalida miksaĵo (ĉa...ĉi)')
+  devas·malsukcesi('local t = {1}; return t ][1]', 'Lua-signa nevalida inversigo ][ ')
+  devas·malsukcesi('local t = ĉa 1 ĉo; return t ĉi ĉe 1 ĉi', 'Lupa-signa nevalida inversigo ĉiĉe')
 
   reŝalte vera
 hop

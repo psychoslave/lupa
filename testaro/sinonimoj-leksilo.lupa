@@ -85,7 +85,8 @@ loke funkcie ŝlosilvortaro·testi()
   loke y = 6
   loka z = 7
   loka a = 1
-  asertu(x + y + z + a == 19, 'loka/loke MISE')
+  ja d = 23
+  asertu(x + y + z + a + d == 42, 'loka/loke/ja MISE')
 
   loka t1 tuj t2 = 11 tuj 31
   asertu(t1 + t2 == 42, 'tuj MISE')

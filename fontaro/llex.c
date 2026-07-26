@@ -72,6 +72,7 @@ static const struct {
   { "el", TK_IN },              // in
   { "loka", TK_LOCAL },         // local
   { "loke", TK_LOCAL },         // local
+  { "ja", TK_LOCAL },           // local
   { "nenio", TK_NIL },          // nil
   { "neo", TK_NIL },            // nil
   { "ne", TK_NOT },             // not

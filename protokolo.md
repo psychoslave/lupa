@@ -11,6 +11,7 @@
 ### Novaĵoj
 
 - Aldonitaj krampaj sinonimoj: `je`/`ek` por `(`/`)`, `ĉe`/`ĉi` por `[`/`]`, `ĉa`/`ĉo` por `{`/`}`.
+- Aldonita `ja` kiel plia mallonga sinonimo por `local`.
 - Aldonita `lo` kiel mallongigo de malplena alvoko `()`.
 - Aldonitaj pli prozaj ferm-/malferm-variantoj: `ere`, `pri`, `are`.
 - Aglutinado de memstaraj krampvortoj nun funkcias (ekz. `jeje`, `ekek`, `jeĉeĉa ... ĉoĉiek`).

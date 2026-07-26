@@ -250,6 +250,7 @@ loke funkcie operatoroj·testi()
 
   asertu((je 40 plus 2 ek) baŭ 42, 'je/ek MISE')
   asertu((jeje 40 plus 2 ekek) baŭ 42, 'jeje/ekek MISE')
+  asertu((jejejejejejejejejejejejejejejejejeje 42 ekekekekekekekekekekekekekekekekekek) baŭ 42, 'profunda aglutino MISE')
 
   loka tie kvardekdu()
     reŝalte 42

@@ -83,9 +83,9 @@ typedef struct LexState {
   struct Dyndata *dyd;  /* dynamic structures used by the parser */
   TString *source;  /* current source name */
   TString *envn;  /* environment variable name */
-  unsigned char pending_count;  /* number of queued virtual tokens */
-  unsigned char pending_pos;  /* next queued virtual token index */
-  int pending_tokens[16];  /* queued virtual tokens (for aglutinitaj krampoj) */
+  TString *pending_alias_ts;  /* source word for pending agglutinated aliases */
+  size_t pending_alias_pos;  /* byte position inside pending_alias_ts */
+  int pending_extra_token;  /* second token emitted by aliases like 'lo' */
 } LexState;
 
 

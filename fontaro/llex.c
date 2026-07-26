@@ -1045,54 +1045,54 @@ static void saveutf8seq(LexState *ls) {
 }
 
 static int isassignalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return ((longo == 4 && memcmp(nomo, "iĝu", 4) == 0) ||
-          (longo == 4 && memcmp(nomo, "igxu", 4) == 0) ||
-          (longo == 4 && memcmp(nomo, "iĝe", 4) == 0) ||
-          (longo == 4 && memcmp(nomo, "igxe", 4) == 0));
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return ((len == 4 && memcmp(name, "iĝu", 4) == 0) ||
+          (len == 4 && memcmp(name, "igxu", 4) == 0) ||
+          (len == 4 && memcmp(name, "iĝe", 4) == 0) ||
+          (len == 4 && memcmp(name, "igxe", 4) == 0));
 }
 
 static int iscommaalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return ((longo == 3 && memcmp(nomo, "tuj", 3) == 0) ||
-          (longo == 4 && memcmp(nomo, "plie", 4) == 0));
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return ((len == 3 && memcmp(name, "tuj", 3) == 0) ||
+          (len == 4 && memcmp(name, "plie", 4) == 0));
 }
 
 static int issemicolonalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return (longo == 2 && memcmp(nomo, "nu", 2) == 0);
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return (len == 2 && memcmp(name, "nu", 2) == 0);
 }
 
 static int islenalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return ((longo == 4 && memcmp(nomo, "pese", 4) == 0) ||
-          (longo == 4 && memcmp(nomo, "kiom", 4) == 0) ||
-          (longo == 6 && memcmp(nomo, "kvante", 6) == 0) ||
-          (longo == 8 && memcmp(nomo, "amplekse", 8) == 0));
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return ((len == 4 && memcmp(name, "pese", 4) == 0) ||
+          (len == 4 && memcmp(name, "kiom", 4) == 0) ||
+          (len == 6 && memcmp(name, "kvante", 6) == 0) ||
+          (len == 8 && memcmp(name, "amplekse", 8) == 0));
 }
 
 static int isdotalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return ((longo == 2 && memcmp(nomo, "ie", 2) == 0) ||
-          (longo == 4 && memcmp(nomo, "ties", 4) == 0) ||
-          (longo == 6 && memcmp(nomo, "propra", 6) == 0));
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return ((len == 2 && memcmp(name, "ie", 2) == 0) ||
+          (len == 4 && memcmp(name, "ties", 4) == 0) ||
+          (len == 6 && memcmp(name, "propra", 6) == 0));
 }
 
 static int isselfalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return (longo == 3 && memcmp(nomo, "sia", 3) == 0);
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return (len == 3 && memcmp(name, "sia", 3) == 0);
 }
 
 static int iscitopenalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return (longo == 3 && memcmp(nomo, "cit", 3) == 0);
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return (len == 3 && memcmp(name, "cit", 3) == 0);
 }
 
 static int readbracketaliasunit (const char *name, size_t namelen, size_t pos,
@@ -1102,7 +1102,7 @@ static int readbracketaliasunit (const char *name, size_t namelen, size_t pos,
     size_t len;
     int token;
     int nexttoken;
-  } unuoj[] = {
+  } units[] = {
     { "cxe", 3, '[', 0 },
     { "cxi", 3, ']', 0 },
     { "cxa", 3, '{', 0 },
@@ -1118,16 +1118,16 @@ static int readbracketaliasunit (const char *name, size_t namelen, size_t pos,
     { "ĉa", 3, '{', 0 },
     { "ĉo", 3, '}', 0 },
   };
-  size_t u;
-  for (u = 0; u < sizeof(unuoj) / sizeof(unuoj[0]); u++) {
-    size_t unitlen = unuoj[u].len;
+  size_t i;
+  for (i = 0; i < sizeof(units) / sizeof(units[0]); i++) {
+    size_t unitlen = units[i].len;
     if (pos + unitlen > namelen)
       continue;
-    if (memcmp(name + pos, unuoj[u].name, unitlen) != 0)
+    if (memcmp(name + pos, units[i].name, unitlen) != 0)
       continue;
     *nextpos = pos + unitlen;
-    *token = unuoj[u].token;
-    *nexttoken = unuoj[u].nexttoken;
+    *token = units[i].token;
+    *nexttoken = units[i].nexttoken;
     return 1;
   }
   return 0;
@@ -1169,9 +1169,9 @@ static int isbracketaliasagglutination (LexState *ls, TString *ts, int *firsttok
 }
 
 static int nametotoken (LexState *ls, TString *ts) {
-  int tokeno;
-  if (isbracketaliasagglutination(ls, ts, &tokeno))
-    return tokeno;
+  int token;
+  if (isbracketaliasagglutination(ls, ts, &token))
+    return token;
   if (isreserved(ts)) {
     int token = ts->extra - 1 + FIRST_RESERVED;
     return token;

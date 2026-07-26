@@ -1104,8 +1104,8 @@ static int readbracketaliasunit (const char *name, size_t namelen, size_t pos,
   } unuoj[] = {
     { "cxe", 3, '[', 0 },
     { "cxi", 3, ']', 0 },
-    { "cxo", 3, '{', 0 },
-    { "cxa", 3, '}', 0 },
+    { "cxa", 3, '{', 0 },
+    { "cxo", 3, '}', 0 },
     { "are", 3, '}', 0 },
     { "ere", 3, ']', 0 },
     { "pri", 3, '{', 0 },
@@ -1114,8 +1114,8 @@ static int readbracketaliasunit (const char *name, size_t namelen, size_t pos,
     { "lo", 2, '(', ')' },
     { "ĉe", 3, '[', 0 },
     { "ĉi", 3, ']', 0 },
-    { "ĉo", 3, '{', 0 },
-    { "ĉa", 3, '}', 0 },
+    { "ĉa", 3, '{', 0 },
+    { "ĉo", 3, '}', 0 },
   };
   size_t u;
   for (u = 0; u < sizeof(unuoj) / sizeof(unuoj[0]); u++) {

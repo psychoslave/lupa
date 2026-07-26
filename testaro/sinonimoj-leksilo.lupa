@@ -257,15 +257,15 @@ loke funkcie operatoroj·testi()
   hop
   asertu(kvardekdu lo baŭ 42, 'lo MISE')
 
-  loka listo iĝu ĉo 10 plie 20 ĉa
+  loka listo iĝu ĉa 10 plie 20 ĉo
   asertu((listo ĉe 2 ĉi) baŭ 20, 'ĉe/ĉi MISE')
   asertu((listo ĉe 2 ere) baŭ 20, 'ere MISE')
 
   loka listo2 iĝu pri 30 plie 12 are
   asertu((listo2 ĉe 1 ĉi plus listo2 ĉe 2 ĉi) baŭ 42, 'pri/are MISE')
 
-  loka envolvita iĝu jeĉo ĉo 99 ĉa ĉaek
-  asertu((envolvita ĉe 1 ĉi ĉe 1 ĉi) baŭ 99, 'aglutina krampado MISE')
+  loka envolvita iĝu jeĉa ĉa 99 ĉo ĉoek
+    asertu((envolvita ĉe 1 ĉi ĉe 1 ĉi) baŭ 99, 'aglutina krampado MISE')
 
   reŝalte vera
 hop

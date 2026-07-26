@@ -35,7 +35,7 @@ Por la operatoro `~=` (neegala), ni adoptis la neologismon **`zaŭ`** (kaj ĝiaj
 - `goto` -> `ŝalte`, `sxalte`
 - `if` -> `se`
 - `in` -> `el`
-- `local` -> `loka`, `loke`
+- `local` -> `loka`, `loke`, `ja`
 - `nil` -> `nenio`, `neo`
 - `not` -> `ne`
 - `or` -> `aŭ`, `aux`
@@ -97,6 +97,7 @@ Por `::`, la sinonimo `ho` baziĝas sur la vokativa interjekcio en Esperanto: ĝ
 Por `()` ni aldonis la mallongigon `lo` kiel unu-vortan alvokan ŝparvojon (ekz. `io·funkcio lo`). PMEG dokumentas `lo` kiel alvokan elementon (precipe en la duvorta formo `ha lo`): <https://bertilow.com/pmeg/gramatiko/ekkrioj_sonimitoj/neoficialaj_ekkrioj.html>. Tiu noto estas konservata kiel "ene de farado" semantika klarigo por la projekta dokumentaro.
 
 `ĉi` estis retenita por `]` (kaj ne plu por `local`) por konservi fortan leksikan paron kun `ĉe` por `[`; tio samtempe tenas klaran, simetrian legadon en proza kodo.
+En abstrakta senco, `ĉi` ankaŭ estus interesa kandidato por loka markilo, sed ĝi restas rezervita ĉi tie por la ferma indeksa operatoro.
 
 Pri la `{`/`}` paro, la formoj `ĉa`/`ĉo` resonas kun pli malnovaj reform-ideoj kiel mallongigoj de **ĉia/ĉio**; tio liveras "praneologisman" senton en la koda fluo. Referencoj: <https://www.tekstaro.com/?s=6a65e9e1bcb2d> kaj <https://www.scribd.com/document/953949064/La-Strukturo-de-Esperanto-Kiel-Faktoro-p#content=query:uzi%20la%20formojn,pageNum:131,indexOnPage:0,bestMatch:false>.
 
@@ -168,7 +169,7 @@ Krome, `malcit`/`ĉit` fermas nur ĉe vortlimoj (do internvorta kiel `sinmalciti
 
 - `break` (`eksterŝalte`, `ekstersxalte`, `rompe`) estas la elireja ordono por tuj forlasi ciklon aŭ blokon; la ŝalt-derivaĵoj emfazas subitan ŝanĝon de stato.
 - `function` (`funkcie`, `tie`, `verbe`, `age`) markas funkciodifinon; la proponoj celas nomi agon aŭ funkcion sen perdi la funkcio-noman rolon.
-- `local` (`loka`, `loke`) markas lokan amplekson; la tradukoj emfazas ke la sekva nomo restas limigita al la nuna kodo.
+- `local` (`loka`, `loke`, `ja`) markas lokan amplekson; `ja` ne estas la plej rekta semantika analogo, sed donas mallongan prozodian markilon por emfazi la tuj sekvan lokan difinon.
 - `return` (`reŝalte`, `resxalte`, `ren`) estas la kunulo de `break`: ĝi “ŝaltas reen” kun valoro aŭ sen ĝi. `ren` sekvas la jam proponitan wiki-formon, estas same mallonga kiel la antaŭa varianto, kaj restas natura Esperanto-vorto sen nova neologismo. Kompreneble la `r-` komenco ankaŭ donas mneman proksimon kun *r*eŝalte kaj *r*eturn(ig)/i.
 - `==` (`baŭ`, `egalas`, `samas`) estas egaleco; la mallonga formo `baŭ` tenas la saman b/ z-simetrian ideon kiel `zaŭ`.
 - `~=` (`zaŭ`, `zaux`, `malsamas`, `neegalas`, `nesamas`) estas neegaleco; `zaŭ` estas la spegulo de `baŭ`.

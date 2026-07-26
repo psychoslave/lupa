@@ -23,7 +23,7 @@
 
 #define LUA_VERSION	"Lua " LUA_VERSION_MAJOR "." LUA_VERSION_MINOR
 #define LUA_RELEASE	LUA_VERSION "." LUA_VERSION_RELEASE
-#define LUPA_COPYRIGHT	"Lupa 0.1.0  Aŭtorrajto (C) ekde 2016 fare de psychoslave"
+#define LUPA_COPYRIGHT	"Lupa 0.2.0  Aŭtorrajto (C) ekde 2016 fare de psychoslave"
 #define LUA_COPYRIGHT	LUA_RELEASE "  Aŭtorrajto (C) 1994-2016 Lua.org, PUC-Rio" "\n" \
       LUPA_COPYRIGHT
 #define LUA_AUTHORS	"R. Ierusalimschy, L. H. de Figueiredo, W. Celes"

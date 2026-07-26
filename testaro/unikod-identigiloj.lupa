@@ -2,14 +2,14 @@
 -- Unuotestoj por unikodaj identigiloj en Lupa
 -- Rulu per `lupe testaro/unikod-identigiloj.lupa`
 
-ĉi tie unikoda·identigila·atribucio·testi()
+loka tie unikoda·identigila·atribucio·testi()
   -- Baza unikoda identigila atribuo
   loka identigilo = 'Saluton, mondo!'
   asertu(identigilo == 'Saluton, mondo!', 'Unikoda identigila atribuo nesukcesita')
   printe('[BONE] unikoda·identigila·atribucio·testi')
 hop
 
-ĉi tie unikodajn·numerojn·testi()
+loka tie unikodajn·numerojn·testi()
   -- Unikodaj identigiloj kun nombraj valoroj
   loka ĉifro = 1
   loka pi = 3.14159
@@ -18,7 +18,7 @@ hop
   printe('[BONE] unikodajn·numerojn·testi')
 hop
 
-ĉi tie unikodajn·identigilojn·en·tabelo·testi()
+loka tie unikodajn·identigilojn·en·tabelo·testi()
   -- Unikodaj identigiloj kiel tabelkampoj
   loka glosaro = {}
   glosaro.saluton = 'Saluton'
@@ -28,9 +28,9 @@ hop
   printe('[BONE] unikodajn·identigilojn·en·tabelo·testi')
 hop
 
-ĉi tie unikoda·funkcio·identigilo·testi()
+loka tie unikoda·funkcio·identigilo·testi()
   -- Unikodaj identigiloj en funkciaj difinoj kaj alvokoj
-  ĉi tie kvadrato(ĉifro)
+  loka tie kvadrato(ĉifro)
     reŝalte ĉifro * ĉifro
   hop
 
@@ -39,7 +39,7 @@ hop
   printe('[BONE] unikoda·funkcio·identigilo·testi')
 hop
 
-ĉi tie unikoda·iteracia·variablo·testi()
+loka tie unikoda·iteracia·variablo·testi()
   -- Unikodaj identigiloj en cikloj
   loka sumo = 0
   por aldonota = 1, 5 fare
@@ -49,7 +49,7 @@ hop
   printe('[BONE] unikoda·iteracia·variablo·testi')
 hop
 
-ĉi tie miksita·asciia·unikoda·uzaĵo·testi()
+loka tie miksita·asciia·unikoda·uzaĵo·testi()
   -- Miksitaj ASCII kaj unikodaj identigiloj
   loka unua·tago = 1
   loka ĵaŭdo = 4
@@ -58,7 +58,7 @@ hop
   printe('[BONE] miksita·asciia·unikoda·uzaĵo·testi')
 hop
 
-ĉi tie unikodajn·enkondiĉa·identigilo·testi()
+loka tie unikodajn·enkondiĉa·identigilo·testi()
   -- Unikodaj identigiloj en kondiĉaj esprimoj
   loka identigilo = 'testo'
   se identigilo == 'testo' tiam
@@ -69,7 +69,7 @@ hop
   printe('[BONE] unikodajn·enkondiĉa·identigilo·testi')
 hop
 
-ĉi tie unikoda·ĉenoperacio·testi()
+loka tie unikoda·ĉenoperacio·testi()
   -- Unikodaj identigiloj kun ĉenaj operacioj
   loka unua·teksto = 'Saluton'
   loka dua·teksto = 'mondo'
@@ -78,7 +78,7 @@ hop
   printe('[BONE] unikoda·ĉenoperacio·testi')
 hop
 
-ĉi tie latina·ampleksigita·signo·testi()
+loka tie latina·ampleksigita·signo·testi()
   -- Diversaj latinaj ampleksigitaj signoj uzataj en eŭropaj lingvoj
   loka ĉ = 'aldonota'
   loka ĝ = 'ĝojo'
@@ -96,7 +96,7 @@ hop
   printe('[BONE] latina·ampleksigita·signo·testi')
 hop
 
-ĉi tie unikoda·loka·skopo·testi()
+loka tie unikoda·loka·skopo·testi()
   -- Unikodaj identigiloj respektas lokan skopon
   loka transpaso = 'ekstera'
   fare

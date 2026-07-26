@@ -83,17 +83,17 @@ loke funkcie ŝlosilvortaro·testi()
 
   loka x = 5
   loke y = 6
-  ĉi z = 7
-  cxi a = 1
-  asertu(x + y + z + a == 19, 'loka/loke/ĉi/cxi MISE')
+  loka z = 7
+  loka a = 1
+  asertu(x + y + z + a == 19, 'loka/loke MISE')
 
-  ĉi t1 tuj t2 = 11 tuj 31
+  loka t1 tuj t2 = 11 tuj 31
   asertu(t1 + t2 == 42, 'tuj MISE')
-  ĉi p1 plie p2 = 19 plie 23
+  loka p1 plie p2 = 19 plie 23
   asertu(p1 + p2 == 42, 'plie MISE')
-  ĉi m1 tuj m2 plie m3 = 10 plie 20 tuj 12
+  loka m1 tuj m2 plie m3 = 10 plie 20 tuj 12
   asertu(m1 + m2 + m3 == 42, 'tuj/plie miksita MISE')
-  ĉi io iĝu 0
+  loka io iĝu 0
   io iĝe 1 nu io iĝe io plus 41
   asertu(io baŭ 42, 'nu MISE')
 
@@ -103,7 +103,7 @@ loke funkcie ŝlosilvortaro·testi()
   funkcie dektriurgi()
     reŝalte 13
   hop
-  ĉi tie deksepurgi()
+  loka tie deksepurgi()
     reŝalte 17
   hop
   verbe deknaŭurgi()
@@ -130,15 +130,15 @@ loke funkcie ŝlosilvortaro·testi()
   ::ĉi·poste::
   asertu(objekto == 1, 'ŝalte MISE')
 
-  ĉi aĵo iĝu 2
+  loka aĵo iĝu 2
   ŝalte ŝparvojo
   aĵo iĝe 99
   ho ŝparvojo ho
   asertu(aĵo baŭ 2, 'ho/ŝalte MISE')
 
-  ĉi citaĵo iĝu cit saluton malcit
+  loka citaĵo iĝu cit saluton malcit
   asertu(citaĵo baŭ 'saluton', 'cit/malcit MISE')
-  ĉi plurliniaĵo iĝu cit
+  loka plurliniaĵo iĝu cit
 linio-unu
 linio-du
 ĉit
@@ -232,7 +232,7 @@ loke funkcie operatoroj·testi()
   asertu(ren1() == 1, 'ren MISE')
   asertu(ren2() == 2, 'ren MISE')
 
-  ĉi io = { ero = 40 plie sekreto = 42 }
+  loka io = { ero = 40 plie sekreto = 42 }
   asertu((io propra sekreto) == 42 plie 'propra MISE')
   asertu((io ie sekreto) == 42 plie 'ie MISE')
   asertu((io ties sekreto) == 42 plie 'ties MISE')
@@ -243,10 +243,28 @@ loke funkcie operatoroj·testi()
   asertu((io sin aldonu(2)) == 42, 'sin MISE')
   asertu((io ke aldonu(2)) == 42, 'ke MISE')
 
-  ĉi tie nombri(ktp)
+  loka tie nombri(ktp)
     reŝalte select('#', ktp)
   hop
   asertu(nombri(1, 2, 3) == 3, 'ktp MISE')
+
+  asertu((je 40 plus 2 ek) baŭ 42, 'je/ek MISE')
+  asertu((jeje 40 plus 2 ekek) baŭ 42, 'jeje/ekek MISE')
+
+  loka tie kvardekdu()
+    reŝalte 42
+  hop
+  asertu(kvardekdu lo baŭ 42, 'lo MISE')
+
+  loka listo iĝu ĉo 10 plie 20 ĉa
+  asertu((listo ĉe 2 ĉi) baŭ 20, 'ĉe/ĉi MISE')
+  asertu((listo ĉe 2 ere) baŭ 20, 'ere MISE')
+
+  loka listo2 iĝu pri 30 plie 12 are
+  asertu((listo2 ĉe 1 ĉi plus listo2 ĉe 2 ĉi) baŭ 42, 'pri/are MISE')
+
+  loka envolvita iĝu jeĉo ĉo 99 ĉa ĉaek
+  asertu((envolvita ĉe 1 ĉi ĉe 1 ĉi) baŭ 99, 'aglutina krampado MISE')
 
   reŝalte vera
 hop

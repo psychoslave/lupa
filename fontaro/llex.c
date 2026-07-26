@@ -72,8 +72,6 @@ static const struct {
   { "el", TK_IN },              // in
   { "loka", TK_LOCAL },         // local
   { "loke", TK_LOCAL },         // local
-  { "ĉi", TK_LOCAL },          // local
-  { "cxi", TK_LOCAL },           // local
   { "nenio", TK_NIL },          // nil
   { "neo", TK_NIL },            // nil
   { "ne", TK_NOT },             // not
@@ -299,6 +297,8 @@ void luaX_setinput (lua_State *L, LexState *ls, ZIO *z, TString *source,
   ls->lastline = 1;
   ls->source = source;
   ls->envn = luaS_newliteral(L, LUA_ENV);  /* get env name */
+  ls->pending_count = 0;
+  ls->pending_pos = 0;
   luaZ_resizebuffer(ls->L, ls->buff, LUA_MINBUFFER);  /* initialize buffer */
 }
 
@@ -1093,7 +1093,74 @@ static int iscitopenalias (TString *ts) {
   return (longo == 3 && memcmp(nomo, "cit", 3) == 0);
 }
 
-static int nametotoken (TString *ts) {
+static int isbracketaliasagglutination (LexState *ls, TString *ts, int *firsttoken) {
+  static const struct {
+    const char *nomo;
+    size_t longo;
+    int token;
+    int sekvotoken;
+  } unuoj[] = {
+    { "cxe", 3, '[', 0 },
+    { "cxi", 3, ']', 0 },
+    { "cxo", 3, '{', 0 },
+    { "cxa", 3, '}', 0 },
+    { "are", 3, '}', 0 },
+    { "ere", 3, ']', 0 },
+    { "pri", 3, '{', 0 },
+    { "je", 2, '(', 0 },
+    { "ek", 2, ')', 0 },
+    { "lo", 2, '(', ')' },
+    { "ĉe", 3, '[', 0 },
+    { "ĉi", 3, ']', 0 },
+    { "ĉo", 3, '{', 0 },
+    { "ĉa", 3, '}', 0 },
+  };
+  int tokenoj[16];
+  int nombro = 0;
+  size_t i = 0;
+  size_t longo = tsslen(ts);
+  const char *nomo = getstr(ts);
+  while (i < longo) {
+    size_t u;
+    int trovita = 0;
+    for (u = 0; u < sizeof(unuoj) / sizeof(unuoj[0]); u++) {
+      size_t ulongo = unuoj[u].longo;
+      if (i + ulongo > longo)
+        continue;
+      if (memcmp(nomo + i, unuoj[u].nomo, ulongo) != 0)
+        continue;
+      if (nombro >= cast_int(sizeof(tokenoj) / sizeof(tokenoj[0])))
+        return 0;
+      tokenoj[nombro++] = unuoj[u].token;
+      if (unuoj[u].sekvotoken != 0) {
+        if (nombro >= cast_int(sizeof(tokenoj) / sizeof(tokenoj[0])))
+          return 0;
+        tokenoj[nombro++] = unuoj[u].sekvotoken;
+      }
+      i += ulongo;
+      trovita = 1;
+      break;
+    }
+    if (!trovita)
+      return 0;
+  }
+  if (nombro == 0)
+    return 0;
+  ls->pending_pos = 0;
+  ls->pending_count = 0;
+  if (nombro > 1) {
+    int j;
+    for (j = 1; j < nombro; j++)
+      ls->pending_tokens[ls->pending_count++] = tokenoj[j];
+  }
+  *firsttoken = tokenoj[0];
+  return 1;
+}
+
+static int nametotoken (LexState *ls, TString *ts) {
+  int tokeno;
+  if (isbracketaliasagglutination(ls, ts, &tokeno))
+    return tokeno;
   if (isreserved(ts)) {
     int token = ts->extra - 1 + FIRST_RESERVED;
     return token;
@@ -1112,6 +1179,10 @@ static int nametotoken (TString *ts) {
 }
 
 static int llex (LexState *ls, SemInfo *seminfo) {
+  if (ls->pending_pos < ls->pending_count)
+    return ls->pending_tokens[ls->pending_pos++];
+  ls->pending_pos = 0;
+  ls->pending_count = 0;
   luaZ_resetbuffer(ls->buff);
   for (;;) {
     switch (ls->current) {
@@ -1227,7 +1298,7 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           if (isselfalias(ts))
             ts = luaS_newliteral(ls->L, "self");
           seminfo->ts = ts;
-          return nametotoken(ts);
+          return nametotoken(ls, ts);
         }
         /* UTF-8 identifier start (non-ASCII) */
         else if ((unsigned char)ls->current >= 0xC0) {
@@ -1285,7 +1356,7 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           if (isselfalias(ts))
             ts = luaS_newliteral(ls->L, "self");
           seminfo->ts = ts;
-          return nametotoken(ts);
+          return nametotoken(ls, ts);
         }
         else {  /* single-char tokens (+ - / ...) */
           int c = ls->current;

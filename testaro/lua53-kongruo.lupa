@@ -1,7 +1,7 @@
 #!/usr/bin/env lupe
 -- Kongrua testo inter Lua 5.3 kaj Lupa por kanona Lua-kodo.
 
-ĉi tie ruli(komando)
+loka tie ruli(komando)
   -- FARINDA: traduki la uzivarajn (API) elementojn kiel "io.popen", "os.exit", ktp
   loke procezo = io.popen(komando .. " 2>&1")
   se ne procezo tiam reŝalte falsa, "" hop
@@ -12,7 +12,7 @@
   reŝalte falsa, eligo
 hop
 
-ĉi tie havas_lua53()
+loka tie havas_lua53()
   loke statuso, eligo = ruli("lua -v")
   se ne statuso tiam reŝalte falsa hop
   reŝalte eligo:find("Lua 5%.3", 1, falsa) ~= nenio

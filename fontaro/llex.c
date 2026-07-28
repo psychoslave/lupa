@@ -1155,8 +1155,6 @@ static int shouldskipseparatorbeforeclosealias (LexState *ls) {
   int nexttoken = 0;
   if (ls->current == EOZ || ls->bracket_alias_depth <= 0 || !currentisseparator(ls))
     return 0;
-  if (ls->current == '\'' || ls->current == '"')
-    return 0;
   seqlen = utf8seqlen(cast_uchar(ls->current));
   if (seqlen == 1) {
     look = cast(const unsigned char *, ls->z->p);

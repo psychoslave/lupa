@@ -1153,7 +1153,11 @@ static int shouldskipseparatorbeforeclosealias (LexState *ls) {
   size_t checkpos;
   int token = 0;
   int nexttoken = 0;
-  if (ls->current == EOZ || ls->bracket_alias_depth <= 0 || !currentisseparator(ls))
+  if (ls->current == EOZ || !currentisseparator(ls))
+    return 0;
+  /* Only process if we have open bracket aliases that haven't been closed */
+  lua_assert(ls->bracket_alias_depth >= 0);
+  if (ls->bracket_alias_depth <= 0)
     return 0;
   seqlen = utf8seqlen(cast_uchar(ls->current));
   if (seqlen == 1) {
@@ -1186,8 +1190,12 @@ static int shouldskipseparatorbeforeclosealias (LexState *ls) {
 }
 
 static void updatebracketaliasdepth (LexState *ls, int token) {
-  if (token == '(' || token == '[' || token == '{')
+  if (token == '(' || token == '[' || token == '{') {
+    /* Prevent integer overflow - if at max, next increment would wrap */
+    if (ls->bracket_alias_depth == MAX_INT)
+      lexerror(ls, "bracket nesting too deep", 0);
     ls->bracket_alias_depth++;
+  }
   else if ((token == ')' || token == ']' || token == '}') &&
            ls->bracket_alias_depth > 0)
     ls->bracket_alias_depth--;

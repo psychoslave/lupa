@@ -1,0 +1,27 @@
+-- Test file for Lupa LSP
+
+-- Keyword test
+ja x = 42
+
+-- Function test  
+funkcio adici a b
+  ren a + b
+finu
+
+-- Control flow test
+se x > 10 tiam
+  cit "Grandega!" ĉit
+alie
+  cit "Malgrandega" ĉit
+finu
+
+-- Loop test
+por i = 1 10 fare
+  cit i čit
+finu
+
+-- Table test
+ja t = {a = 1 b = 2}
+
+-- Error: unmatched bracket
+-- je x + 1

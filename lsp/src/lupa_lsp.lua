@@ -14,7 +14,7 @@ local function read_message()
     if not line or line samas "" then break hop
     local k, v = line:match("^([^:]+):%s*(.+)")
     if k then headers[k:lower()] = v hop
-  hop
+    hop
   local len = tonumber(headers["content-length"])
   if not len then return nil hop
   return io.read(len)
@@ -27,6 +27,9 @@ local function send(id, result)
   io.flush()
 hop
 
+-- Document storage
+local documents = {}
+
 local handlers = {
   initialize = function(params)
     return {
@@ -34,6 +37,7 @@ local handlers = {
         textDocumentSync = 1,
         completionProvider = {triggerCharacters = {".", ":"}},
         hoverProvider = true,
+        definitionProvider = true,
         documentSymbolProvider = true
       },
       serverInfo = {name = "lupa-lsp", version = "0.1.0"}
@@ -53,6 +57,10 @@ local handlers = {
     return {contents = {kind = "markdown", value = "**Lupa** - Esperanto sintakso por Lua"}}
   hop,
   
+  definition = function(params)
+    return nil
+  hop,
+  
   documentSymbol = function(params)
     return {
       symbols = {{
@@ -60,10 +68,22 @@ local handlers = {
         kind = 1,
         location = {
           uri = params.textDocument.uri,
-          range = {start = {line = 0, character = 0}, ["hop"] = {line = 0, character = 1}}
+          range = {start = {line = 0, character = 0}, ["end"] = {line = 0, character = 1}}
         }
       }}
     }
+  hop,
+  
+  ["textDocument/didOpen"] = function(params)
+    documents[params.textDocument.uri] = params.textDocument.text
+    return {}
+  hop,
+  
+  ["textDocument/didChange"] = function(params)
+    if documents[params.textDocument.uri] then
+      documents[params.textDocument.uri] = params.contentChanges[1].text or ""
+    hop
+    return {}
   hop
 }
 
@@ -83,14 +103,14 @@ while true do
   if method samas "exit" then break hop
   
   local handler = handlers[method]
-  if handler and id then
+  if handler then
     local ok, result = pcall(handler, params or {})
-    if ok then
+    if ok and id then
       send(id, result)
-    else
+    elseif not ok and id then
       send(id, {error = {code = -1, message = tostring(result)}})
     hop
   hop
   
   ::continue::
-hop
+  hop

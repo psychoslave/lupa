@@ -103,7 +103,7 @@ Pri la `{`/`}` paro, la formoj `ĉa`/`ĉo` resonas kun pli malnovaj reform-ideoj
 
 Noto pri limoj: Lua-a `[[...]]` longa ĉeno ne konflikcias kun ĉi tiu krampa sinonimaro; en Lupa la ĉenkonstruado jam havas apartan, Esperanto-amikan `cit`/`ĉit` mekanismon, do ne estas interkovro aŭ interfero inter la du subsistemoj.
 
-Boundary harmonization note: bracket aliases mirror `cit/ĉit` separator behavior by swallowing one separator immediately after an opening alias and one separator immediately before a closing alias (e.g. `je¡42!ek`, `ĉa[5]ĉo`).
+Krampaj sinonimoj glutas unu apartigilan signon tuj post malfermila vorto kaj unu tuj antaŭ fermila vorto (ekz. `je¡42!ek`, `ĉa[5]ĉo`). Citiloj povas do servi kiel kadraj apartigiloj: `ĉa"saluton"ĉo` egalas al `{saluton}`, dum `ĉa""saluton""ĉo` egalas al `{"saluton"}`. La duobligitaj citiloj konservas la internajn citilojn kiel ordinaran Lua-ĉenon kaj faras la limojn simetriaj.
 
 Por `cit`, la unua sekva **apartigila signo** (blanksigno aŭ ne-litera interpunkcio) estas ignorata, kaj same unu apartigila signo tuj antaŭ `malcit`/`ĉit` ne eniras la rezultan ĉenon. La ĉeno povas transiri plurajn liniojn ĝis `malcit` aŭ `ĉit`, por konduto pli proksima al `[[ ... ]]`.
 

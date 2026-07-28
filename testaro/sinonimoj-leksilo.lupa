@@ -295,6 +295,12 @@ loke funkcie operatoroj·testi()
     'Unikoda + ASCII glutitaj limoj je/ek MISE')
   asertu(devas·kompili('local t = ĉa[5]ĉo; return t[1]', 'ASCII glutitaj limoj ĉa/ĉo')() baŭ 5,
     'ASCII glutitaj limoj ĉa/ĉo MISE')
+  asertu(devas·kompili('ja nombro = 7; ja tabelujo = ĉa"nombro"ĉo; reŝalte tabelujo[1]',
+    'Citilaj limoj ĉa/ĉo por identigilo')() == 7,
+    'Citilaj limoj ĉa/ĉo por identigilo MISE')
+  asertu(devas·kompili('ja tabelujo = ĉa""saluton""ĉo; reŝalte tabelujo[1]',
+    'Citilaj limoj ĉa/ĉo por ĉeno')() == 'saluton',
+    'Citilaj limoj ĉa/ĉo por ĉeno MISE')
 
   -- Pliaj miksitaj krampoj: validaj kaj nevalidaj kazoj.
   asertu(devas·kompili(

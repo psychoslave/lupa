@@ -1,0 +1,8 @@
+#!/bin/sh
+# Lupa LSP Server wrapper
+# Usage: lupa-lsp
+# Runs the Lupa Language Server Protocol implementation
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+export LUA_PATH="${SCRIPT_DIR}/src/?.lua;;${LUA_PATH}"
+exec lupe "${SCRIPT_DIR}/src/lupa_lsp.lua"

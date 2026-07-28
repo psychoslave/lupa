@@ -161,6 +161,58 @@ Kontribuoj estas bonvenaj per:
 - Eldonoj: <https://github.com/psychoslave/lupa/issues>
 - Tirpetoj: <https://github.com/psychoslave/lupa/pulls>
 
+## Agnoskoj
+
+Ni volas esprimi nian profundan dankon al ĉiuj kiuj kontribuis al ĉi tiu projekto, ĉu per rektaj kodkontribuoj, ĉu per iloj kaj servoj kiuj ebligis ĝian evoluon.
+
+### Personoj
+
+**Pradifuzintoj de Esperanto:**
+- [L. L. Zamenhof](https://eo.wikipedia.org/wiki/L._L._Zamenhof) — Kreinto de Esperanto
+- [Antoni Grabowski](https://eo.wikipedia.org/wiki/Antoni_Grabowski) — Pioniro de Esperanto, kreinto de la vorto "ren"
+
+**Esperanto komunumo:**
+- [Espéranto-France Strasbourg](https://strasbourg.esperanto-france.org/) — Loka Esperanto-klubo en Strasburgo, kiu enkondukis la aŭtoron de Lupa al flua scio de Esperanto
+
+**Kreintoj de Lua (PUC-Rio, Brazilo):**
+- [Roberto Ierusalimschy](https://www.inf.puc-rio.br/~roberto/) — Ĉefa arkitekto de Lua
+- [Waldemar Celes](https://www.tecgraf.puc-rio.br/~celes/) — Kun-kreinto de Lua
+- [Luiz Henrique de Figueiredo](https://www.tecgraf.puc-rio.br/~lhf/) — Kun-kreinto de Lua
+
+### Serviloj
+
+C̄i tiuj servoj gravas por la evoluo kaj testado de la projekto:
+
+| Servo | Priskribo | Ligilo |
+|-------|-----------|--------|
+| <img src="https://komputeko.net/Komputeko2012.png" alt="Komputeko" width="16"> **Komputeko** | Esperanta komputila vortaro | [komputeko.net](https://komputeko.net) |
+| <img src="https://vortaro.net/favicon.ico" alt="Vortaro" width="16"> **Vortaro** | Reta Esperanta vortaro | [vortaro.net](https://vortaro.net) |
+| <img src="https://reta-vortaro.de/favicon.ico" alt="Reta Vortaro" width="16"> **Reta Vortaro** | Esperanta-Germana/Germana-Esperanta vortaro | [reta-vortaro.de](https://reta-vortaro.de) |
+
+### Aliaj iloj
+
+C̄i tiuj iloj estis uzataj dum la evoluo de ĉi tiu projekto:
+
+| Ilo | Priskribo | Ligilo |
+|-----|-----------|--------|
+| **CLion** | Integra evolu-medio | [jetbrains.com/clion](https://www.jetbrains.com/clion/) |
+| **Fish-shell** | Amika komando-Ŝelo | [fishshell.com](https://fishshell.com) |
+| **GNU Coreutils** (bash, cat, cd, head, sort, uniq, etc.) | Bazaj komandoj de Unikso | [gnu.org](https://www.gnu.org/software/coreutils/) |
+| <img src="https://git-scm.com/favicon.ico" alt="Git" width="16"> **Git** | Versia kontrolo | [git-scm.com](https://git-scm.com) |
+| <img src="https://github.githubassets.com/favicons/favicon-dark.png" alt="GitHub" width="16"> **GitHub** | Koda gastigado kaj kunlaboro | [github.com](https://github.com) |
+| <img src="https://cli.github.com/favicon.png" alt="GitHub CLI" width="16"> **GitHub CLI (gh)** | Komandlinia interagado kun GitHub | [cli.github.com](https://cli.github.com) |
+| **curl** | Transigo de datumoj per URL | [curl.se](https://curl.se) |
+| **grep** | Serĉado en tekstoj | [gnu.org](https://www.gnu.org/software/grep/) |
+| **Mistral Vibe** | Koda helpilo uzata dum evoluo | [mistral.ai](https://mistral.ai) |
+| **ripgrep (rg)** | Rapida serĉado en tekstoj | [github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) |
+| **Vim** | Teksta redaktilo | [vim.org](https://www.vim.org) |
+
+### Juridika notigo pri iloj
+
+> **Kial ni ne agnoskas ilojn kiel kunverkintojn?**
+> 
+> Ni profundse dankas al ĉiuj iloj kiuj helpis la evoluon de ĉi tiu projekto. Tamen, el juridika vidpunkto, **nek unue juĝejoj agnoskas aŭtorrajtojn por programariloj**, sendepende de ilia potenco aŭ utileco. Aŭtorrajto estas rezervita por homaj kreintoj. Tial, ni decidis ne inkluzivi ilojn kiel "Co-Authored-By" en niaj git-komitmesaĝoj. Iloj restas valoraj partneroj en la evoluprocezo, sed ne juraj kunverkintoj.
+
 ## Licenco
 
 La projekto uzas la **MIT-licencon**.

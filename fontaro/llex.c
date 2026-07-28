@@ -72,8 +72,7 @@ static const struct {
   { "el", TK_IN },              // in
   { "loka", TK_LOCAL },         // local
   { "loke", TK_LOCAL },         // local
-  { "ĉi", TK_LOCAL },          // local
-  { "cxi", TK_LOCAL },           // local
+  { "ja", TK_LOCAL },           // local
   { "nenio", TK_NIL },          // nil
   { "neo", TK_NIL },            // nil
   { "ne", TK_NOT },             // not
@@ -299,6 +298,10 @@ void luaX_setinput (lua_State *L, LexState *ls, ZIO *z, TString *source,
   ls->lastline = 1;
   ls->source = source;
   ls->envn = luaS_newliteral(L, LUA_ENV);  /* get env name */
+  ls->pending_alias_ts = NULL;
+  ls->pending_alias_pos = 0;
+  ls->pending_extra_token = 0;
+  ls->bracket_alias_depth = 0;
   luaZ_resizebuffer(ls->L, ls->buff, LUA_MINBUFFER);  /* initialize buffer */
 }
 
@@ -1043,57 +1046,194 @@ static void saveutf8seq(LexState *ls) {
 }
 
 static int isassignalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return ((longo == 4 && memcmp(nomo, "iĝu", 4) == 0) ||
-          (longo == 4 && memcmp(nomo, "igxu", 4) == 0) ||
-          (longo == 4 && memcmp(nomo, "iĝe", 4) == 0) ||
-          (longo == 4 && memcmp(nomo, "igxe", 4) == 0));
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return ((len == 4 && memcmp(name, "iĝu", 4) == 0) ||
+          (len == 4 && memcmp(name, "igxu", 4) == 0) ||
+          (len == 4 && memcmp(name, "iĝe", 4) == 0) ||
+          (len == 4 && memcmp(name, "igxe", 4) == 0));
 }
 
 static int iscommaalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return ((longo == 3 && memcmp(nomo, "tuj", 3) == 0) ||
-          (longo == 4 && memcmp(nomo, "plie", 4) == 0));
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return ((len == 3 && memcmp(name, "tuj", 3) == 0) ||
+          (len == 4 && memcmp(name, "plie", 4) == 0));
 }
 
 static int issemicolonalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return (longo == 2 && memcmp(nomo, "nu", 2) == 0);
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return (len == 2 && memcmp(name, "nu", 2) == 0);
 }
 
 static int islenalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return ((longo == 4 && memcmp(nomo, "pese", 4) == 0) ||
-          (longo == 4 && memcmp(nomo, "kiom", 4) == 0) ||
-          (longo == 6 && memcmp(nomo, "kvante", 6) == 0) ||
-          (longo == 8 && memcmp(nomo, "amplekse", 8) == 0));
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return ((len == 4 && memcmp(name, "pese", 4) == 0) ||
+          (len == 4 && memcmp(name, "kiom", 4) == 0) ||
+          (len == 6 && memcmp(name, "kvante", 6) == 0) ||
+          (len == 8 && memcmp(name, "amplekse", 8) == 0));
 }
 
 static int isdotalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return ((longo == 2 && memcmp(nomo, "ie", 2) == 0) ||
-          (longo == 4 && memcmp(nomo, "ties", 4) == 0) ||
-          (longo == 6 && memcmp(nomo, "propra", 6) == 0));
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return ((len == 2 && memcmp(name, "ie", 2) == 0) ||
+          (len == 4 && memcmp(name, "ties", 4) == 0) ||
+          (len == 6 && memcmp(name, "propra", 6) == 0));
 }
 
 static int isselfalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return (longo == 3 && memcmp(nomo, "sia", 3) == 0);
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return (len == 3 && memcmp(name, "sia", 3) == 0);
 }
 
 static int iscitopenalias (TString *ts) {
-  size_t longo = tsslen(ts);
-  const char *nomo = getstr(ts);
-  return (longo == 3 && memcmp(nomo, "cit", 3) == 0);
+  size_t len = tsslen(ts);
+  const char *name = getstr(ts);
+  return (len == 3 && memcmp(name, "cit", 3) == 0);
 }
 
-static int nametotoken (TString *ts) {
+static int readbracketaliasunit (const char *name, size_t namelen, size_t pos,
+                                 size_t *nextpos, int *token, int *nexttoken) {
+  static const struct {
+    const char *name;
+    size_t len;
+    int token;
+    int nexttoken;
+  } units[] = {
+    { "cxe", 3, '[', 0 },
+    { "cxi", 3, ']', 0 },
+    { "cxa", 3, '{', 0 },
+    { "cxo", 3, '}', 0 },
+    { "are", 3, '}', 0 },
+    { "ere", 3, ']', 0 },
+    { "pri", 3, '{', 0 },
+    { "je", 2, '(', 0 },
+    { "ek", 2, ')', 0 },
+    { "lo", 2, '(', ')' },
+    { "ĉe", 3, '[', 0 },
+    { "ĉi", 3, ']', 0 },
+    { "ĉa", 3, '{', 0 },
+    { "ĉo", 3, '}', 0 },
+  };
+  size_t i;
+  for (i = 0; i < sizeof(units) / sizeof(units[0]); i++) {
+    size_t unitlen = units[i].len;
+    if (pos + unitlen > namelen)
+      continue;
+    if (memcmp(name + pos, units[i].name, unitlen) != 0)
+      continue;
+    *nextpos = pos + unitlen;
+    *token = units[i].token;
+    *nexttoken = units[i].nexttoken;
+    return 1;
+  }
+  return 0;
+}
+
+static void skiponeseparator (LexState *ls) {
+  if (!currentisseparator(ls))
+    return;
+  if (currIsNewline(ls))
+    inclinenumber(ls);
+  else if (cast_uchar(ls->current) >= 0x80)
+    skiponeutf8char(ls);
+  else
+    next(ls);
+}
+
+static int shouldskipseparatorbeforeclosealias (LexState *ls) {
+  const unsigned char *look;
+  size_t lookn;
+  size_t seqlen;
+  size_t nextpos = 0;
+  size_t checkpos;
+  int token = 0;
+  int nexttoken = 0;
+  if (ls->current == EOZ || ls->bracket_alias_depth <= 0 || !currentisseparator(ls))
+    return 0;
+  seqlen = utf8seqlen(cast_uchar(ls->current));
+  if (seqlen == 1) {
+    look = cast(const unsigned char *, ls->z->p);
+    lookn = ls->z->n;
+  }
+  else {
+    size_t skip = seqlen - 1;
+    if (ls->z->n <= skip)
+      return 0;
+    look = cast(const unsigned char *, ls->z->p + skip);
+    lookn = ls->z->n - skip;
+  }
+  if (!readbracketaliasunit(cast(const char *, look), lookn, 0, &nextpos, &token, &nexttoken))
+    return 0;
+  if (!(token == ')' || token == ']' || token == '}'))
+    return 0;
+  checkpos = nextpos;
+  if (checkpos >= lookn)
+    return 1;
+  if (readbracketaliasunit(cast(const char *, look), lookn, checkpos, &nextpos, &token, &nexttoken))
+    return 1;
+  {
+    unsigned char c1 = look[checkpos];
+    unsigned char c2 = (checkpos + 1 < lookn) ? look[checkpos + 1] : 0;
+    unsigned char c3 = (checkpos + 2 < lookn) ? look[checkpos + 2] : 0;
+    unsigned char c4 = (checkpos + 3 < lookn) ? look[checkpos + 3] : 0;
+    return isworddelimiterutf8(c1, c2, c3, c4);
+  }
+}
+
+static void updatebracketaliasdepth (LexState *ls, int token) {
+  if (token == '(' || token == '[' || token == '{')
+    ls->bracket_alias_depth++;
+  else if ((token == ')' || token == ']' || token == '}') &&
+           ls->bracket_alias_depth > 0)
+    ls->bracket_alias_depth--;
+}
+
+static int isbracketaliasagglutination (LexState *ls, TString *ts, int *firsttoken) {
+  size_t namelen = tsslen(ts);
+  const char *name = getstr(ts);
+  size_t firstnextpos = 0;
+  size_t pos = 0;
+  size_t nextpos = 0;
+  int token = 0;
+  int nexttoken = 0;
+
+  if (!readbracketaliasunit(name, namelen, pos, &firstnextpos, &token, &nexttoken))
+    return 0;
+
+  pos = firstnextpos;
+  while (pos < namelen) {
+    int ignored_token;
+    int ignored_nexttoken;
+    if (!readbracketaliasunit(name, namelen, pos, &nextpos,
+                              &ignored_token, &ignored_nexttoken))
+      return 0;
+    pos = nextpos;
+  }
+
+  ls->pending_alias_ts = NULL;
+  ls->pending_alias_pos = 0;
+  ls->pending_extra_token = 0;
+  if (nexttoken != 0)
+    ls->pending_extra_token = nexttoken;
+  if (firstnextpos < namelen) {
+    ls->pending_alias_ts = ts;
+    ls->pending_alias_pos = firstnextpos;
+  }
+  *firsttoken = token;
+  return 1;
+}
+
+static int nametotoken (LexState *ls, TString *ts) {
+  int token;
+  if (!currentposisworddelim(ls))
+    return TK_NAME;
+  if (isbracketaliasagglutination(ls, ts, &token))
+    return token;
   if (isreserved(ts)) {
     int token = ts->extra - 1 + FIRST_RESERVED;
     return token;
@@ -1111,9 +1251,63 @@ static int nametotoken (TString *ts) {
   return TK_NAME;
 }
 
+static int finishnametoken (LexState *ls, TString *ts, SemInfo *seminfo) {
+  int token;
+  if (!currentposisworddelim(ls)) {
+    seminfo->ts = ts;
+    return TK_NAME;
+  }
+  if (iscitopenalias(ts)) {
+    read_cit_string(ls, seminfo);
+    return TK_STRING;
+  }
+  if (isselfalias(ts))
+    ts = luaS_newliteral(ls->L, "self");
+  seminfo->ts = ts;
+  token = nametotoken(ls, ts);
+  updatebracketaliasdepth(ls, token);
+  if ((token == '(' || token == '[' || token == '{') &&
+      ls->pending_alias_ts == NULL && ls->pending_extra_token == 0)
+    skiponeseparator(ls);
+  return token;
+}
+
 static int llex (LexState *ls, SemInfo *seminfo) {
+  if (ls->pending_extra_token != 0) {
+    int token = ls->pending_extra_token;
+    ls->pending_extra_token = 0;
+    updatebracketaliasdepth(ls, token);
+    return token;
+  }
+  if (ls->pending_alias_ts != NULL) {
+    size_t namelen = tsslen(ls->pending_alias_ts);
+    const char *name = getstr(ls->pending_alias_ts);
+    size_t nextpos = 0;
+    int token = 0;
+    int nexttoken = 0;
+    if (!readbracketaliasunit(name, namelen, ls->pending_alias_pos,
+                              &nextpos, &token, &nexttoken)) {
+      ls->pending_alias_ts = NULL;
+      ls->pending_alias_pos = 0;
+      ls->pending_extra_token = 0;
+      return TK_NAME;
+    }
+    ls->pending_alias_pos = nextpos;
+    if (ls->pending_alias_pos >= namelen) {
+      ls->pending_alias_ts = NULL;
+      ls->pending_alias_pos = 0;
+    }
+    if (nexttoken != 0)
+      ls->pending_extra_token = nexttoken;
+    updatebracketaliasdepth(ls, token);
+    return token;
+  }
   luaZ_resetbuffer(ls->buff);
   for (;;) {
+    if (shouldskipseparatorbeforeclosealias(ls)) {
+      skiponeseparator(ls);
+      continue;
+    }
     switch (ls->current) {
       case '\n': case '\r': {  /* line breaks */
         inclinenumber(ls);
@@ -1220,14 +1414,7 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           }
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
-          if (iscitopenalias(ts)) {
-            read_cit_string(ls, seminfo);
-            return TK_STRING;
-          }
-          if (isselfalias(ts))
-            ts = luaS_newliteral(ls->L, "self");
-          seminfo->ts = ts;
-          return nametotoken(ts);
+          return finishnametoken(ls, ts, seminfo);
         }
         /* UTF-8 identifier start (non-ASCII) */
         else if ((unsigned char)ls->current >= 0xC0) {
@@ -1278,14 +1465,7 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           
           ts = luaX_newstring(ls, luaZ_buffer(ls->buff),
                                   luaZ_bufflen(ls->buff));
-          if (iscitopenalias(ts)) {
-            read_cit_string(ls, seminfo);
-            return TK_STRING;
-          }
-          if (isselfalias(ts))
-            ts = luaS_newliteral(ls->L, "self");
-          seminfo->ts = ts;
-          return nametotoken(ts);
+          return finishnametoken(ls, ts, seminfo);
         }
         else {  /* single-char tokens (+ - / ...) */
           int c = ls->current;

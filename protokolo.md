@@ -2,6 +2,20 @@
 
 Ĉi tiu dosiero registras gravajn eldonaĵojn de Lupa.
 
+## 0.2.0 — 2026-07-26
+
+### Rompa ŝanĝo
+
+- `local` ne plu havas la sinonimon `ĉi`/`cxi`.
+
+### Novaĵoj
+
+- Aldonitaj krampaj sinonimoj: `je`/`ek` por `(`/`)`, `ĉe`/`ĉi` por `[`/`]`, `ĉa`/`ĉo` por `{`/`}`.
+- Aldonita `ja` kiel plia mallonga sinonimo por `local`.
+- Aldonita `lo` kiel mallongigo de malplena alvoko `()`.
+- Aldonitaj pli prozaj ferm-/malferm-variantoj: `ere`, `pri`, `are`.
+- Aglutinado de memstaraj krampvortoj nun funkcias (ekz. `jeje`, `ekek`, `jeĉeĉa ... ĉoĉiek`).
+
 ## 0.1.0 — 2026-07-23
 
 Ĉi tiu estas eksperimenta eldono por formaligi la nunan staton de la projekto.

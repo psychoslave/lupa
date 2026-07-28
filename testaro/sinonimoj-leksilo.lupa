@@ -83,17 +83,18 @@ loke funkcie ŝlosilvortaro·testi()
 
   loka x = 5
   loke y = 6
-  ĉi z = 7
-  cxi a = 1
-  asertu(x + y + z + a == 19, 'loka/loke/ĉi/cxi MISE')
+  loka z = 7
+  loka a = 1
+  ja d = 23
+  asertu(x + y + z + a + d == 42, 'loka/loke/ja MISE')
 
-  ĉi t1 tuj t2 = 11 tuj 31
+  loka t1 tuj t2 = 11 tuj 31
   asertu(t1 + t2 == 42, 'tuj MISE')
-  ĉi p1 plie p2 = 19 plie 23
+  loka p1 plie p2 = 19 plie 23
   asertu(p1 + p2 == 42, 'plie MISE')
-  ĉi m1 tuj m2 plie m3 = 10 plie 20 tuj 12
+  loka m1 tuj m2 plie m3 = 10 plie 20 tuj 12
   asertu(m1 + m2 + m3 == 42, 'tuj/plie miksita MISE')
-  ĉi io iĝu 0
+  loka io iĝu 0
   io iĝe 1 nu io iĝe io plus 41
   asertu(io baŭ 42, 'nu MISE')
 
@@ -103,7 +104,7 @@ loke funkcie ŝlosilvortaro·testi()
   funkcie dektriurgi()
     reŝalte 13
   hop
-  ĉi tie deksepurgi()
+  loka tie deksepurgi()
     reŝalte 17
   hop
   verbe deknaŭurgi()
@@ -130,15 +131,15 @@ loke funkcie ŝlosilvortaro·testi()
   ::ĉi·poste::
   asertu(objekto == 1, 'ŝalte MISE')
 
-  ĉi aĵo iĝu 2
+  loka aĵo iĝu 2
   ŝalte ŝparvojo
   aĵo iĝe 99
   ho ŝparvojo ho
   asertu(aĵo baŭ 2, 'ho/ŝalte MISE')
 
-  ĉi citaĵo iĝu cit saluton malcit
+  loka citaĵo iĝu cit saluton malcit
   asertu(citaĵo baŭ 'saluton', 'cit/malcit MISE')
-  ĉi plurliniaĵo iĝu cit
+  loka plurliniaĵo iĝu cit
 linio-unu
 linio-du
 ĉit
@@ -148,6 +149,17 @@ linio-du
 hop
 
 loke funkcie operatoroj·testi()
+  loka tie devas·kompili(fonto, etikedo)
+    loka peco, eraro = load(fonto)
+    asertu(peco ~= nil, etikedo .. ' MISE (kompilo): ' .. tostring(eraro))
+    reŝalte peco
+  hop
+
+  loka tie devas·malsukcesi(fonto, etikedo)
+    loka peco, eraro = load(fonto)
+    asertu(peco == nil kaj tipdonu(eraro) == 'string', etikedo .. ' devus esti sintakse nevalida')
+  hop
+
   asertu((7 onige 3) == 2, 'onige MISE')
   asertu((7 parte 3) == 2, 'parte MISE')
   asertu((7 pece 3) == 2, 'pece MISE')
@@ -232,7 +244,7 @@ loke funkcie operatoroj·testi()
   asertu(ren1() == 1, 'ren MISE')
   asertu(ren2() == 2, 'ren MISE')
 
-  ĉi io = { ero = 40 plie sekreto = 42 }
+  loka io = { ero = 40 plie sekreto = 42 }
   asertu((io propra sekreto) == 42 plie 'propra MISE')
   asertu((io ie sekreto) == 42 plie 'ie MISE')
   asertu((io ties sekreto) == 42 plie 'ties MISE')
@@ -243,10 +255,64 @@ loke funkcie operatoroj·testi()
   asertu((io sin aldonu(2)) == 42, 'sin MISE')
   asertu((io ke aldonu(2)) == 42, 'ke MISE')
 
-  ĉi tie nombri(ktp)
+  loka tie nombri(ktp)
     reŝalte select('#', ktp)
   hop
   asertu(nombri(1, 2, 3) == 3, 'ktp MISE')
+
+  asertu((je 40 plus 2 ek) baŭ 42, 'je/ek MISE')
+  asertu((jeje 40 plus 2 ekek) baŭ 42, 'jeje/ekek MISE')
+  asertu((jejejejejejejejejejejejejejejejejeje 42 ekekekekekekekekekekekekekekekekekek) baŭ 42, 'profunda aglutino MISE')
+
+  loka tie kvardekdu()
+    reŝalte 42
+  hop
+  asertu(kvardekdu lo baŭ 42, 'lo MISE')
+
+  loka listo iĝu ĉa 10 plie 20 ĉo
+  asertu((listo ĉe 2 ĉi) baŭ 20, 'ĉe/ĉi MISE')
+  asertu((listo ĉe 2 ere) baŭ 20, 'ere MISE')
+
+  loka listo2 iĝu pri 30 plie 12 are
+  asertu((listo2 ĉe 1 ĉi plus listo2 ĉe 2 ĉi) baŭ 42, 'pri/are MISE')
+
+  loka envolvita iĝu jeĉa ĉa 99 ĉo ĉoek
+  asertu((envolvita ĉe 1 ĉi ĉe 1 ĉi) baŭ 99, 'aglutina krampado MISE')
+
+  -- Limtestoj por la sama vortlima strategio kiel cit/ĉit:
+  -- ASCII-limoj aktivigas la aliasojn, vortinterno ne.
+  asertu(devas·kompili('return je 40 plus 2 ek', 'ASCII-limo je/ek')() baŭ 42,
+    'ASCII-limo je/ek MISE')
+  asertu(devas·kompili('local jefooek = 7; return jefooek', 'ASCII-vortinterno je/ek')() baŭ 7,
+    'ASCII-vortinterno je/ek MISE')
+  asertu(devas·kompili('local jeŝek = 8; return jeŝek', 'Unikoda-litera vortinterno je/ek')() baŭ 8,
+    'Unikoda-litera vortinterno je/ek MISE')
+  asertu(devas·kompili('local je·ek = 9; return je·ek', 'U+00B7 vortinterno je/ek')() baŭ 9,
+    'U+00B7 vortinterno je/ek MISE')
+  asertu(devas·kompili('local t = ĉa 5 ĉo; return t ĉe 1 ĉi', 'ASCII-limo ĉe/ĉi')() baŭ 5,
+    'ASCII-limo ĉe/ĉi MISE')
+  asertu(devas·kompili('return je¡42!ek', 'Unikoda + ASCII glutitaj limoj je/ek')() baŭ 42,
+    'Unikoda + ASCII glutitaj limoj je/ek MISE')
+  asertu(devas·kompili('local t = ĉa[5]ĉo; return t[1]', 'ASCII glutitaj limoj ĉa/ĉo')() baŭ 5,
+    'ASCII glutitaj limoj ĉa/ĉo MISE')
+  asertu(devas·kompili('ja nombro = 7; ja tabelujo = ĉa"nombro"ĉo; reŝalte tabelujo[1]',
+    'Citilaj limoj ĉa/ĉo por identigilo')() == 7,
+    'Citilaj limoj ĉa/ĉo por identigilo MISE')
+  asertu(devas·kompili('ja tabelujo = ĉa""saluton""ĉo; reŝalte tabelujo[1]',
+    'Citilaj limoj ĉa/ĉo por ĉeno')() == 'saluton',
+    'Citilaj limoj ĉa/ĉo por ĉeno MISE')
+
+  -- Pliaj miksitaj krampoj: validaj kaj nevalidaj kazoj.
+  asertu(devas·kompili(
+    'local t = ĉa je 1 plus 2 ek plie ĉe \"a\" ĉi = je 3 plus 4 ek ĉo; return t ĉe 1 ĉi + t ĉe \"a\" ĉi',
+    'Miksitaj validaj krampoj')() baŭ 10,
+    'Miksitaj validaj krampoj MISE')
+
+  -- Nevalidaj miksitaj kazoj, en kongruo kun Lua-signa konduto.
+  devas·malsukcesi('return ( {1] )', 'Lua-signa nevalida miksaĵo ({])')
+  devas·malsukcesi('return je ĉa 1 ĉi ek', 'Lupa-signa nevalida miksaĵo (ĉa...ĉi)')
+  devas·malsukcesi('local t = {1}; return t ][1]', 'Lua-signa nevalida inversigo ][ ')
+  devas·malsukcesi('local t = ĉa 1 ĉo; return t ĉi ĉe 1 ĉi', 'Lupa-signa nevalida inversigo ĉiĉe')
 
   reŝalte vera
 hop

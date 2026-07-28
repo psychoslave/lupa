@@ -312,7 +312,24 @@ loke funkcie operatoroj·testi()
   devas·malsukcesi('return ( {1] )', 'Lua-signa nevalida miksaĵo ({])')
   devas·malsukcesi('return je ĉa 1 ĉi ek', 'Lupa-signa nevalida miksaĵo (ĉa...ĉi)')
   devas·malsukcesi('local t = {1}; return t ][1]', 'Lua-signa nevalida inversigo ][ ')
-  devas·malsukcesi('local t = ĉa 1 ĉo; return t ĉi ĉe 1 ĉi', 'Lupa-signa nevalida inversigo ĉiĉe')
+  devas·malsukcesi('local t = ĉa 1 ĉo; return t ĉi ĉe 1 ĉi', 'Lupa-signa nevalida inversigo (ĉiĉe)')
+  devas·malsukcesi('ek je', 'Lua-signa nevalida inversigo ())')
+
+  -- Testu lo en alvoko-kunteksto (malplena argumentaro)
+  asertu(devas·kompili('funkcie var lo ren 42 hop ren var lo baŭ 42', 'lo en alvoko')() == true,
+    'lo en alvoko MISE')
+  asertu(devas·kompili('funkcie var2 lo ren 43 hop ren var2 lo baŭ 43', 'lo kun funkcio')() == true,
+    'lo kun funkcio MISE')
+
+  -- Testu profundan ingadon (limita nur de memoro, kiel Lua)
+  -- 100 niveloj estas sekura sur normalaj sistemoj
+  -- Fakte, tiom da krampoj estas rarega, sed ja ekistas, ekzemple:
+  -- https://github.com/SeilaNomeFoda/Oo/blob/93f456b83f403b8a333a13a5293ed156819d58ba/ZinazcxTu.lua#L4008
+  -- https://github.com/danini-the-panini/lambda-fizzbuzz/blob/6ec086d76c1ff1251aaab3f5ddd94803c8e01af8/lua/lambda.lua#L45
+  asertu(devas·kompili(
+    'local nombro = ' .. string.rep('je ', 100) .. '42' .. string.rep(' ek', 100) .. '; ren nombro',
+    'Profunda nestado (100 niveloj)')() baŭ 42,
+    'Profunda nestado (100 niveloj) MISE')
 
   reŝalte vera
 hop

@@ -107,6 +107,40 @@ loka tie unikoda·loka·skopo·testi()
   printe('[BONE] unikoda·loka·skopo·testi')
 hop
 
+loka tie unikoda·identigilo·simbola·limo·testi()
+  -- Probo por UTF-8 identigilo apud aliaj tokenoj tra diversaj bufrolimoj.
+  -- Ĉi tiu testo ne malsukcesigu la tutan aron: ĝi signalas ĉu la simila
+  -- problemo ekzistas en ĉi tiu pli malnova kodo-bazo.
+  loka problemo = nil
+  por plenigo = 0, 512 fare
+    loka prefikso = 'p' .. string.rep('x', plenigo)
+    loka fonto =
+      'loka ' .. prefikso .. ' = 0\n' ..
+      'loka tie ƒ()\n' ..
+      '  reŝalte 7\n' ..
+      'hop\n' ..
+      'asertu(ƒ() == 7)\n' ..
+      'loka sumo = 0\n' ..
+      'por i = 1, 3 fare sumo = sumo + i hop\n' ..
+      'reŝalte sumo\n'
+    loka peco, eraro = load(fonto)
+    se peco == nil tiam
+      problemo = 'Kompilo malsukcesis ĉe plenigo=' .. plenigo .. ': ' .. tostring(eraro)
+      eksterŝalte
+    hop
+    loka ok, rezulto = ŝirmvoku(peco)
+    se ne (ok kaj rezulto == 6) tiam
+      problemo = 'Rulado malsukcesis ĉe plenigo=' .. plenigo .. ': ' .. tostring(rezulto)
+      eksterŝalte
+    hop
+  hop
+  se problemo tiam
+    printe('[ATENTO] unikoda·identigilo·simbola·limo·testi: ' .. problemo)
+  alie
+    printe('[BONE] unikoda·identigilo·simbola·limo·testi')
+  hop
+hop
+
 -- Rulu ĉiujn testojn
 loke testoj = {
   unikoda·identigila·atribucio·testi,
@@ -119,6 +153,7 @@ loke testoj = {
   unikoda·ĉenoperacio·testi,
   latina·ampleksigita·signo·testi,
   unikoda·loka·skopo·testi,
+  unikoda·identigilo·simbola·limo·testi,
 }
 
 printe('\n=== Rulado de unikodaj identigilaj testoj ===')

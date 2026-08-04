@@ -88,9 +88,9 @@ int luai_isutf8alpha(unsigned char c1, unsigned char c2, unsigned char c3) {
   if (c1 >= 0xC0 && c1 <= 0xDF) {
     if (!luai_isutf8cont(c2)) return 0;
     
-    /* Latin Extended-A and Extended-B (0xC380-0xC5BF) */
-    /* Covers: à-ÿ, Ā-ƿ, etc. */
-    if (c1 == 0xC3 || c1 == 0xC4 || c1 == 0xC5) return 1;
+    /* Latin ranges incl. U+0192 'ƒ' (0xC6 0x92). */
+    if (c1 == 0xC3 || c1 == 0xC4 || c1 == 0xC5 || c1 == 0xC6 || c1 == 0xC7)
+      return 1;
     
     /* Greek (0xCE91-0xCEB3) */
     if (c1 == 0xCE && c2 >= 0x91 && c2 <= 0xBF) return 1;
